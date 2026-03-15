@@ -18,7 +18,12 @@ const Home = () => {
     const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           p.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = activeCategory === 'All' || p.category === activeCategory;
-    return matchesSearch && matchesCategory;
+    
+    // De-duplicate: If we are in 'All' view and not searching, hide featured products from the grid
+    // because they are already shown in the horizontal Featured section above.
+    const isRedundant = activeCategory === 'All' && !searchQuery && p.featured;
+    
+    return matchesSearch && matchesCategory && !isRedundant;
   });
 
   const featuredProducts = products.filter(p => p.featured);
