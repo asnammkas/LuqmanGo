@@ -5,7 +5,7 @@ const Footer = () => {
     <footer>
       {/* Find Us Section */}
       <section style={{ backgroundColor: 'var(--color-bg-card)', padding: '3rem 0', borderTop: '1px solid var(--color-border)' }}>
-        <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem', alignItems: 'center' }}>
+        <div className="container" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem', alignItems: 'center' }}>
           <div>
             <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>Find us in Kalmunai</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
