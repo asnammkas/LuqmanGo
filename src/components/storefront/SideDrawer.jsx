@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { X, Moon, Sun, Phone, Mail, Award, LayoutDashboard, ChevronRight } from 'lucide-react';
+import { X, Moon, Sun, Phone, Mail, Award, LayoutDashboard, ChevronRight, UserPlus, LogIn } from 'lucide-react';
 import { useShop } from '../../context/ShopContext';
 
 const SideDrawer = ({ isOpen, onClose }) => {
@@ -93,8 +93,14 @@ const SideDrawer = ({ isOpen, onClose }) => {
 
           {/* More Links Section */}
           <div style={{ padding: '0 1.5rem 0.5rem', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '1px' }}>
-            More to Explore
+            My Account
           </div>
+          <Link to="/signin" onClick={onClose} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1rem 1.5rem', color: 'var(--color-text-main)', textDecoration: 'none', fontSize: '0.95rem' }}>
+            <LogIn size={20} color="var(--color-primary)" /> Sign In
+          </Link>
+          <Link to="/register" onClick={onClose} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1rem 1.5rem', color: 'var(--color-text-main)', textDecoration: 'none', fontSize: '0.95rem' }}>
+            <UserPlus size={20} color="var(--color-primary)" /> Create Account
+          </Link>
           <Link to="/admin" onClick={onClose} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1rem 1.5rem', color: 'var(--color-text-main)', textDecoration: 'none', fontSize: '0.95rem' }}>
             <LayoutDashboard size={20} color="var(--color-secondary)" /> Admin Panel
           </Link>
