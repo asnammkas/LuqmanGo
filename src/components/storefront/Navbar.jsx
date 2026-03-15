@@ -6,7 +6,7 @@ import { ShoppingCart, LayoutDashboard, Search, Moon, Sun, Phone, Menu, X } from
 const categories = ['All', 'Electronics', 'Dresses', 'Groceries', 'Furniture', 'Home & Living'];
 
 const Navbar = ({ onOpenDrawer }) => {
-  const { getCartCount, searchQuery, setSearchQuery, theme, toggleTheme } = useShop();
+  const { getCartCount, searchQuery, setSearchQuery, activeCategory, setActiveCategory, theme, toggleTheme } = useShop();
 
   return (
     <header style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50 }}>
