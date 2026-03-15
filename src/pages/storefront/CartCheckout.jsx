@@ -16,7 +16,7 @@ const CartCheckout = () => {
     let orderDetails = cart.map(item => `${item.quantity}x ${item.title} ($${item.price.toFixed(2)})`).join('%0A');
     
     // 2. Format the entire message
-    const textMessage = `*NEW ORDER - LUQMANGO*%0A%0A*Customer Details:*%0AName: ${formData.name}%0AEmail: ${formData.email}%0AAddress: ${formData.address}%0A%0A*Payment Method:* ${formData.paymentMethod}%0A%0A*Order Summary:*%0A${orderDetails}%0A%0A*TOTAL: $${getCartTotal().toFixed(2)}*`;
+    const textMessage = `*📦 NEW ORDER - LuqmanGo*%0A%0A*👤 Customer Details*%0A━━━━━━━━━━━━━━%0A*Name:* ${formData.name}%0A*Email:* ${formData.email}%0A*Address:* ${formData.address}%0A%0A*💳 Payment Method:* ${formData.paymentMethod}%0A%0A*🛒 Order Summary*%0A━━━━━━━━━━━━━━%0A${orderDetails}%0A%0A*💰 TOTAL AMOUNT: $${getCartTotal().toFixed(2)}*%0A%0A_Thank you for shopping with LuqmanGo!_`;
     
     // 3. Open WhatsApp Direct Link to Vendor
     const vendorPhone = "94725065252"; 

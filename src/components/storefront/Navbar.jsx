@@ -23,11 +23,11 @@ const Navbar = ({ onOpenDrawer }) => {
             {/* Logo with Text */}
             <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexShrink: 0, textDecoration: 'none' }}>
               <img src="/images/logo.jpg" alt="LuqmanGo Logo" style={{ height: '50px', objectFit: 'contain' }} className="logo-img-header" />
-              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }} className="hide-on-mobile">
-                <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--color-secondary)', letterSpacing: '-0.5px', lineHeight: 1.1 }}>
-                  LuqmanGo.lk
+              <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }} className="nav-logo-text">
+                <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'var(--color-secondary)', letterSpacing: '-0.5px', lineHeight: 1.1 }}>
+                  LuqmanGo
                 </span>
-                <span style={{ fontSize: '0.6rem', color: '#9CA3AF', fontWeight: 500 }}>
+                <span style={{ fontSize: '0.55rem', color: '#9CA3AF', fontWeight: 500 }} className="hide-on-mobile">
                   Shop. Click. Done.
                 </span>
               </div>
