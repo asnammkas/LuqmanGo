@@ -60,29 +60,29 @@ const CartCheckout = () => {
     <div className="container sidebar-layout animate-fade-in" style={{ padding: '4rem 1.5rem' }}>
       
       {/* Cart Items */}
-      <div>
+      <div className="cart-items-section">
         <h2 style={{ fontSize: '2rem', marginBottom: '2rem' }}>Shopping Cart</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           {cart.map(item => (
-            <div key={item.id} className="card" style={{ padding: '1.25rem' }}>
-              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <img src={item.image} alt={item.title} style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: 'var(--radius-md)', flexShrink: 0 }} />
-                <div style={{ flexGrow: 1, minWidth: 0 }}>
+            <div key={item.id} className="card cart-item-card" style={{ padding: '1.25rem' }}>
+              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }} className="cart-item-inner">
+                <img src={item.image} alt={item.title} className="cart-item-image" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: 'var(--radius-md)', flexShrink: 0 }} />
+                <div style={{ flexGrow: 1, minWidth: 0 }} className="cart-item-details">
                   <h3 style={{ fontSize: '1rem', marginBottom: '0.25rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.title}</h3>
                   <p style={{ color: 'var(--color-primary)', fontWeight: 700, fontSize: '1rem', marginBottom: '0.75rem' }}>${item.price.toFixed(2)}</p>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }} className="cart-item-controls">
                     {/* Quantity Controls */}
                     <div style={{ display: 'flex', alignItems: 'center', border: '1px solid var(--color-border)', borderRadius: 'var(--radius-sm)', overflow: 'hidden' }}>
-                      <button style={{ width: '32px', height: '32px', border: 'none', background: 'var(--color-bg-main)', cursor: 'pointer', fontSize: '1rem', fontWeight: 700 }} onClick={() => updateCartQuantity(item.id, item.quantity - 1)}>−</button>
+                      <button style={{ width: '32px', height: '32px', border: 'none', background: 'var(--color-bg-main)', cursor: 'pointer', fontSize: '1.25rem', fontWeight: 700 }} onClick={() => updateCartQuantity(item.id, item.quantity - 1)}>−</button>
                       <span style={{ padding: '0 0.75rem', fontWeight: 600, fontSize: '0.9rem' }}>{item.quantity}</span>
-                      <button style={{ width: '32px', height: '32px', border: 'none', background: 'var(--color-bg-main)', cursor: 'pointer', fontSize: '1rem', fontWeight: 700 }} onClick={() => updateCartQuantity(item.id, item.quantity + 1)}>+</button>
+                      <button style={{ width: '32px', height: '32px', border: 'none', background: 'var(--color-bg-main)', cursor: 'pointer', fontSize: '1.25rem', fontWeight: 700 }} onClick={() => updateCartQuantity(item.id, item.quantity + 1)}>+</button>
                     </div>
                     {/* Delete Button */}
                     <button 
                       onClick={() => removeFromCart(item.id)}
                       style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, padding: '0.4rem' }}
                     >
-                      <Trash2 size={16} /> Remove
+                      <Trash2 size={16} /> <span className="hide-on-mobile">Remove</span>
                     </button>
                   </div>
                 </div>
@@ -93,7 +93,7 @@ const CartCheckout = () => {
       </div>
 
       {/* Checkout Summary Sidebar */}
-      <div className="card" style={{ padding: '2rem', position: 'sticky', top: '7rem' }}>
+      <div className="card cart-summary-card" style={{ padding: '2rem', position: 'sticky', top: '7rem' }}>
         <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>Order Summary</h3>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', color: 'var(--color-text-muted)' }}>
           <span>Subtotal</span>

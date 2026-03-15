@@ -10,7 +10,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="container animate-fade-in" style={{ padding: '3rem 1.5rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem', marginBottom: '3rem' }}>
+      <div className="admin-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1.5rem', marginBottom: '3rem' }}>
         <div>
           <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>Dashboard Overview</h1>
           <p style={{ color: 'var(--color-text-muted)' }}>Welcome back, store owner.</p>
@@ -23,7 +23,7 @@ const AdminDashboard = () => {
       </div>
 
       {/* Metrics Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '2rem', marginBottom: '4rem' }}>
+      <div className="admin-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '2rem', marginBottom: '4rem' }}>
         <MetricCard title="Total Revenue" value={`$${totalRevenue.toFixed(2)}`} icon={<TrendingUp size={24} color="var(--color-primary)" />} />
         <MetricCard title="Active Products" value={products.length} icon={<Package size={24} color="var(--color-secondary)" />} />
         <MetricCard title="Total Orders" value={orders.length} icon={<ShoppingCart size={24} color="#10b981" />} />
@@ -32,7 +32,7 @@ const AdminDashboard = () => {
 
       {/* Recent Orders Table */}
       <h2 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>Recent Orders</h2>
-      <div className="card" style={{ overflowX: 'auto' }}>
+      <div className="card admin-table-container" style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-main)' }}>

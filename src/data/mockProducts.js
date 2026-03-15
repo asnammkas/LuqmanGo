@@ -27,7 +27,7 @@ export const mockProducts = [
     price: 89.99,
     category: 'Dresses',
     description: 'Lightweight and breathable chiffon maxi dress with a vibrant floral print, perfect for summer evenings and beach getaways.',
-    image: 'https://images.unsplash.com/photo-1572804013309-8c98e10f1ba4?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=800',
     stock: 30,
     featured: true,
   },
@@ -230,7 +230,7 @@ export const mockProducts = [
     price: 34.99,
     category: 'Home & Living',
     description: 'Ultrasonic essential oil diffuser with LED color-changing light and quiet operation.',
-    image: 'https://images.unsplash.com/photo-1550985543-f47f38aee65e?auto=format&fit=crop&q=80&w=800',
+    image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?auto=format&fit=crop&q=80&w=800',
     stock: 60,
     featured: false,
   }

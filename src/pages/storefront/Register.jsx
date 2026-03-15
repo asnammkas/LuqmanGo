@@ -17,9 +17,9 @@ const Register = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
-      <div className="container" style={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '4rem 1.5rem' }}>
+      <div className="container" style={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1.5rem' }}>
         
-        <div style={{ width: '100%', maxWidth: '450px', backgroundColor: 'var(--color-bg-card)', borderRadius: 'var(--radius-lg)', padding: '3rem 2rem', boxShadow: 'var(--shadow-lg)', border: '1px solid var(--color-border)' }}>
+        <div className="auth-container card">
           
           <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
             <h1 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--color-secondary)', marginBottom: '0.5rem' }}>Create Account</h1>

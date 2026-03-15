@@ -48,7 +48,7 @@ const ProductManagement = () => {
         <h2 style={{ fontSize: '2rem', marginBottom: '2rem' }}>{currentProduct ? 'Edit Product' : 'Add New Product'}</h2>
         
         <form onSubmit={handleSubmit} className="card" style={{ padding: '2rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+          <div className="admin-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
             <div>
               <label className="label">Product Title</label>
               <input required type="text" className="input" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} />
@@ -59,7 +59,7 @@ const ProductManagement = () => {
             </div>
           </div>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+          <div className="admin-form-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
             <div>
               <label className="label">Price ($)</label>
               <input required type="number" step="0.01" min="0" className="input" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} />
@@ -96,7 +96,7 @@ const ProductManagement = () => {
 
   return (
     <div className="container animate-fade-in" style={{ padding: '3rem 1.5rem' }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+      <div className="admin-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div>
            <Link to="/admin" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-text-muted)', marginBottom: '1rem', fontSize: '0.875rem' }}>
              <ArrowLeft size={16} /> Back to Dashboard
@@ -108,7 +108,7 @@ const ProductManagement = () => {
         </button>
       </div>
 
-      <div className="card" style={{ overflowX: 'auto' }}>
+      <div className="card admin-table-container" style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-main)' }}>

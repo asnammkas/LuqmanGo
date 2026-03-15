@@ -23,7 +23,7 @@ const OrderManagement = () => {
     <div className="container animate-fade-in" style={{ padding: '3rem 1.5rem' }}>
       
       {/* Header */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
+      <div className="admin-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
             <Link to="/admin" style={{ color: 'var(--color-text-muted)', display: 'flex', alignItems: 'center' }}>
@@ -67,7 +67,7 @@ const OrderManagement = () => {
       </div>
 
       {/* Orders Table */}
-      <div className="card" style={{ overflowX: 'auto' }}>
+      <div className="card admin-table-container" style={{ overflowX: 'auto' }}>
         <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-main)' }}>

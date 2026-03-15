@@ -10,10 +10,10 @@ const UserProfile = () => {
   const [activeTab, setActiveTab] = useState('orders');
 
   return (
-    <div className="container sidebar-layout animate-fade-in" style={{ padding: '4rem 1.5rem' }}>
+    <div className="container sidebar-layout animate-fade-in user-profile-container" style={{ padding: '4rem 1.5rem' }}>
       
       {/* Sidebar Profile Nav */}
-      <div className="card" style={{ padding: '2rem 1.5rem' }}>
+      <div className="card profile-sidebar" style={{ padding: '2rem 1.5rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
           <div style={{ width: '80px', height: '80px', backgroundColor: 'var(--color-primary)', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto', fontSize: '2rem', fontWeight: 600 }}>
             JD
@@ -22,7 +22,7 @@ const UserProfile = () => {
           <p style={{ color: 'var(--color-text-muted)', fontSize: '0.875rem' }}>john@example.com</p>
         </div>
 
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+        <nav className="profile-nav" style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           <button 
             className={`btn ${activeTab === 'orders' ? 'btn-primary' : 'btn-outline'}`} 
             style={{ width: '100%', justifyContent: 'flex-start', padding: '0.75rem 1rem', border: activeTab === 'orders' ? 'none' : '1px solid transparent' }}
@@ -35,10 +35,10 @@ const UserProfile = () => {
             style={{ width: '100%', justifyContent: 'flex-start', padding: '0.75rem 1rem', border: activeTab === 'settings' ? 'none' : '1px solid transparent' }}
             onClick={() => setActiveTab('settings')}
           >
-            <Settings size={18} /> Account Settings
+            <Package size={18} /> Account Settings
           </button>
-          <hr style={{ border: 'none', borderTop: '1px solid var(--color-border)', margin: '1rem 0' }} />
-          <Link to="/" className="btn btn-outline" style={{ width: '100%', justifyContent: 'flex-start', padding: '0.75rem 1rem', color: '#EF4444', borderColor: 'transparent' }}>
+          <hr className="hide-on-mobile" style={{ border: 'none', borderTop: '1px solid var(--color-border)', margin: '1rem 0' }} />
+          <Link to="/" className="btn btn-outline profile-signout" style={{ width: '100%', justifyContent: 'flex-start', padding: '0.75rem 1rem', color: '#EF4444', borderColor: 'transparent' }}>
             <LogOut size={18} /> Sign Out
           </Link>
         </nav>
@@ -47,8 +47,8 @@ const UserProfile = () => {
       {/* Main Content Area */}
       <div>
         {activeTab === 'orders' && (
-          <div className="animate-fade-in">
-            <h1 style={{ fontSize: '2rem', marginBottom: '1.5rem' }}>Order History</h1>
+          <div className="animate-fade-in profile-content">
+            <h1 className="profile-content-title" style={{ fontSize: '2rem', marginBottom: '1.5rem' }}>Order History</h1>
             {myOrders.length === 0 ? (
               <div className="card" style={{ padding: '3rem', textAlign: 'center', color: 'var(--color-text-muted)' }}>
                 <Package size={48} opacity={0.2} style={{ margin: '0 auto 1rem auto', display: 'block' }} />
@@ -83,8 +83,8 @@ const UserProfile = () => {
         )}
 
         {activeTab === 'settings' && (
-          <div className="animate-fade-in card" style={{ padding: '2rem' }}>
-            <h1 style={{ fontSize: '2rem', marginBottom: '2rem' }}>Account Settings</h1>
+          <div className="animate-fade-in card profile-content" style={{ padding: '2rem' }}>
+            <h1 className="profile-content-title" style={{ fontSize: '2rem', marginBottom: '2rem' }}>Account Settings</h1>
             
             <form style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxWidth: '500px' }}>
               <div>
