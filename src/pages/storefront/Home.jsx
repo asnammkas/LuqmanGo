@@ -66,9 +66,9 @@ const Home = () => {
             <h2 style={{ fontSize: '1.3rem', margin: 0, fontWeight: 700, letterSpacing: '-0.02em' }}>Featured</h2>
             <span style={{ fontSize: '0.8rem', color: 'var(--color-text-muted)', cursor: 'pointer', fontWeight: 500 }}>View all →</span>
           </div>
-          <div style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '1rem', scrollSnapType: 'x mandatory' }} className="category-pills">
+          <div style={{ display: 'flex', gap: '0.75rem', overflowX: 'auto', paddingBottom: '1rem', scrollSnapType: 'x mandatory' }} className="category-pills">
             {featuredProducts.map(product => (
-              <div key={product.id} style={{ minWidth: '220px', maxWidth: '220px', flexShrink: 0, scrollSnapAlign: 'start' }}>
+              <div key={product.id} className="featured-item-scroll" style={{ scrollSnapAlign: 'start', flexShrink: 0 }}>
                 <ProductCard product={product} />
               </div>
             ))}

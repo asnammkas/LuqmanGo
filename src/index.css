@@ -295,6 +295,9 @@ a:hover {
 /* Hero slideshow */
 .hero-slideshow {
   aspect-ratio: 21 / 8;
+  width: 100%;
+  max-width: 100vw;
+  overflow: hidden;
 }
 
 /* Category pills scrollbar */
@@ -304,8 +307,15 @@ a:hover {
 /* Product Grid Responsive Layout */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .product-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
 }
 
 /* Sidebar Responsive Layout */
@@ -376,10 +386,12 @@ a:hover {
 
   .hero-slideshow {
     aspect-ratio: 16 / 9; /* Better for mobile screens */
+    width: 100vw;
+    margin-left: calc(-50vw + 50%); /* Force full viewport width if containerized */
   }
   
   .product-grid {
-    grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile is standard */
+    grid-template-columns: repeat(2, 1fr);
     gap: 0.75rem;
   }
 
@@ -411,6 +423,49 @@ a:hover {
   from { transform: translateX(-100%); }
   to { transform: translateX(0); }
 }
+
+/* Responsive Scaling & Layout Refinements */
+.featured-item-scroll {
+  min-width: 260px;
+  max-width: 260px;
+}
+
+@media (max-width: 768px) {
+  .featured-item-scroll {
+    min-width: 175px;
+    max-width: 175px;
+  }
+  
+  .footer-contact-info {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .footer-contact-info h3 {
+    font-size: 1.25rem !important;
+  }
+  
+  .footer-map-container {
+    height: 300px !important; /* Larger map on mobile for usability */
+  }
+  
+  .footer-bottom {
+    justify-content: center !important;
+    text-align: center !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+  }
+  
+  .footer-bottom > div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+
 
 /* Custom scrollbar adjustments for mobile (hidden but functional) */
 @media (max-width: 768px) {

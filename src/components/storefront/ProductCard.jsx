@@ -93,23 +93,23 @@ const ProductCard = ({ product }) => {
         </div>
 
         {/* Info Section */}
-        <div style={{ padding: '1rem 1rem 1.25rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+        <div style={{ padding: isTouchDevice ? '0.75rem 0.75rem 1rem' : '1rem 1rem 1.25rem', display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
           {/* Category Label */}
-          <span style={{ fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-primary-hover)', marginBottom: '0.4rem' }}>
+          <span style={{ fontSize: '0.65rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-primary-hover)', marginBottom: '0.3rem' }}>
             {product.category}
           </span>
           
           {/* Title */}
-          <h3 style={{ fontSize: '0.95rem', margin: 0, fontWeight: 600, color: 'var(--color-text-main)', lineHeight: 1.4, marginBottom: '0.5rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+          <h3 style={{ fontSize: isTouchDevice ? '0.85rem' : '0.95rem', margin: 0, fontWeight: 600, color: 'var(--color-text-main)', lineHeight: 1.4, marginBottom: '0.5rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
             {product.title}
           </h3>
           
           {/* Price + Stock */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 'auto' }}>
-            <span style={{ fontWeight: 800, fontSize: '1.1rem', color: 'var(--color-secondary)' }}>
+            <span style={{ fontWeight: 800, fontSize: isTouchDevice ? '1rem' : '1.1rem', color: 'var(--color-secondary)' }}>
               ${product.price.toFixed(2)}
             </span>
-            <span style={{ fontSize: '0.7rem', fontWeight: 500, color: product.stock > 0 ? '#10B981' : '#EF4444' }}>
+            <span style={{ fontSize: '0.65rem', fontWeight: 500, color: product.stock > 0 ? '#10B981' : '#EF4444' }}>
               {product.stock > 0 ? 'In Stock' : 'Sold Out'}
             </span>
           </div>
@@ -121,16 +121,16 @@ const ProductCard = ({ product }) => {
               disabled={product.stock === 0}
               className="btn-premium"
               style={{ 
-                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem',
                 border: 'none', borderRadius: '999px',
-                padding: '0.6rem 1rem',
-                fontWeight: 700, fontSize: '0.8rem', fontFamily: 'inherit',
+                padding: '0.5rem 0.75rem',
+                fontWeight: 700, fontSize: '0.75rem', fontFamily: 'inherit',
                 cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
                 opacity: product.stock === 0 ? 0.6 : 1,
-                marginTop: '0.75rem', width: '100%'
+                marginTop: '0.6rem', width: '100%'
               }}
             >
-              <ShoppingCart size={14} />
+              <ShoppingCart size={13} />
               {product.stock === 0 ? 'Sold Out' : 'Add to Cart'}
             </button>
           )}
