@@ -55,6 +55,12 @@ body {
   color: var(--color-text-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden !important; 
+}
+
+html, #root, .app-container {
+  overflow-x: hidden !important;
+  width: 100%;
 }
 
 /* Glassmorphism utility */
@@ -385,9 +391,9 @@ a:hover {
   }
 
   .hero-slideshow {
-    aspect-ratio: 16 / 9; /* Better for mobile screens */
-    width: 100vw;
-    margin-left: calc(-50vw + 50%); /* Force full viewport width if containerized */
+    aspect-ratio: 16 / 9;
+    width: 100%;
+    margin: 0;
   }
   
   .product-grid {
@@ -432,8 +438,12 @@ a:hover {
 
 @media (max-width: 768px) {
   .featured-item-scroll {
-    min-width: 175px;
-    max-width: 175px;
+    min-width: 150px;
+    max-width: 150px;
+  }
+  
+  .hero-slideshow > a {
+    background-position: 20% center !important; /* Keep focus on text/labels usually on the left */
   }
   
   .footer-contact-info {

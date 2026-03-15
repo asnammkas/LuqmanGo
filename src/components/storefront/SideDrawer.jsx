@@ -91,9 +91,9 @@ const SideDrawer = ({ isOpen, onClose }) => {
 
           <div style={{ height: '1.5rem' }} />
 
-          {/* Quick Links */}
+          {/* More Links Section */}
           <div style={{ padding: '0 1.5rem 0.5rem', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '1px' }}>
-            Account & Support
+            More to Explore
           </div>
           <Link to="/admin" onClick={onClose} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1rem 1.5rem', color: 'var(--color-text-main)', textDecoration: 'none', fontSize: '0.95rem' }}>
             <LayoutDashboard size={20} color="var(--color-secondary)" /> Admin Panel
@@ -105,21 +105,47 @@ const SideDrawer = ({ isOpen, onClose }) => {
             {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
             {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
           </div>
+
+          <div style={{ height: '1.5rem' }} />
+
+          {/* Legal Section */}
+          <div style={{ padding: '0 1.5rem 0.5rem', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', color: 'var(--color-text-muted)', letterSpacing: '1px' }}>
+            Information
+          </div>
+          {[
+            { label: 'About LuqmanGo', path: '#' },
+            { label: 'Privacy Policy', path: '#' },
+            { label: 'Terms of Service', path: '#' },
+            { label: 'Delivery Policy', path: '#' }
+          ].map((item) => (
+            <Link key={item.label} to={item.path} onClick={onClose} style={{ display: 'block', padding: '0.85rem 1.5rem', color: 'var(--color-text-main)', textDecoration: 'none', fontSize: '0.9rem', opacity: 0.8 }}>
+              {item.label}
+            </Link>
+          ))}
         </div>
 
-        {/* Footer */}
-        <div style={{ padding: '1.5rem', borderTop: '1px solid var(--color-border)', backgroundColor: '#F9FAFB' }}>
+        {/* Support Section - Premium Stick to Bottom */}
+        <div style={{ padding: '1.5rem', borderTop: '1px solid var(--color-border)', backgroundColor: 'var(--color-bg-main)' }}>
           <div style={{ marginBottom: '1rem' }}>
-            <div style={{ fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.5rem' }}>Contact Vendor</div>
-            <a href="tel:0725065252" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-primary)', textDecoration: 'none', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
-              <Phone size={16} /> 072 506 5252
-            </a>
-            <a href="mailto:info@luqmango.lk" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>
-              <Mail size={16} /> info@luqmango.lk
-            </a>
+            <div style={{ fontSize: '0.8rem', fontWeight: 700, marginBottom: '0.75rem', color: 'var(--color-text-main)' }}>Need Help?</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <a href="tel:0725065252" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--color-primary)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: 600 }}>
+                <Phone size={18} /> 072 506 5252
+              </a>
+              <a href="mailto:info@luqmango.lk" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', color: 'var(--color-text-muted)', textDecoration: 'none', fontSize: '0.9rem' }}>
+                <Mail size={18} /> info@luqmango.lk
+              </a>
+              <a href="https://wa.me/94725065252" target="_blank" rel="noreferrer" style={{ 
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', 
+                backgroundColor: '#25D366', color: 'white', padding: '0.6rem', borderRadius: 'var(--radius-md)',
+                textDecoration: 'none', fontSize: '0.85rem', fontWeight: 700, marginTop: '0.25rem'
+              }}>
+                Order via WhatsApp
+              </a>
+            </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.7rem', color: '#9CA3AF' }}>
-            <Award size={14} /> Official LuqmanGo Store
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.65rem', color: 'var(--color-text-muted)', opacity: 0.8 }}>
+            <Award size={14} /> Official LuqmanGo Partner Store
           </div>
         </div>
       </div>
