@@ -353,51 +353,70 @@ a:hover {
 
 /* ==================== RESPONSIVE STYLES ==================== */
 
-/* Desktop hidden classes */
-.nav-mobile-toggle { display: none !important; }
-.nav-search-mobile { display: none !important; }
+/* Desktop utilities */
+@media (min-width: 769px) {
+  .show-on-mobile {
+    display: none !important;
+  }
+}
 
-/* Tablet and below */
+/* Mobile Utilities & Adjustments */
 @media (max-width: 768px) {
+  .hide-on-mobile {
+    display: none !important;
+  }
+  .show-on-mobile {
+    display: flex !important;
+  }
+
   .main-content {
-    padding-top: 9rem; /* More space for mobile search bar */
+    padding-top: 4.5rem !important; /* Slimmer header on mobile */
+    padding-bottom: 80px !important; /* Space for bottom nav */
   }
 
   .hero-slideshow {
-    aspect-ratio: 21 / 8;
+    aspect-ratio: 16 / 9; /* Better for mobile screens */
   }
   
   .product-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(2, 1fr); /* 2 columns on mobile is standard */
     gap: 0.75rem;
   }
-  
-  .sidebar-layout {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+
+  .logo-img-header {
+    height: 40px !important;
   }
-
-  .nav-search-desktop { display: none !important; }
-  .nav-search-mobile { display: block !important; }
-  .nav-mobile-toggle { display: flex !important; }
-  .nav-phone-desktop { display: none !important; }
-  .nav-admin-desktop { display: none !important; }
-  .nav-callus-desktop { display: none !important; }
-  .nav-logo-text { font-size: 1rem !important; }
-
-  .nav-cat-bar { padding: 0 0.5rem !important; }
-  .nav-cat-bar button { padding: 0.5rem 0.6rem !important; font-size: 0.7rem !important; }
-
-  .footer-bottom { flex-direction: column; text-align: center; }
-  .footer-bottom > div:last-child { width: 100%; display: flex; justify-content: center; }
-
-  /* Find us grid stack on mobile */
-  .container { padding: 0 1rem; }
 }
 
-/* Find Us Section responsive */
+/* Base Styles Overrides */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
 @media (max-width: 640px) {
-  footer section .container {
-    grid-template-columns: 1fr !important;
+  .container {
+    padding: 0 1rem;
   }
 }
+
+/* Drawer & Overlay Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+/* Custom scrollbar adjustments for mobile (hidden but functional) */
+@media (max-width: 768px) {
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+}
+

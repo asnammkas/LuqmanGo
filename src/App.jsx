@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/storefront/Navbar';
+import SideDrawer from './components/storefront/SideDrawer';
+import MobileBottomNav from './components/storefront/MobileBottomNav';
 import Home from './pages/storefront/Home';
 import ProductDetail from './pages/storefront/ProductDetail';
 import SignIn from './pages/storefront/SignIn';
@@ -14,6 +16,7 @@ import OrderManagement from './pages/admin/OrderManagement';
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   useEffect(() => {
     // Simulate initial loading sequence for a premium feel
@@ -27,6 +30,9 @@ function App() {
 
   return (
     <div className="app-container">
+      {/* Side Drawer for Mobile */}
+      <SideDrawer isOpen={isDrawerOpen} onClose={() => setIsDrawerOpen(false)} />
+
       {/* Global Start-up Loader */}
       {isLoading && (
         <div 
@@ -39,16 +45,14 @@ function App() {
           }}
         >
           {/* Animated App Logo */}
-          <div style={{ display: 'flex', alignItems: 'flex-end', height: '48px', marginBottom: '2rem', animation: 'pulse-glow 2s infinite', borderRadius: '50%', padding: '10px' }}>
-             <div style={{ width: '18px', height: '48px', backgroundColor: 'var(--color-primary)', borderRadius: '6px', marginRight: '6px' }}></div>
-             <div style={{ width: '24px', height: '18px', backgroundColor: 'var(--color-primary)', borderRadius: '6px', borderBottomRightRadius: '24px' }}></div>
-             <div style={{ width: '0', height: '0', borderTop: '24px solid transparent', borderBottom: '24px solid transparent', borderLeft: '36px solid var(--color-secondary)', marginLeft: '12px' }}></div>
+          <div style={{ display: 'flex', alignItems: 'flex-end', height: '40px', marginBottom: '1.5rem', animation: 'pulse-glow 2s infinite', borderRadius: '50%', padding: '10px' }}>
+             <img src="/images/logo.jpg" alt="Logo" style={{ height: '80px', objectFit: 'contain' }} />
           </div>
-          <h2 style={{ fontSize: '2rem', letterSpacing: '0.15em', fontWeight: 700, color: 'var(--color-text-main)', textTransform: 'uppercase' }}>
-            Luqman <span style={{ color: 'var(--color-primary)' }}>Express</span>
+          <h2 style={{ fontSize: '1.8rem', letterSpacing: '0.15em', fontWeight: 800, color: 'var(--color-secondary)', textTransform: 'uppercase' }}>
+            Luqman<span style={{ color: 'var(--color-primary)' }}>Go</span>
           </h2>
           {/* Loading Bar */}
-          <div style={{ marginTop: '2.5rem', width: '240px', height: '3px', backgroundColor: 'var(--color-border)', borderRadius: '99px', overflow: 'hidden', position: 'relative' }}>
+          <div style={{ marginTop: '2rem', width: '200px', height: '3px', backgroundColor: 'var(--color-border)', borderRadius: '99px', overflow: 'hidden', position: 'relative' }}>
             <div 
               style={{ 
                 position: 'absolute', top: 0, left: 0, height: '100%', width: '40%', 
@@ -60,7 +64,8 @@ function App() {
         </div>
       )}
 
-      <Navbar />
+      <Navbar onOpenDrawer={() => setIsDrawerOpen(true)} />
+      
       <main className="main-content">
         <Routes>
           {/* Storefront Routes */}
@@ -77,6 +82,9 @@ function App() {
           <Route path="/admin/orders" element={<OrderManagement />} />
         </Routes>
       </main>
+
+      {/* Persistent Bottom Nav for Mobile */}
+      <MobileBottomNav onOpenDrawer={() => setIsDrawerOpen(true)} />
     </div>
   );
 }

@@ -37,8 +37,29 @@ const HeroSlideshow = () => {
     setTimeout(() => setIsAnim(false), 700);
   };
 
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+
+  // Swipe detection
+  const minSwipeDistance = 50;
+  const onTouchStart = (e) => { setTouchEnd(null); setTouchStart(e.targetTouches[0].clientX); };
+  const onTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    if (isLeftSwipe) goNext();
+    if (isRightSwipe) goPrev();
+  };
+
   return (
-    <div style={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
+    <div 
+      style={{ position: 'relative', width: '100%', overflow: 'hidden' }}
+      onTouchStart={onTouchStart}
+      onTouchMove={onTouchMove}
+      onTouchEnd={onTouchEnd}
+    >
       
       {/* The container for the aspect ratio of the banners */}
       <div className="hero-slideshow" style={{ position: 'relative', width: '100%', backgroundColor: 'var(--color-bg-main)' }}>
@@ -68,11 +89,11 @@ const HeroSlideshow = () => {
           ))}
         </div>
 
-        {/* Arrows */}
-        <button onClick={goPrev} disabled={isAnim} className="slideshow-nav-btn" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', zIndex: 10, width: '40px', height: '40px' }}>
+        {/* Arrows - Only visible on desktop */}
+        <button onClick={goPrev} disabled={isAnim} className="slideshow-nav-btn hide-on-mobile" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', zIndex: 10, width: '40px', height: '40px' }}>
           <ChevronLeft size={20} />
         </button>
-        <button onClick={goNext} disabled={isAnim} className="slideshow-nav-btn" style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', zIndex: 10, width: '40px', height: '40px' }}>
+        <button onClick={goNext} disabled={isAnim} className="slideshow-nav-btn hide-on-mobile" style={{ position: 'absolute', right: '1rem', top: '50%', transform: 'translateY(-50%)', zIndex: 10, width: '40px', height: '40px' }}>
           <ChevronRight size={20} />
         </button>
       </div>
