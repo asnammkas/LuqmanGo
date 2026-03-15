@@ -52,8 +52,11 @@ const SideDrawer = ({ isOpen, onClose }) => {
           color: 'white'
         }}>
           <div>
-            <div style={{ fontWeight: 800, fontSize: '1.2rem' }}>LuqmanGo.lk</div>
-            <div style={{ fontSize: '0.7rem', opacity: 0.8 }}>Shop. Click. Done.</div>
+            <div style={{ fontWeight: 800, fontSize: '1.3rem', letterSpacing: '-0.5px', marginBottom: '2px' }}>
+              <span style={{ color: 'white' }}>Luqman</span>
+              <span style={{ color: 'var(--color-primary)' }}>Go</span>
+            </div>
+            <div style={{ fontSize: '0.7rem', opacity: 0.9, fontWeight: 500 }}>Shop. Click. Done.</div>
           </div>
           <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer' }}>
             <X size={24} />
@@ -143,7 +146,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
               </a>
               <a href="https://wa.me/94725065252" target="_blank" rel="noreferrer" style={{ 
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', 
-                backgroundColor: '#25D366', color: 'white', padding: '0.6rem', borderRadius: 'var(--radius-md)',
+                backgroundColor: '#128C7E', color: 'white', padding: '0.6rem', borderRadius: 'var(--radius-md)',
                 textDecoration: 'none', fontSize: '0.85rem', fontWeight: 700, marginTop: '0.25rem'
               }}>
                 Order via WhatsApp

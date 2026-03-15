@@ -61,7 +61,7 @@ const Footer = () => {
           </div>
           <a href="https://wa.me/94725065252" target="_blank" rel="noreferrer" style={{
             display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1.25rem',
-            backgroundColor: '#25D366', color: 'white', borderRadius: 'var(--radius-md)', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none'
+            backgroundColor: '#128C7E', color: 'white', borderRadius: 'var(--radius-md)', fontWeight: 700, fontSize: '0.85rem', textDecoration: 'none'
           }} className="hide-on-mobile">
             WhatsApp Order
           </a>

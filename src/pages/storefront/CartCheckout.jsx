@@ -30,7 +30,7 @@ const CartCheckout = () => {
   if (isSuccess) {
     return (
       <div className="container" style={{ padding: '6rem 1.5rem', textAlign: 'center', maxWidth: '600px', minHeight: '60vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
-        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem', color: '#25D366' /* WhatsApp Green */ }}>
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem', color: '#128C7E' /* Standard WhatsApp Teal-Green */ }}>
           <CheckCircle size={80} strokeWidth={1.5} />
         </div>
         <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: 'var(--color-secondary)' }}>Order Sent to WhatsApp!</h2>
