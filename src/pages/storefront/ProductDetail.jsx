@@ -1,6 +1,6 @@
 import { useParams, Link } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
-import { ShoppingCart, ArrowLeft, Truck, ShieldCheck, Clock } from 'lucide-react';
+import { ShoppingCart, ArrowLeft, Truck, ShieldCheck, Clock, Image as ImageIcon } from 'lucide-react';
 import Footer from '../../components/storefront/Footer';
 
 const ProductDetail = () => {
@@ -11,105 +11,98 @@ const ProductDetail = () => {
 
   if (!product) {
     return (
-      <div className="container" style={{ padding: '4rem 1.5rem', textAlign: 'center' }}>
-        <h2>Product not found</h2>
-        <Link to="/" className="btn btn-primary" style={{ marginTop: '1rem', display: 'inline-block' }}>
-          Back to Store
-        </Link>
-      </div>
+      <>
+        <div className="container" style={{ padding: '8rem 1.5rem', textAlign: 'center' }}>
+          <h2 style={{ fontWeight: 300, letterSpacing: '0.1em' }}>Product not found</h2>
+          <Link to="/" style={{ color: 'var(--color-text-main)', textDecoration: 'underline', marginTop: '2rem', display: 'inline-block', fontSize: '0.9rem' }}>
+            Back to Collection
+          </Link>
+        </div>
+        <Footer />
+      </>
     );
   }
 
   return (
-    <div>
-      <div className="container" style={{ padding: '2rem 1.5rem 4rem' }}>
+    <div style={{ paddingTop: '70px' }}>
+      <div className="container" style={{ padding: '4rem 1.5rem 8rem' }}>
         
-        {/* Back Button */}
-        <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-text-muted)', textDecoration: 'none', marginBottom: '2rem', fontWeight: 600 }}>
-          <ArrowLeft size={18} /> Back to Products
-        </Link>
-
-        <div className="product-detail-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '3rem' }}>
+        <div className="product-detail-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '5rem', alignItems: 'start' }}>
           
-          {/* Left Column - Image Placeholder */}
-          <div style={{ backgroundColor: '#F8F8F8', borderRadius: 'var(--radius-lg)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>
-             <img src={product.image} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'cover', maxHeight: '500px' }} />
+          {/* Left Column - Large Focused Image */}
+          <div style={{ 
+            backgroundColor: '#F3F2EE', 
+            borderRadius: 'var(--radius-lg)', 
+            overflow: 'hidden', 
+            aspectRatio: '4 / 5'
+          }}>
+             {product.image ? (
+               <img src={product.image} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+             ) : (
+               <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                 <ImageIcon size={48} strokeWidth={1} color="var(--color-text-muted)" />
+               </div>
+             )}
           </div>
 
-          {/* Right Column - Details */}
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {/* Right Column - Elegant Typography */}
+          <div style={{ display: 'flex', flexDirection: 'column', paddingTop: '1rem' }}>
             
-            {/* Category Breadcrumb */}
-            <span style={{ color: 'var(--color-primary)', fontWeight: 700, fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.5rem' }}>
-              {product.category}
-            </span>
+            <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-text-muted)', textDecoration: 'none', marginBottom: '2.5rem', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+              <ArrowLeft size={14} /> Back
+            </Link>
 
-            {/* Title */}
-            <h1 className="product-detail-title" style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--color-secondary)', lineHeight: 1.1, marginBottom: '1rem' }}>
+            <h1 style={{ 
+              fontSize: '2.4rem', 
+              fontWeight: 400, 
+              color: 'var(--color-text-main)', 
+              lineHeight: 1.2, 
+              marginBottom: '1rem',
+              letterSpacing: '0.01em'
+            }}>
                {product.title}
             </h1>
 
-            {/* Price */}
-            <div style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--color-primary)', marginBottom: '1.5rem' }}>
-              ${product.price.toFixed(2)}
+            <div style={{ fontSize: '1.5rem', fontWeight: 300, color: 'var(--color-text-main)', marginBottom: '2.5rem' }}>
+              ${product.price ? product.price.toFixed(2) : '0.00'}
             </div>
 
-            {/* Description */}
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '1.1rem', lineHeight: 1.6, marginBottom: '2rem' }}>
+            <div style={{ height: '1px', backgroundColor: 'var(--color-border)', marginBottom: '2.5rem' }}></div>
+
+            <p style={{ color: 'var(--color-text-muted)', fontSize: '1rem', lineHeight: 1.8, marginBottom: '3rem' }}>
               {product.description}
             </p>
 
-            {/* Stock & Add to Cart */}
-            <div className="product-detail-actions" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '3rem', padding: '1.5rem 0', borderTop: '1px solid var(--color-border)', borderBottom: '1px solid var(--color-border)' }}>
-              
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Availability</span>
-                {product.stock > 0 ? (
-                  <span style={{ color: '#43A047', fontWeight: 700, fontSize: '1.1rem' }}>In Stock ({product.stock})</span>
-                ) : (
-                  <span style={{ color: '#E53935', fontWeight: 700, fontSize: '1.1rem' }}>Out of Stock</span>
-                )}
-              </div>
+            <button 
+              className="btn"
+              style={{ 
+                backgroundColor: 'var(--color-text-main)', 
+                color: 'white', 
+                height: '3.5rem', 
+                borderRadius: '0', 
+                fontSize: '0.8rem', 
+                letterSpacing: '0.2em', 
+                textTransform: 'uppercase',
+                width: '100%',
+                cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
+                opacity: product.stock === 0 ? 0.5 : 1
+              }}
+              onClick={() => addToCart(product)}
+              disabled={product.stock === 0}
+            >
+              {product.stock === 0 ? 'Out of Stock' : 'Add to Bag'}
+            </button>
 
-              <button 
-                className="btn btn-primary product-detail-add"
-                style={{ 
-                  flexGrow: 1, height: '3.5rem', fontSize: '1.1rem', display: 'flex', justifyContent: 'center', gap: '0.75rem',
-                  opacity: product.stock === 0 ? 0.5 : 1, cursor: product.stock === 0 ? 'not-allowed' : 'pointer'
-                }}
-                onClick={() => addToCart(product)}
-                disabled={product.stock === 0}
-              >
-                <ShoppingCart size={22} />
-                Add to Cart
-              </button>
+            <div style={{ marginTop: '3rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.85rem' }}>
+                    <Truck size={18} strokeWidth={1} />
+                    <span>Complimentary shipping on orders over $150</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.85rem' }}>
+                    <ShieldCheck size={18} strokeWidth={1} />
+                    <span>Secure payment processing</span>
+                </div>
             </div>
-
-            {/* Trust Badges / Info */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--color-text-main)' }}>
-                <Truck size={24} color="var(--color-primary)" />
-                <div>
-                  <div style={{ fontWeight: 700 }}>Fast Delivery</div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Delivery within 1-2 business days in Kalmunai area.</div>
-                </div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--color-text-main)' }}>
-                <ShieldCheck size={24} color="var(--color-primary)" />
-                <div>
-                  <div style={{ fontWeight: 700 }}>Quality Assured</div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>We guarantee the quality of all our products.</div>
-                </div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: 'var(--color-text-main)' }}>
-                <Clock size={24} color="var(--color-primary)" />
-                <div>
-                  <div style={{ fontWeight: 700 }}>Customer Support</div>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)' }}>Available 9AM - 8PM, 7 days a week.</div>
-                </div>
-              </div>
-            </div>
-
           </div>
         </div>
       </div>

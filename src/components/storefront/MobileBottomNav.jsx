@@ -1,16 +1,14 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Search, ShoppingCart, User, Menu } from 'lucide-react';
-import { useShop } from '../../context/ShopContext';
+import { Sparkles, Search, BookOpen, User, Home } from 'lucide-react';
 
 const MobileBottomNav = ({ onOpenDrawer }) => {
   const location = useLocation();
-  const { getCartCount } = useShop();
 
   const navItems = [
-    { name: 'Home', path: '/', icon: Home },
-    { name: 'Categories', onClick: onOpenDrawer, icon: Menu },
-    { name: 'Cart', path: '/cart', icon: ShoppingCart, badge: getCartCount() },
-    { name: 'Profile', path: '/profile', icon: User },
+    { name: 'HOME', path: '/', icon: Home },
+    { name: 'SEARCH', onClick: onOpenDrawer, icon: Search },
+    { name: 'JOURNAL', path: '/journal', icon: BookOpen },
+    { name: 'ACCOUNT', path: '/profile', icon: User },
   ];
 
   return (
@@ -19,70 +17,58 @@ const MobileBottomNav = ({ onOpenDrawer }) => {
       bottom: 0,
       left: 0,
       right: 0,
-      height: '70px',
-      backgroundColor: 'rgba(255, 255, 255, 0.9)',
-      backdropFilter: 'blur(10px)',
-      WebkitBackdropFilter: 'blur(10px)',
-      borderTop: '1px solid rgba(229, 231, 235, 0.5)',
+      height: '80px',
+      backgroundColor: '#F7F3ED',
+      borderTop: '1px solid rgba(0,0,0,0.05)',
       display: 'flex',
       justifyContent: 'space-around',
       alignItems: 'center',
       zIndex: 100,
-      boxShadow: '0 -4px 20px rgba(0,0,0,0.05)',
-      paddingBottom: 'env(safe-area-inset-bottom)'
+      paddingBottom: 'env(safe-area-inset-bottom)',
+      boxShadow: '0 -1px 0 rgba(0,0,0,0.02)'
     }}>
       {navItems.map((item) => {
         const Icon = item.icon;
-        const isActive = location.pathname === item.path;
+        const isActive = (item.path === '/' && location.pathname === '/') || 
+                        (item.path !== '/' && item.path && location.pathname.startsWith(item.path));
         
         const content = (
           <div style={{
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '4px',
-            color: isActive ? 'var(--color-primary)' : '#6B7280',
+            gap: '8px',
+            color: isActive ? '#0C2311' : '#706F65',
             position: 'relative',
             cursor: 'pointer',
-            transition: 'all 0.3s ease'
+            transition: 'all 0.3s ease',
+            padding: '10px 0'
           }}>
-            <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
-            <span style={{ fontSize: '0.65rem', fontWeight: isActive ? 700 : 500 }}>{item.name}</span>
-            {item.badge > 0 && (
-              <span style={{
-                position: 'absolute',
-                top: '-4px',
-                right: '4px',
-                backgroundColor: 'var(--color-primary)',
-                color: 'white',
-                fontSize: '10px',
-                fontWeight: 'bold',
-                width: '18px',
-                height: '18px',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '2px solid white'
-              }}>
-                {item.badge}
-              </span>
-            )}
+            <Icon size={22} strokeWidth={isActive ? 2 : 1.5} style={{ opacity: isActive ? 1 : 0.8 }} />
+            <span style={{ 
+              fontSize: '0.65rem', 
+              fontWeight: 500, 
+              letterSpacing: '0.1em',
+              textTransform: 'uppercase'
+            }}>
+              {item.name}
+            </span>
+            
             {isActive && (
               <div style={{
                 position: 'absolute',
-                bottom: '-8px',
-                width: '4px',
-                height: '4px',
+                bottom: '0px',
+                width: '5px',
+                height: '5px',
                 borderRadius: '50%',
-                backgroundColor: 'var(--color-primary)'
+                backgroundColor: '#5C7444'
               }} />
             )}
           </div>
         );
 
         if (item.path) {
-          return <Link key={item.name} to={item.path} style={{ textDecoration: 'none' }}>{content}</Link>;
+          return <Link key={item.name} to={item.path} style={{ textDecoration: 'none', color: 'inherit' }}>{content}</Link>;
         }
         return <div key={item.name} onClick={item.onClick}>{content}</div>;
       })}

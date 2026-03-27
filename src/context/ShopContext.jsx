@@ -25,28 +25,61 @@ export const ShopProvider = ({ children }) => {
 
   // Products Firebase Listener & Auto-Seeder
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, 'products'), (snapshot) => {
-      if (snapshot.empty) {
-        // If database is completely empty, seed it with mockProducts automatically
-        const seedDatabase = async () => {
-          for (const p of mockProducts) {
-             // Use the existing mock ID so image links and categories stay intact
-             await setDoc(doc(db, 'products', p.id.toString()), p);
-          }
-        };
-        seedDatabase();
-      } else {
-        const loadedProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setProducts(loadedProducts);
+    console.log("Initializing Firebase Product Listener...");
+    // Add a fallback timeout if Firebase is slow or fails due to invalid keys
+    const fallbackTimer = setTimeout(() => {
+      if (isProductsLoading) {
+        console.warn("Firebase connection timed out (15s). Falling back to mock data.");
+        setProducts(mockProducts);
         setIsProductsLoading(false);
       }
-    }, (error) => {
-      console.error("Firebase Snapshot Error:", error.message);
-      setProductsError(error.message);
+    }, 15000);
+
+    try {
+      const unsubscribe = onSnapshot(collection(db, 'products'), (snapshot) => {
+        console.log("Firebase Snapshot received!", snapshot.empty ? "Empty" : "Data found");
+        clearTimeout(fallbackTimer);
+        if (snapshot.empty) {
+          console.log("Seeding database with mock data...");
+          // If database is completely empty, seed it with mockProducts automatically
+          const seedDatabase = async () => {
+            try {
+              for (const p of mockProducts) {
+                 // Use the existing mock ID so image links and categories stay intact
+                 await setDoc(doc(db, 'products', p.id.toString()), p);
+              }
+              console.log("Database seeded successfully.");
+            } catch (err) {
+              console.error("Seeding failed:", err.message);
+              // If seeding fails, we still need to finish loading
+              setProducts(mockProducts);
+              setIsProductsLoading(false);
+            }
+          };
+          seedDatabase();
+        } else {
+          const loadedProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          setProducts(loadedProducts);
+          setIsProductsLoading(false);
+        }
+      }, (error) => {
+        clearTimeout(fallbackTimer);
+        console.error("Firebase Snapshot Error:", error.message, error.code);
+        setProductsError(error.message);
+        // Fallback on error too
+        setProducts(mockProducts);
+        setIsProductsLoading(false);
+      });
+      
+      return () => {
+        unsubscribe();
+        clearTimeout(fallbackTimer);
+      };
+    } catch (err) {
+      console.error("Error setting up onSnapshot:", err.message);
+      setProducts(mockProducts);
       setIsProductsLoading(false);
-    });
-    
-    return () => unsubscribe();
+    }
   }, []);
 
   useEffect(() => {
