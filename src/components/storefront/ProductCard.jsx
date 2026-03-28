@@ -88,7 +88,7 @@ const ProductCard = ({ product }) => {
             <h3 style={{ 
               fontSize: '1rem', 
               fontWeight: 500, 
-              color: 'var(--color-text-main)', 
+              color: '#001d04', 
               margin: 0,
               letterSpacing: '-0.01em',
               lineHeight: 1.3
@@ -98,7 +98,7 @@ const ProductCard = ({ product }) => {
             <span style={{ 
               fontSize: '1rem', 
               fontWeight: 400, 
-              color: 'var(--color-text-main)' 
+              color: '#2a2418' 
             }}>
               ${Math.round(product.price)}
             </span>
@@ -107,7 +107,7 @@ const ProductCard = ({ product }) => {
           <span style={{ 
             fontSize: '0.7rem', 
             fontWeight: 600, 
-            color: 'var(--color-text-muted)',
+            color: '#587541',
             textTransform: 'uppercase',
             letterSpacing: '0.1em',
             marginTop: '0.4rem'
