@@ -101,6 +101,18 @@ const CategoryGrid = () => {
                 />
               ) : null}
             </div>
+            <span style={{
+              marginTop: '10px',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              color: '#0C2311',
+              textAlign: 'center',
+              letterSpacing: '0.01em',
+              lineHeight: 1.2,
+              whiteSpace: 'pre-line',
+            }}>
+              {cat.name}
+            </span>
           </div>
         ))}
       </div>
