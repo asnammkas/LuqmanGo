@@ -1,4 +1,4 @@
-import { useShop } from '../../context/ShopContext';
+import { useNavigate } from 'react-router-dom';
 
 const categories = [
   {
@@ -37,15 +37,10 @@ const categories = [
 // ExclusiveDealsSvg removed in favor of cat-exclusive-deals.png
 
 const CategoryGrid = () => {
-  const { setActiveCategory } = useShop();
+  const navigate = useNavigate();
 
   const handleCategoryClick = (cat) => {
-    setActiveCategory(cat.category);
-    // Scroll to the product grid
-    const productsSection = document.querySelector('.product-grid');
-    if (productsSection) {
-      productsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
+    navigate(`/category/${cat.category}`);
   };
 
   return (

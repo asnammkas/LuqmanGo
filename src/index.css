@@ -2,15 +2,15 @@
 @import './slideshow.css';
 
 :root {
-  --color-primary: #1A1A1A; 
-  --color-primary-hover: #333333;
+  --color-primary: #113013; 
+  --color-primary-hover: #1b4d1e;
   --color-secondary: #4A4A4A; 
   --color-secondary-hover: #666666;
   
   --color-bg-main: #F7F3ED; 
   --color-bg-card: #FFFFFF;
-  --color-text-main: #2C2C2C; /* Slightly warmer charcoal */
-  --color-text-muted: #8C8C8C;
+  --color-text-main: #113013; /* Updated user-requested deep green */
+  --color-text-muted: #6b7a6d;
   --color-accent-sage: #C5D1B8; /* Sage green for badges */
   --color-text-sage: #4A5D43;
   
@@ -28,6 +28,18 @@
   --radius-md: 0.5rem;
   --radius-lg: 1.5rem; /* Larger rounded corners from reference */
   --radius-xl: 2.5rem;
+}
+
+/* Browser Autofill Overrides */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--color-text-main) !important;
+  -webkit-box-shadow: 0 0 0px 1000px #FBF5EC inset !important;
+  transition: background-color 5000s ease-in-out 0s !important;
 }
 
 /* ... existing body styles ... */
@@ -324,7 +336,7 @@ a:hover {
 
 .main-content {
   flex-grow: 1;
-  padding-top: 7.5rem; /* Space for two-row fixed navbar */
+  padding-top: 70px; /* Match single-row fixed navbar height */
 }
 
 /* Hero slideshow */

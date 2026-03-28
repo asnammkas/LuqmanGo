@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
-import { Package, ShoppingCart, TrendingUp, Users } from 'lucide-react';
+import { Package, ShoppingBag, TrendingUp, Users } from 'lucide-react';
 
 const AdminDashboard = () => {
   const { products, orders } = useShop();
@@ -26,7 +26,7 @@ const AdminDashboard = () => {
       <div className="admin-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '2rem', marginBottom: '4rem' }}>
         <MetricCard title="Total Revenue" value={`$${totalRevenue.toFixed(2)}`} icon={<TrendingUp size={24} color="var(--color-primary)" />} />
         <MetricCard title="Active Products" value={products.length} icon={<Package size={24} color="var(--color-secondary)" />} />
-        <MetricCard title="Total Orders" value={orders.length} icon={<ShoppingCart size={24} color="#10b981" />} />
+        <MetricCard title="Total Orders" value={orders.length} icon={<ShoppingBag size={24} color="#10b981" />} />
         <MetricCard title="Pending Orders" value={pendingOrders} icon={<Users size={24} color="#f59e0b" />} />
       </div>
 

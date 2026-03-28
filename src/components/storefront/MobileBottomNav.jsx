@@ -1,13 +1,15 @@
 import { Link, useLocation } from 'react-router-dom';
-import { Sparkles, Search, BookOpen, User, Home } from 'lucide-react';
+import { Heart, Store, User, Home } from 'lucide-react';
+import { useShop } from '../../context/ShopContext';
 
 const MobileBottomNav = ({ onOpenDrawer }) => {
+  const { wishlist } = useShop();
   const location = useLocation();
 
   const navItems = [
     { name: 'HOME', path: '/', icon: Home },
-    { name: 'SEARCH', onClick: onOpenDrawer, icon: Search },
-    { name: 'JOURNAL', path: '/journal', icon: BookOpen },
+    { name: 'STORES', path: '/stores', icon: Store },
+    { name: 'WISHLIST', path: '/wishlist', icon: Heart },
     { name: 'ACCOUNT', path: '/profile', icon: User },
   ];
 
@@ -44,7 +46,15 @@ const MobileBottomNav = ({ onOpenDrawer }) => {
             transition: 'all 0.3s ease',
             padding: '10px 0'
           }}>
-            <Icon size={22} strokeWidth={isActive ? 2 : 1.5} style={{ opacity: isActive ? 1 : 0.8 }} />
+            <Icon 
+              size={22} 
+              strokeWidth={isActive ? 2 : 1.5} 
+              style={{ 
+                opacity: isActive ? 1 : 0.8,
+                color: (item.name === 'WISHLIST' && isActive) ? '#EF4444' : (isActive ? '#0C2311' : '#706F65')
+              }} 
+              fill={(item.name === 'WISHLIST' && isActive) ? '#EF4444' : 'transparent'}
+            />
             <span style={{ 
               fontSize: '0.65rem', 
               fontWeight: 500, 

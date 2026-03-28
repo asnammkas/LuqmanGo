@@ -7,7 +7,7 @@ import Footer from '../../components/storefront/Footer';
 import { Loader, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
 
 const Home = () => {
-  const { products, isProductsLoading, productsError, activeCategory } = useShop();
+  const { products, isProductsLoading, productsError } = useShop();
 
   // Get featured/hero products for the carousel (up to 5)
   const heroProducts = products.filter(p => p.featured).length > 0 
@@ -36,12 +36,10 @@ const Home = () => {
   const currentHero = heroProducts[currentSlide];
 
   const allGridProducts = products.filter(p => !heroProducts.some(h => h.id === p.id));
-  const gridProducts = activeCategory === 'All' 
-    ? allGridProducts 
-    : allGridProducts.filter(p => p.category === activeCategory);
+  const gridProducts = allGridProducts.slice(0, 8);
 
   return (
-    <div style={{ paddingTop: '70px' }}>
+    <div>
       {/* Hero Carousel with Floating Effect */}
       <section className="container" style={{ padding: '0.5rem 1.5rem 2rem' }}>
         {isProductsLoading ? (
@@ -153,62 +151,19 @@ const Home = () => {
       <section className="container" style={{ padding: '2rem 1.5rem 6rem' }}>
         <div style={{ 
           display: 'flex', 
-          justifyContent: 'space-between', 
           alignItems: 'center', 
           marginBottom: '2rem',
-          flexWrap: 'nowrap',
-          gap: '10px'
         }}>
             <h2 style={{ 
-              fontSize: 'clamp(1rem, 4vw, 1.4rem)', 
-              fontWeight: 500, 
-              letterSpacing: '0.01em', 
+              fontSize: 'clamp(0.9rem, 4vw, 1.2rem)', 
+              fontWeight: 300, 
+              letterSpacing: '0.12em', 
               color: 'var(--color-text-main)',
               margin: 0,
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis'
+              textTransform: 'uppercase'
             }}>
-              {activeCategory === 'All' ? 'Recent Arrivals' : activeCategory}
+              Recent Arrivals
             </h2>
-            <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
-              <button style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '6px',
-                backgroundColor: '#F2E7D2', 
-                border: 'none', 
-                padding: '0.6rem 1.1rem',
-                borderRadius: '50px', 
-                fontSize: '0.68rem', 
-                fontWeight: 600,
-                letterSpacing: '0.05em', 
-                cursor: 'pointer', 
-                color: '#333',
-                transition: 'all 0.2s ease',
-                whiteSpace: 'nowrap'
-              }}>
-                <SlidersHorizontal size={14} /> FILTER
-              </button>
-              <button style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '6px',
-                backgroundColor: '#F2E7D2', 
-                border: 'none', 
-                padding: '0.6rem 1.1rem',
-                borderRadius: '50px', 
-                fontSize: '0.68rem', 
-                fontWeight: 600,
-                letterSpacing: '0.05em', 
-                cursor: 'pointer', 
-                color: '#333',
-                transition: 'all 0.2s ease',
-                whiteSpace: 'nowrap'
-              }}>
-                <ArrowUpDown size={14} /> SORT
-              </button>
-            </div>
         </div>
 
         {productsError ? (

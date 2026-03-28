@@ -1,12 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
-import { ShoppingCart, Image as ImageIcon } from 'lucide-react';
+import { ShoppingBag, Image as ImageIcon, Heart } from 'lucide-react';
 
 const ProductCard = ({ product }) => {
-  const { addToCart } = useShop();
+  const { addToCart, toggleCart, isInCart, toggleWishlist, isInWishlist } = useShop();
   const [imgError, setImgError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const isHearted = isInWishlist(product.id);
+  const isBagged = isInCart(product.id);
 
   return (
     <div 
@@ -56,23 +58,52 @@ const ProductCard = ({ product }) => {
             <div className="badge-limited">Limited</div>
           )}
 
-          {/* Minimal Add to Cart Icon button */}
+          {/* Wishlist Heart Button */}
           <button 
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); addToCart(product); }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(product); }}
             style={{ 
-              position: 'absolute', bottom: '1rem', right: '1rem',
-              width: '36px', height: '36px', borderRadius: '50%',
-              backgroundColor: 'white', border: 'none',
+              position: 'absolute', top: '0.75rem', right: '0.75rem',
+              width: '32px', height: '32px', borderRadius: '50%',
+              backgroundColor: 'white', 
+              border: '1px solid #000000', 
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
-              opacity: isHovered ? 1 : 0,
-              transform: isHovered ? 'translateY(0)' : 'translateY(10px)',
-              transition: 'all 0.3s ease',
-              cursor: 'pointer',
-              zIndex: 10
+              boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+              cursor: 'pointer', zIndex: 10,
+              transition: 'transform 0.2s ease'
             }}
+            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
           >
-            <ShoppingCart size={14} strokeWidth={1.5} color="var(--color-text-main)" />
+            <Heart 
+              size={15} 
+              fill={isHearted ? '#EF4444' : 'transparent'} 
+              color={isHearted ? '#EF4444' : '#113013'} 
+              strokeWidth={isHearted ? 1 : 1.5}
+            />
+          </button>
+
+          {/* Quick Add to Bag button */}
+          <button 
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleCart(product); }}
+            style={{ 
+              position: 'absolute', bottom: '0.75rem', right: '0.75rem',
+              width: '32px', height: '32px', borderRadius: '50%',
+              backgroundColor: 'white', 
+              border: '1px solid #000000', 
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+              cursor: 'pointer', zIndex: 10,
+              transition: 'transform 0.2s ease'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+            onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          >
+            <ShoppingBag 
+              size={14} 
+              strokeWidth={isBagged ? 2.5 : 1.5} 
+              fill="none" 
+              color={isBagged ? '#3B82F6' : '#113013'} 
+            />
           </button>
         </div>
 

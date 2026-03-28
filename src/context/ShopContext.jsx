@@ -21,6 +21,11 @@ export const ShopProvider = ({ children }) => {
     return saved ? JSON.parse(saved) : [];
   });
 
+  const [wishlist, setWishlist] = useState(() => {
+    const saved = localStorage.getItem('luqman_wishlist');
+    return saved ? JSON.parse(saved) : [];
+  });
+
   const [orders, setOrders] = useState([]);
 
   // Products Firebase Listener & Auto-Seeder
@@ -86,6 +91,10 @@ export const ShopProvider = ({ children }) => {
     localStorage.setItem('luqman_cart', JSON.stringify(cart));
   }, [cart]);
 
+  useEffect(() => {
+    localStorage.setItem('luqman_wishlist', JSON.stringify(wishlist));
+  }, [wishlist]);
+
   // Orders Firebase Listener
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, 'orders'), (snapshot) => {
@@ -126,15 +135,15 @@ export const ShopProvider = ({ children }) => {
   };
 
   // Cart Actions
-  const addToCart = (product) => {
+  const addToCart = (product, quantity = 1) => {
     setCart((prevCart) => {
       const existing = prevCart.find(item => item.id === product.id);
       if (existing) {
         return prevCart.map(item => 
-          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
+          item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
         );
       }
-      return [...prevCart, { ...product, quantity: 1 }];
+      return [...prevCart, { ...product, quantity }];
     });
   };
 
@@ -150,6 +159,20 @@ export const ShopProvider = ({ children }) => {
     setCart(cart.filter(item => item.id !== id));
   };
 
+  const toggleCart = (product) => {
+    setCart((prevCart) => {
+      const exists = prevCart.find(item => item.id === product.id);
+      if (exists) {
+        return prevCart.filter(item => item.id !== product.id);
+      }
+      return [...prevCart, { ...product, quantity: 1 }];
+    });
+  };
+
+  const isInCart = (id) => {
+    return !!cart.find(item => item.id === id);
+  };
+
   const clearCart = () => setCart([]);
 
   const getCartTotal = () => {
@@ -158,6 +181,21 @@ export const ShopProvider = ({ children }) => {
 
   const getCartCount = () => {
     return cart.reduce((count, item) => count + item.quantity, 0);
+  };
+
+  // Wishlist Actions
+  const toggleWishlist = (product) => {
+    setWishlist((prev) => {
+      const exists = prev.find(item => item.id === product.id);
+      if (exists) {
+        return prev.filter(item => item.id !== product.id);
+      }
+      return [...prev, product];
+    });
+  };
+
+  const isInWishlist = (id) => {
+    return !!wishlist.find(item => item.id === id);
   };
 
   // Order Actions (Firebase CRUD)
@@ -220,7 +258,8 @@ export const ShopProvider = ({ children }) => {
 
   const value = {
     products, addProduct, updateProduct, deleteProduct,
-    cart, addToCart, updateCartQuantity, removeFromCart, clearCart, getCartTotal, getCartCount,
+    cart, addToCart, toggleCart, isInCart, updateCartQuantity, removeFromCart, clearCart, getCartTotal, getCartCount,
+    wishlist, toggleWishlist, isInWishlist,
     orders, checkout, updateOrderStatus,
     searchQuery, setSearchQuery,
     activeCategory, setActiveCategory: handleCategoryChange,

@@ -1,11 +1,14 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
-import { ShoppingCart, ArrowLeft, Truck, ShieldCheck, Clock, Image as ImageIcon } from 'lucide-react';
+import { ArrowLeft, Truck, ShieldCheck, Clock, Image as ImageIcon, Heart, Minus, Plus } from 'lucide-react';
 import Footer from '../../components/storefront/Footer';
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const { products, addToCart } = useShop();
+  const { products, addToCart, toggleWishlist, isInWishlist } = useShop();
+  const isHearted = isInWishlist(id);
+  const [quantity, setQuantity] = useState(1);
   
   const product = products.find(p => p.id === id);
 
@@ -24,13 +27,14 @@ const ProductDetail = () => {
   }
 
   return (
-    <div style={{ paddingTop: '70px' }}>
-      <div className="container" style={{ padding: '4rem 1.5rem 8rem' }}>
+    <div>
+      <div className="container" style={{ padding: '2rem 1.5rem 8rem' }}>
         
         <div className="product-detail-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '5rem', alignItems: 'start' }}>
           
-          {/* Left Column - Large Focused Image */}
+          {/* Left Column - Large Focused Image with Wishlist Button */}
           <div style={{ 
+            position: 'relative',
             backgroundColor: '#F3F2EE', 
             borderRadius: 'var(--radius-lg)', 
             overflow: 'hidden', 
@@ -43,64 +47,137 @@ const ProductDetail = () => {
                  <ImageIcon size={48} strokeWidth={1} color="var(--color-text-muted)" />
                </div>
              )}
+
+             {/* Wishlist Heart Button - Moved from details */}
+             <button 
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(product); }}
+                style={{ 
+                  position: 'absolute', top: '1.25rem', right: '1.25rem',
+                  width: '36px', height: '36px', borderRadius: '50%',
+                  backgroundColor: 'white', 
+                  border: '1px solid #000000',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.06)',
+                  cursor: 'pointer', zIndex: 10,
+                  transition: 'transform 0.2s ease'
+                }}
+                onMouseOver={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+                onMouseOut={(e) => e.currentTarget.style.transform = 'scale(1)'}
+              >
+                <Heart 
+                  size={18} 
+                  fill={isHearted ? '#EF4444' : 'transparent'} 
+                  color={isHearted ? '#EF4444' : '#113013'} 
+                  strokeWidth={isHearted ? 1 : 1.5}
+                />
+              </button>
           </div>
 
-          {/* Right Column - Elegant Typography */}
-          <div style={{ display: 'flex', flexDirection: 'column', paddingTop: '1rem' }}>
+          {/* Right Column - Elegant Grouped Details */}
+          <div style={{ 
+            backgroundColor: '#EAE1D3', 
+            borderRadius: '32px', 
+            padding: '2rem 1.75rem',
+            display: 'flex', 
+            flexDirection: 'column',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.03)',
+            height: 'fit-content'
+          }}>
             
-            <Link to="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-text-muted)', textDecoration: 'none', marginBottom: '2.5rem', fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-              <ArrowLeft size={14} /> Back
-            </Link>
+            <div style={{ 
+              fontSize: '0.6rem', 
+              fontWeight: 700, 
+              textTransform: 'uppercase', 
+              letterSpacing: '0.15em', 
+              color: '#706F65', 
+              marginBottom: '0.6rem' 
+            }}>
+              Curated Selection
+            </div>
 
             <h1 style={{ 
-              fontSize: '2.4rem', 
-              fontWeight: 400, 
-              color: 'var(--color-text-main)', 
-              lineHeight: 1.2, 
-              marginBottom: '1rem',
-              letterSpacing: '0.01em'
+              fontSize: '2.5rem', 
+              fontWeight: 700, 
+              color: '#001d04', 
+              lineHeight: 1.1, 
+              marginBottom: '0.4rem',
+              letterSpacing: '-0.02em'
             }}>
                {product.title}
             </h1>
 
-            <div style={{ fontSize: '1.5rem', fontWeight: 300, color: 'var(--color-text-main)', marginBottom: '2.5rem' }}>
+            <div style={{ 
+              fontSize: '1.6rem', 
+              fontWeight: 500, 
+              color: '#5C7444', 
+              marginBottom: '1rem' 
+            }}>
               ${product.price ? product.price.toFixed(2) : '0.00'}
             </div>
 
-            <div style={{ height: '1px', backgroundColor: 'var(--color-border)', marginBottom: '2.5rem' }}></div>
-
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '1rem', lineHeight: 1.8, marginBottom: '3rem' }}>
+            <p style={{ 
+              color: '#001d04', 
+              fontSize: '0.95rem', 
+              lineHeight: 1.5, 
+              marginBottom: '1.5rem',
+              opacity: 0.8,
+              fontWeight: 300
+            }}>
               {product.description}
             </p>
 
-            <button 
-              className="btn"
-              style={{ 
-                backgroundColor: 'var(--color-text-main)', 
-                color: 'white', 
-                height: '3.5rem', 
-                borderRadius: '0', 
-                fontSize: '0.8rem', 
-                letterSpacing: '0.2em', 
-                textTransform: 'uppercase',
-                width: '100%',
-                cursor: product.stock === 0 ? 'not-allowed' : 'pointer',
-                opacity: product.stock === 0 ? 0.5 : 1
-              }}
-              onClick={() => addToCart(product)}
-              disabled={product.stock === 0}
-            >
-              {product.stock === 0 ? 'Out of Stock' : 'Add to Bag'}
-            </button>
+            {/* Actions Grid - Single Line Alignment (Swapped) */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.5rem' }}>
+              <button 
+                onClick={() => addToCart(product, quantity)}
+                className="btn"
+                style={{ 
+                  flexGrow: 1, 
+                  height: '3.5rem', 
+                  backgroundColor: '#001d04', 
+                  color: 'white', 
+                  borderRadius: '12px',
+                  fontWeight: 600,
+                  fontSize: '0.85rem',
+                  letterSpacing: '0.05em'
+                }}
+              >
+                ADD TO BAG — ${(product.price * quantity).toFixed(2)}
+              </button>
 
-            <div style={{ marginTop: '3rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.85rem' }}>
-                    <Truck size={18} strokeWidth={1} />
-                    <span>Complimentary shipping on orders over $150</span>
+              <div style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                backgroundColor: 'white', 
+                borderRadius: '12px', 
+                padding: '4px',
+                border: '1px solid rgba(0,0,0,0.05)',
+                width: 'fit-content'
+              }}>
+                <button 
+                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  style={{ background: 'none', border: 'none', width: '36px', height: '36px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <Minus size={16} />
+                </button>
+                <span style={{ width: '40px', textAlign: 'center', fontWeight: 600, fontSize: '1rem' }}>{quantity}</span>
+                <button 
+                  onClick={() => setQuantity(quantity + 1)}
+                  style={{ background: 'none', border: 'none', width: '36px', height: '36px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  <Plus size={16} />
+                </button>
+              </div>
+            </div>
+
+            <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.8rem', color: '#001d04' }}>
+                    <Truck size={16} strokeWidth={1} />
+                    <span style={{ fontWeight: 300 }}>Complimentary shipping on orders over $150</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.85rem' }}>
-                    <ShieldCheck size={18} strokeWidth={1} />
-                    <span>Secure payment processing</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.8rem', color: '#001d04' }}>
+                    <ShieldCheck size={16} strokeWidth={1} />
+                    <span style={{ fontWeight: 300 }}>Secure payment processing</span>
                 </div>
             </div>
           </div>

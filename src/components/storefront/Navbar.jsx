@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
-import { ShoppingCart, LayoutDashboard, Search, Moon, Sun, Phone, Menu, X } from 'lucide-react';
+import { ShoppingBag, LayoutDashboard, Search, Moon, Sun, Phone, Menu, X } from 'lucide-react';
 
 const categories = ['All', 'Electronics', 'Dresses', 'Groceries', 'Furniture', 'Home & Living'];
 
@@ -11,8 +11,7 @@ const Navbar = ({ onOpenDrawer }) => {
   return (
     <header style={{ 
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-      backgroundColor: 'rgba(250, 249, 246, 0.9)', 
-      backdropFilter: 'blur(10px)',
+      backgroundColor: '#fff8f1', 
       borderBottom: '1px solid var(--color-border)',
       height: '70px',
       display: 'flex',
@@ -34,13 +33,6 @@ const Navbar = ({ onOpenDrawer }) => {
             <Menu size={24} strokeWidth={1.5} />
           </button>
           
-          <button 
-            onClick={toggleTheme}
-            className="hide-on-mobile"
-            style={{ background: 'none', border: 'none', color: 'var(--color-text-main)', cursor: 'pointer', marginLeft: '1rem' }}
-          >
-            {theme === 'light' ? <Moon size={20} strokeWidth={1.2} /> : <Sun size={20} strokeWidth={1.2} />}
-          </button>
         </div>
 
         {/* Center: Brand Name */}
@@ -52,7 +44,7 @@ const Navbar = ({ onOpenDrawer }) => {
               letterSpacing: '0.4em', 
               color: 'var(--color-text-main)', 
               margin: 0,
-              textTransform: 'uppercase',
+              textTransform: 'none',
               textAlign: 'center'
             }}>
               LuqmanGo
@@ -74,7 +66,7 @@ const Navbar = ({ onOpenDrawer }) => {
           </Link>
           
           <Link to="/cart" style={{ position: 'relative', color: 'var(--color-text-main)', display: 'flex', alignItems: 'center' }}>
-            <ShoppingCart size={22} strokeWidth={1.5} />
+            <ShoppingBag size={22} strokeWidth={1.5} />
             {getCartCount() > 0 && (
               <span style={{ 
                 position: 'absolute', top: '-8px', right: '-8px', 
