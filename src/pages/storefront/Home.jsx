@@ -155,45 +155,58 @@ const Home = () => {
           display: 'flex', 
           justifyContent: 'space-between', 
           alignItems: 'center', 
-          marginBottom: '3rem' 
+          marginBottom: '2rem',
+          flexWrap: 'nowrap',
+          gap: '10px'
         }}>
-            <h2 style={{ fontSize: '1.4rem', fontWeight: 500, letterSpacing: '0.01em', color: 'var(--color-text-main)' }}>
+            <h2 style={{ 
+              fontSize: 'clamp(1rem, 4vw, 1.4rem)', 
+              fontWeight: 500, 
+              letterSpacing: '0.01em', 
+              color: 'var(--color-text-main)',
+              margin: 0,
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
+            }}>
               {activeCategory === 'All' ? 'Recent Arrivals' : activeCategory}
             </h2>
-            <div style={{ display: 'flex', gap: '10px' }}>
+            <div style={{ display: 'flex', gap: '8px', flexShrink: 0 }}>
               <button style={{ 
                 display: 'flex', 
                 alignItems: 'center', 
-                gap: '10px',
+                gap: '6px',
                 backgroundColor: '#F2E7D2', 
                 border: 'none', 
-                padding: '0.8rem 1.8rem',
+                padding: '0.6rem 1.1rem',
                 borderRadius: '50px', 
-                fontSize: '0.75rem', 
+                fontSize: '0.68rem', 
                 fontWeight: 600,
-                letterSpacing: '0.12em', 
+                letterSpacing: '0.05em', 
                 cursor: 'pointer', 
                 color: '#333',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.2s ease',
+                whiteSpace: 'nowrap'
               }}>
-                <SlidersHorizontal size={15} /> FILTER
+                <SlidersHorizontal size={14} /> FILTER
               </button>
               <button style={{ 
                 display: 'flex', 
                 alignItems: 'center', 
-                gap: '10px',
+                gap: '6px',
                 backgroundColor: '#F2E7D2', 
                 border: 'none', 
-                padding: '0.8rem 1.8rem',
+                padding: '0.6rem 1.1rem',
                 borderRadius: '50px', 
-                fontSize: '0.75rem', 
+                fontSize: '0.68rem', 
                 fontWeight: 600,
-                letterSpacing: '0.12em', 
+                letterSpacing: '0.05em', 
                 cursor: 'pointer', 
                 color: '#333',
-                transition: 'all 0.2s ease'
+                transition: 'all 0.2s ease',
+                whiteSpace: 'nowrap'
               }}>
-                <ArrowUpDown size={15} /> SORT
+                <ArrowUpDown size={14} /> SORT
               </button>
             </div>
         </div>
