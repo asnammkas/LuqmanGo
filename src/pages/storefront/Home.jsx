@@ -4,7 +4,7 @@ import { useShop } from '../../context/ShopContext';
 import ProductCard from '../../components/storefront/ProductCard';
 import CategoryGrid from '../../components/storefront/CategoryGrid';
 import Footer from '../../components/storefront/Footer';
-import { Loader } from 'lucide-react';
+import { Loader, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
 
 const Home = () => {
   const { products, isProductsLoading, productsError, activeCategory } = useShop();
@@ -151,10 +151,51 @@ const Home = () => {
 
       {/* Product Grid */}
       <section className="container" style={{ padding: '2rem 1.5rem 6rem' }}>
-        <div style={{ textAlign: 'left', marginBottom: '3rem' }}>
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          marginBottom: '3rem' 
+        }}>
             <h2 style={{ fontSize: '1.4rem', fontWeight: 500, letterSpacing: '0.01em', color: 'var(--color-text-main)' }}>
               {activeCategory === 'All' ? 'Recent Arrivals' : activeCategory}
             </h2>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '10px',
+                backgroundColor: '#F3F2EE', 
+                border: 'none', 
+                padding: '0.8rem 1.8rem',
+                borderRadius: '50px', 
+                fontSize: '0.75rem', 
+                fontWeight: 600,
+                letterSpacing: '0.12em', 
+                cursor: 'pointer', 
+                color: '#333',
+                transition: 'all 0.2s ease'
+              }}>
+                <SlidersHorizontal size={15} /> FILTER
+              </button>
+              <button style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '10px',
+                backgroundColor: '#F3F2EE', 
+                border: 'none', 
+                padding: '0.8rem 1.8rem',
+                borderRadius: '50px', 
+                fontSize: '0.75rem', 
+                fontWeight: 600,
+                letterSpacing: '0.12em', 
+                cursor: 'pointer', 
+                color: '#333',
+                transition: 'all 0.2s ease'
+              }}>
+                <ArrowUpDown size={15} /> SORT
+              </button>
+            </div>
         </div>
 
         {productsError ? (
