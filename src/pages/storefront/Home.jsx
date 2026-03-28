@@ -41,12 +41,12 @@ const Home = () => {
     : allGridProducts.filter(p => p.category === activeCategory);
 
   return (
-    <div style={{ paddingTop: '70px' }}>
+    <div style={{ paddingTop: '40px' }}>
       {/* Hero Carousel with Floating Effect */}
-      <section className="container" style={{ padding: '2rem 1.5rem 2rem' }}>
+      <section className="container" style={{ padding: '1rem 1.5rem 1rem' }}>
         {isProductsLoading ? (
             <div style={{ 
-              width: '100%', height: '55vh', maxHeight: '500px',
+              width: '100%', height: '28vh', maxHeight: '250px',
               backgroundColor: '#F3F2EE', borderRadius: '20px', 
               display: 'flex', alignItems: 'center', justifyContent: 'center' 
             }}>
@@ -56,8 +56,8 @@ const Home = () => {
             <div style={{ 
               position: 'relative', 
               width: '100%', 
-              height: '55vh', 
-              maxHeight: '500px', 
+              height: '28vh', 
+              maxHeight: '250px', 
               overflow: 'hidden', 
               borderRadius: '20px',
               boxShadow: '0 8px 30px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)',
@@ -91,9 +91,9 @@ const Home = () => {
                     background: 'linear-gradient(to top, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.05) 50%, transparent)',
                 }}>
                     <h2 style={{ 
-                      color: 'white', fontSize: '1.6rem', fontWeight: 300, 
+                      color: 'white', fontSize: '1.2rem', fontWeight: 300, 
                       letterSpacing: '0.08em', textTransform: 'uppercase', 
-                      marginBottom: '0.8rem', textAlign: 'center',
+                      marginBottom: '0.6rem', textAlign: 'center',
                       textShadow: '0 1px 4px rgba(0,0,0,0.3)',
                     }}>
                         {currentHero?.title || 'The Collection'}
