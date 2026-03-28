@@ -4,33 +4,33 @@ const categories = [
   {
     name: 'Grocery',
     category: 'Groceries',
-    image: '/images/cat-grocery.png',
+    image: '/images/i1.png',
   },
   {
     name: 'Electronics',
     category: 'Electronics',
-    image: '/images/cat-electronics.png',
+    image: '/images/i2.png',
   },
   {
     name: 'Dress',
     category: 'Dresses',
-    image: '/images/cat-dress.png',
+    image: '/images/i3.png',
   },
   {
     name: 'Home-Living',
     category: 'Home & Living',
-    image: '/images/cat-home-living.png',
+    image: '/images/i4.png',
   },
   {
     name: 'Beauty and\nCosmetics',
     category: 'Beauty',
-    image: '/images/cat-beauty.png',
+    image: '/images/i5.png',
   },
   {
     name: 'Exclusive Deals',
     category: 'All',
     isDeals: true,
-    image: '/images/cat-exclusive-deals.png',
+    image: '/images/i6.png',
   },
 ];
 
@@ -101,18 +101,6 @@ const CategoryGrid = () => {
                 />
               ) : null}
             </div>
-            <span style={{
-              marginTop: '8px',
-              fontSize: '0.72rem',
-              fontWeight: 500,
-              color: '#0C2311',
-              textAlign: 'center',
-              letterSpacing: '0.02em',
-              lineHeight: 1.3,
-              whiteSpace: 'pre-line',
-            }}>
-              {cat.name}
-            </span>
           </div>
         ))}
       </div>
