@@ -41,12 +41,12 @@ const Home = () => {
     : allGridProducts.filter(p => p.category === activeCategory);
 
   return (
-    <div style={{ paddingTop: '24px' }}>
+    <div style={{ paddingTop: '70px' }}>
       {/* Hero Carousel with Floating Effect */}
-      <section className="container" style={{ padding: '0.5rem 1.5rem 0.5rem' }}>
+      <section className="container" style={{ padding: '0.5rem 1.5rem 2rem' }}>
         {isProductsLoading ? (
             <div style={{ 
-              width: '100%', height: '15vh', maxHeight: '130px',
+              width: '100%', height: '55vh', maxHeight: '500px',
               backgroundColor: '#F3F2EE', borderRadius: '20px', 
               display: 'flex', alignItems: 'center', justifyContent: 'center' 
             }}>
@@ -56,8 +56,8 @@ const Home = () => {
             <div style={{ 
               position: 'relative', 
               width: '100%', 
-              height: '15vh', 
-              maxHeight: '130px', 
+              height: '55vh', 
+              maxHeight: '500px', 
               overflow: 'hidden', 
               borderRadius: '20px',
               boxShadow: '0 8px 30px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)',
@@ -91,9 +91,9 @@ const Home = () => {
                     background: 'linear-gradient(to top, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.05) 50%, transparent)',
                 }}>
                     <h2 style={{ 
-                      color: 'white', fontSize: '0.9rem', fontWeight: 300, 
-                      letterSpacing: '0.06em', textTransform: 'uppercase', 
-                      marginBottom: '0.4rem', textAlign: 'center',
+                      color: 'white', fontSize: '1.6rem', fontWeight: 300, 
+                      letterSpacing: '0.08em', textTransform: 'uppercase', 
+                      marginBottom: '0.8rem', textAlign: 'center',
                       textShadow: '0 1px 4px rgba(0,0,0,0.3)',
                     }}>
                         {currentHero?.title || 'The Collection'}
@@ -103,10 +103,10 @@ const Home = () => {
                       className="btn" 
                       style={{ 
                         backgroundColor: 'white', color: '#0C2311', 
-                        padding: '0.4rem 1.2rem', borderRadius: '50px', 
-                        fontSize: '0.65rem', letterSpacing: '0.12em', 
+                        padding: '0.8rem 2rem', borderRadius: '50px', 
+                        fontSize: '0.75rem', letterSpacing: '0.15em', 
                         textTransform: 'uppercase', fontWeight: 600,
-                        boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+                        boxShadow: '0 4px 15px rgba(0,0,0,0.15)',
                         textDecoration: 'none',
                         transition: 'transform 0.2s ease',
                       }}
@@ -119,7 +119,7 @@ const Home = () => {
                 {heroProducts.length > 1 && (
                   <div style={{
                     position: 'absolute',
-                    bottom: '8px',
+                    bottom: '12px',
                     left: '50%',
                     transform: 'translateX(-50%)',
                     display: 'flex',
