@@ -14,7 +14,7 @@ const Navbar = ({ onOpenDrawer }) => {
       backgroundColor: 'rgba(250, 249, 246, 0.9)', 
       backdropFilter: 'blur(10px)',
       borderBottom: '1px solid var(--color-border)',
-      height: '40px',
+      height: '24px',
       display: 'flex',
       alignItems: 'center'
     }}>
@@ -31,7 +31,7 @@ const Navbar = ({ onOpenDrawer }) => {
             onClick={onOpenDrawer} 
             style={{ background: 'none', border: 'none', color: 'var(--color-text-main)', cursor: 'pointer', padding: '0.5rem' }}
           >
-            <Menu size={20} strokeWidth={1.5} />
+            <Menu size={16} strokeWidth={1.5} />
           </button>
           
           <button 
@@ -47,9 +47,9 @@ const Navbar = ({ onOpenDrawer }) => {
         <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
           <Link to="/" style={{ textDecoration: 'none' }}>
             <h1 style={{ 
-              fontSize: '1.1rem', 
+              fontSize: '0.85rem', 
               fontWeight: 400, 
-              letterSpacing: '0.3em', 
+              letterSpacing: '0.2em', 
               color: 'var(--color-text-main)', 
               margin: 0,
               textTransform: 'uppercase',
@@ -74,7 +74,7 @@ const Navbar = ({ onOpenDrawer }) => {
           </Link>
           
           <Link to="/cart" style={{ position: 'relative', color: 'var(--color-text-main)', display: 'flex', alignItems: 'center' }}>
-            <ShoppingCart size={18} strokeWidth={1.5} />
+            <ShoppingCart size={16} strokeWidth={1.5} />
             {getCartCount() > 0 && (
               <span style={{ 
                 position: 'absolute', top: '-8px', right: '-8px', 
