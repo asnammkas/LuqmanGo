@@ -11,8 +11,8 @@ const Navbar = ({ onOpenDrawer }) => {
   return (
     <header style={{ 
       position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
-      backgroundColor: '#fff8f1', 
-      borderBottom: '1px solid var(--color-border)',
+      backgroundColor: '#F7F3ED', 
+      borderBottom: '1px solid rgba(0,0,0,0.03)',
       height: '70px',
       display: 'flex',
       alignItems: 'center'
@@ -44,6 +44,7 @@ const Navbar = ({ onOpenDrawer }) => {
               letterSpacing: '0.4em', 
               color: 'var(--color-text-main)', 
               margin: 0,
+              marginLeft: '0.4em', /* Compensate for letter-spacing to ensure absolute center */
               textTransform: 'none',
               textAlign: 'center'
             }}>

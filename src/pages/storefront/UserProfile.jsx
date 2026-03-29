@@ -1,20 +1,21 @@
 import { useState } from 'react';
 import { useShop } from '../../context/ShopContext';
 import { 
-  User, Package, Settings, LogOut, ChevronRight, MapPin, CreditCard, Bell, HelpCircle, ShieldCheck, ArrowLeft, TreePine, Star
+  User, Package, Settings, LogOut, ChevronRight, MapPin, CreditCard, Bell, HelpCircle, ShieldCheck, ArrowLeft, TreePine, Star,
+  Truck, ChevronDown, FileText, PackageCheck, RefreshCw
 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const UserProfile = () => {
   const { orders } = useShop();
   const myOrders = orders.slice(0, 2); 
-  const [currentView, setCurrentView] = useState('main'); // 'main', 'orders', 'addresses', 'payments', 'personal', 'notifications'
+  const [currentView, setCurrentView] = useState('main'); // 'main', 'orders', 'addresses', 'payments', 'personal', 'notifications', 'help', 'privacy'
   const navigate = useNavigate();
 
   // Mock User Data
   const user = {
     name: "Asnam Sanaf",
-    email: "alex.sylvan@curator.studio",
+    email: "asnam.sanaf@luqmango.com",
     initials: "AS",
     points: "2,450",
     trees: 12,
@@ -27,37 +28,48 @@ const UserProfile = () => {
   };
 
   const BackButton = ({ title }) => (
-    <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem', padding: '0 0.5rem' }}>
+    <div style={{ display: 'flex', alignItems: 'center', marginBottom: title ? '1.5rem' : '0.5rem', padding: '0' }}>
       <button 
         onClick={() => setCurrentView('main')}
-        style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0.5rem', marginRight: '0.5rem', color: '#001d04', marginLeft: '-0.5rem' }}
+        style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0.4rem', marginRight: '0.5rem', color: '#001d04', marginLeft: '-0.4rem', transition: 'transform 0.2s' }}
       >
-        <ArrowLeft size={24} />
+        <ArrowLeft size={20} strokeWidth={2} />
       </button>
-      <h1 style={{ fontSize: '1.5rem', fontWeight: 600, color: '#001d04', margin: 0 }}>{title}</h1>
+      {title && <h1 style={{ fontSize: '1.2rem', fontWeight: 500, color: '#001d04', margin: 0, letterSpacing: '-0.01em' }}>{title}</h1>}
     </div>
   );
 
   // --- Sub-Views Components ---
   const PersonalInfoView = () => (
-    <div className="animate-fade-in" style={{ padding: '2rem 1.5rem', maxWidth: '600px', margin: '0 auto', minHeight: '100vh', backgroundColor: '#F9F8F4' }}>
-      <BackButton title="Personal Information" />
-      <div style={{ backgroundColor: 'white', borderRadius: '32px', padding: '2rem', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
-        <form style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
+        <button 
+          onClick={() => setCurrentView('main')}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
+        >
+          <ArrowLeft size={18} strokeWidth={2} />
+        </button>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Profile Details</span>
+      </div>
+      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+        Manage your identity and how we connect with you. Keep your personal information secure and up to date.
+      </p>
+      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '24px', padding: '2rem', border: '1px solid rgba(0,0,0,0.02)' }}>
+        <form style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
           <div>
-            <label className="label" style={{ fontSize: '0.8rem', color: '#706F65' }}>Full Name</label>
-            <input type="text" className="input" defaultValue={user.name} style={{ backgroundColor: '#FBF5EC', border: '1px solid var(--color-border)', borderRadius: '12px' }} />
+            <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>FULL NAME</label>
+            <input type="text" className="input" defaultValue={user.name} style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.03)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
           </div>
           <div>
-            <label className="label" style={{ fontSize: '0.8rem', color: '#706F65' }}>Email Address</label>
-            <input type="email" className="input" defaultValue={user.email} style={{ backgroundColor: '#FBF5EC', border: '1px solid var(--color-border)', borderRadius: '12px' }} />
+            <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>EMAIL ADDRESS</label>
+            <input type="email" className="input" defaultValue={user.email} style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.03)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
           </div>
           <div>
-            <label className="label" style={{ fontSize: '0.8rem', color: '#706F65' }}>Phone Number</label>
-            <input type="tel" className="input" defaultValue="+1 234 567 8900" style={{ backgroundColor: '#FBF5EC', border: '1px solid var(--color-border)', borderRadius: '12px' }} />
+            <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>PHONE NUMBER</label>
+            <input type="tel" className="input" defaultValue="+91 98765 43210" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.03)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
           </div>
-          <button type="button" className="btn" style={{ backgroundColor: '#001d04', color: 'white', padding: '1.2rem', width: '100%', borderRadius: '16px', marginTop: '1rem', fontWeight: 600 }}>
-            Save Changes
+          <button type="button" className="btn btn-primary" style={{ backgroundColor: '#001d04', color: 'white', border: 'none', padding: '1rem', width: '100%', borderRadius: '12px', marginTop: '0.5rem', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}>
+            Update Profile
           </button>
         </form>
       </div>
@@ -65,218 +77,734 @@ const UserProfile = () => {
   );
 
   const AddressesView = () => (
-    <div className="animate-fade-in" style={{ padding: '2rem 1.5rem', maxWidth: '600px', margin: '0 auto', minHeight: '100vh', backgroundColor: '#F9F8F4' }}>
-      <BackButton title="Shipping Addresses" />
+    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
+        <button 
+          onClick={() => setCurrentView('main')}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
+        >
+          <ArrowLeft size={18} strokeWidth={2} />
+        </button>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Saved Locations</span>
+      </div>
+      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+        Your curated network of delivery destinations. Add, edit, or remove your frequent stops for faster checkouts.
+      </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <div style={{ backgroundColor: 'white', borderRadius: '24px', padding: '1.5rem', border: '2px solid #001d04', boxShadow: '0 4px 15px rgba(0,0,0,0.02)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-            <span style={{ fontWeight: 600, color: '#001d04' }}>Home (Default)</span>
-            <button style={{ color: '#5C7444', background: 'none', border: 'none', fontSize: '0.85rem', fontWeight: 600, cursor: 'pointer' }}>Edit</button>
+        <div style={{ backgroundColor: '#EAE1D3', borderRadius: '24px', padding: '1.5rem', border: '1px solid #001d04', position: 'relative' }}>
+          <div style={{ position: 'absolute', top: '1.2rem', right: '1.2rem', backgroundColor: '#E4EDDB', color: '#436132', fontSize: '0.6rem', fontWeight: 800, padding: '0.3rem 0.6rem', borderRadius: '6px' }}>DEFAULT</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.8rem' }}>
+             <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <MapPin size={16} color="#001d04" />
+             </div>
+             <span style={{ fontWeight: 700, color: '#001d04', fontSize: '1rem' }}>Home</span>
           </div>
-          <p style={{ color: '#706F65', fontSize: '0.9rem', lineHeight: 1.6 }}>
-            123 Curator Studio<br/>
-            Design District, CA 90210<br/>
-            United States
+          <p style={{ color: '#706F65', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.2rem', fontWeight: 400 }}>
+            Flat 402, Sylvan Heights<br/>
+            Central District, Luqman Street<br/>
+            Kochi, Kerala 682001
           </p>
+          <button 
+            onClick={() => setCurrentView('edit-address')}
+            style={{ color: '#001d04', background: 'transparent', border: '1px solid #001d04', padding: '0.4rem 1.2rem', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+          >
+            Modify Details
+          </button>
         </div>
-        <button style={{ backgroundColor: 'transparent', border: '2px dashed #D4CFC5', color: '#706F65', padding: '1.5rem', borderRadius: '24px', fontWeight: 600, cursor: 'pointer', transition: 'background-color 0.2s', ':hover': { backgroundColor: 'rgba(0,0,0,0.02)' } }}>
+        <button 
+          onClick={() => setCurrentView('add-address')}
+          style={{ backgroundColor: '#001d04', border: 'none', color: 'white', padding: '1.5rem', borderRadius: '24px', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}
+        >
           + Add New Address
         </button>
       </div>
     </div>
   );
+  
+  const AddAddressView = () => (
+    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
+        <button 
+          onClick={() => setCurrentView('addresses')}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
+        >
+          <ArrowLeft size={18} strokeWidth={2} />
+        </button>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Add New Address</span>
+      </div>
+      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+        Provide your shipping details below. We deliver to your doorstep with zero-carbon logistics.
+      </p>
+      
+      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '32px', padding: '2.2rem', border: '1px solid rgba(0,0,0,0.02)' }}>
+        <form style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+          <div>
+            <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>ADDRESS TITLE (E.G. OFFICE)</label>
+            <input type="text" className="input" placeholder="Home / Work / Other" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+          </div>
+          <div>
+            <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>ADDRESS LINE 1</label>
+            <input type="text" className="input" placeholder="Building, Street Name" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div>
+              <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>CITY</label>
+              <input type="text" className="input" placeholder="Kochi" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+            </div>
+            <div>
+              <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>PIN CODE</label>
+              <input type="text" className="input" placeholder="682001" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+            </div>
+          </div>
+          <button type="button" onClick={() => setCurrentView('addresses')} className="btn btn-primary" style={{ backgroundColor: '#001d04', color: 'white', border: 'none', padding: '1.2rem', width: '100%', borderRadius: '16px', marginTop: '1rem', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}>
+            Save Address
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+
+  const EditAddressView = () => (
+    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
+        <button 
+          onClick={() => setCurrentView('addresses')}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
+        >
+          <ArrowLeft size={18} strokeWidth={2} />
+        </button>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Edit Saved Location</span>
+      </div>
+      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+        Refine your delivery details below. Ensure your sustainable journey reaches the right destination.
+      </p>
+      
+      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '32px', padding: '2.2rem', border: '1px solid rgba(0,0,0,0.02)' }}>
+        <form style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+          <div>
+            <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>ADDRESS TITLE</label>
+            <input type="text" className="input" defaultValue="Home" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+          </div>
+          <div>
+            <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>ADDRESS LINE 1</label>
+            <input type="text" className="input" defaultValue="Flat 402, Sylvan Heights" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div>
+              <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>CITY</label>
+              <input type="text" className="input" defaultValue="Kochi" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+            </div>
+            <div>
+              <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>PIN CODE</label>
+              <input type="text" className="input" defaultValue="682001" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+            </div>
+          </div>
+          <button type="button" onClick={() => setCurrentView('addresses')} className="btn btn-primary" style={{ backgroundColor: '#001d04', color: 'white', border: 'none', padding: '1.2rem', width: '100%', borderRadius: '16px', marginTop: '1rem', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}>
+            Update Location
+          </button>
+        </form>
+      </div>
+      <button style={{ width: '100%', padding: '1rem', marginTop: '1.5rem', color: '#E53E3E', background: 'none', border: 'none', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer' }}>Delete Location</button>
+    </div>
+  );
 
   const PaymentsView = () => (
-    <div className="animate-fade-in" style={{ padding: '2rem 1.5rem', maxWidth: '600px', margin: '0 auto', minHeight: '100vh', backgroundColor: '#F9F8F4' }}>
-      <BackButton title="Payment Methods" />
+    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
+        <button 
+          onClick={() => setCurrentView('main')}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
+        >
+          <ArrowLeft size={18} strokeWidth={2} />
+        </button>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Payments</span>
+      </div>
+      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+        Securely manage your preferred payment methods. Your financial integrity is our primary commitment.
+      </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <div style={{ backgroundColor: '#001d04', color: 'white', borderRadius: '24px', padding: '1.5rem', boxShadow: '0 10px 25px rgba(0,29,4,0.15)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2.5rem' }}>
-            <span style={{ fontWeight: 700, letterSpacing: '0.15em', fontStyle: 'italic' }}>VISA</span>
-            <span style={{ fontSize: '0.75rem', opacity: 0.8, backgroundColor: 'rgba(255,255,255,0.1)', padding: '0.2rem 0.6rem', borderRadius: '12px' }}>Default</span>
+        <div style={{ 
+          backgroundColor: '#EAE1D3', 
+          color: '#001d04', borderRadius: '24px', padding: '1.5rem 1.8rem', 
+          border: '1px solid rgba(0,0,0,0.05)',
+          position: 'relative', overflow: 'hidden'
+        }}>
+          <div style={{ position: 'absolute', right: '-10px', bottom: '-10px', opacity: 0.05 }}>
+             <CreditCard size={150} />
           </div>
-          <div style={{ fontSize: '1.3rem', letterSpacing: '0.25em', marginBottom: '1.5rem', fontFamily: 'monospace' }}>**** **** **** 4242</div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            <span>Expires 12/28</span>
-            <span>{user.name}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2.5rem', alignItems: 'center' }}>
+            <span style={{ fontWeight: 800, letterSpacing: '0.15em', fontStyle: 'italic', fontSize: '1.1rem' }}>VISA</span>
+            <div style={{ padding: '0.2rem 0.6rem', backgroundColor: '#001d04', color: 'white', borderRadius: '6px', fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.05em' }}>DEFAULT</div>
+          </div>
+          <div style={{ fontSize: '1.2rem', letterSpacing: '0.2em', marginBottom: '1.5rem', fontFamily: 'monospace', fontWeight: 700 }}>**** **** **** 4242</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
+               <span style={{ fontSize: '0.55rem', fontWeight: 900 }}>CARD HOLDER</span>
+               <span style={{ fontWeight: 700 }}>{user.name}</span>
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', textAlign: 'right' }}>
+               <span style={{ fontSize: '0.55rem', fontWeight: 900 }}>EXPIRES</span>
+               <span style={{ fontWeight: 700 }}>12 / 28</span>
+            </div>
           </div>
         </div>
-        <button style={{ backgroundColor: 'transparent', border: '2px dashed #D4CFC5', color: '#706F65', padding: '1.5rem', borderRadius: '24px', fontWeight: 600, cursor: 'pointer', transition: 'background-color 0.2s', ':hover': { backgroundColor: 'rgba(0,0,0,0.02)' } }}>
-          + Add Payment Method
+        <button 
+          onClick={() => setCurrentView('add-payment')}
+          style={{ backgroundColor: '#001d04', border: 'none', color: 'white', padding: '1.5rem', borderRadius: '24px', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}
+        >
+          + Register New Card
         </button>
       </div>
     </div>
   );
 
-  const NotificationsView = () => (
-    <div className="animate-fade-in" style={{ padding: '2rem 1.5rem', maxWidth: '600px', margin: '0 auto', minHeight: '100vh', backgroundColor: '#F9F8F4' }}>
-      <BackButton title="Notifications" />
-      <div style={{ backgroundColor: 'white', borderRadius: '32px', padding: '1.5rem', boxShadow: '0 4px 20px rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+  const AddPaymentView = () => (
+    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
+        <button 
+          onClick={() => setCurrentView('payments')}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
+        >
+          <ArrowLeft size={18} strokeWidth={2} />
+        </button>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Register New Card</span>
+      </div>
+      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+        Add a secure payment method for your next curated purchase. Built with industry-standard integrity.
+      </p>
+      
+      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '32px', padding: '2.2rem', border: '1px solid rgba(0,0,0,0.02)' }}>
+        <form style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
           <div>
-            <div style={{ fontWeight: 600, color: '#001d04', marginBottom: '0.25rem' }}>Email Order Updates</div>
-            <div style={{ fontSize: '0.85rem', color: '#706F65' }}>Receive receipts and tracking info</div>
+            <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>CARDHOLDER NAME</label>
+            <input type="text" className="input" placeholder="ASNAM SANAF" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
           </div>
-          <input type="checkbox" defaultChecked style={{ width: '1.5rem', height: '1.5rem', accentColor: '#001d04', cursor: 'pointer' }} />
-        </div>
-        <hr style={{ border: 'none', borderTop: '1px solid var(--color-border)', margin: 0 }} />
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <div style={{ fontWeight: 600, color: '#001d04', marginBottom: '0.25rem' }}>SMS Alerts</div>
-            <div style={{ fontSize: '0.85rem', color: '#706F65' }}>Out for delivery text messages</div>
+            <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>CARD NUMBER</label>
+            <input type="text" className="input" placeholder="0000 0000 0000 0000" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
           </div>
-          <input type="checkbox" defaultChecked style={{ width: '1.5rem', height: '1.5rem', accentColor: '#001d04', cursor: 'pointer' }} />
-        </div>
-        <hr style={{ border: 'none', borderTop: '1px solid var(--color-border)', margin: 0 }} />
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <div style={{ fontWeight: 600, color: '#001d04', marginBottom: '0.25rem' }}>Promotional Offers</div>
-            <div style={{ fontSize: '0.85rem', color: '#706F65' }}>Exclusive deals and new arrivals</div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+            <div>
+              <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>EXPIRY DATE</label>
+              <input type="text" className="input" placeholder="MM / YY" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+            </div>
+            <div>
+              <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>CVV</label>
+              <input type="password" size="3" className="input" placeholder="***" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+            </div>
           </div>
-          <input type="checkbox" style={{ width: '1.5rem', height: '1.5rem', accentColor: '#001d04', cursor: 'pointer' }} />
-        </div>
+          <button type="button" onClick={() => setCurrentView('payments')} className="btn btn-primary" style={{ backgroundColor: '#001d04', color: 'white', border: 'none', padding: '1.2rem', width: '100%', borderRadius: '16px', marginTop: '1rem', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}>
+            Register Card
+          </button>
+        </form>
       </div>
     </div>
   );
 
-  const OrdersView = () => (
-    <div className="animate-fade-in" style={{ padding: '2rem 1.5rem', maxWidth: '600px', margin: '0 auto', minHeight: '100vh', backgroundColor: '#F9F8F4' }}>
-      <BackButton title="Order History" />
-      {myOrders.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '3rem', color: '#706F65' }}>
-          <Package size={48} opacity={0.2} style={{ margin: '0 auto 1rem auto' }} />
-          <p>No orders yet.</p>
-        </div>
-      ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          {myOrders.map((order, idx) => (
-            <div key={order.id} style={{ backgroundColor: 'white', borderRadius: '24px', padding: '1.5rem', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--color-border)', paddingBottom: '1rem', marginBottom: '1rem' }}>
-                <div>
-                  <div style={{ fontWeight: 600, color: '#001d04', marginBottom: '0.2rem' }}>Order #{order.id.substring(0, 8)}</div>
-                  <div style={{ fontSize: '0.85rem', color: '#706F65' }}>{new Date(order.date).toLocaleDateString()}</div>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontWeight: 600, color: '#001d04', marginBottom: '0.3rem', fontSize: '1.1rem' }}>${order.total.toFixed(2)}</div>
-                  <div style={{ fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.05em', padding: '0.3rem 0.6rem', backgroundColor: order.status === 'Processing' ? '#FBF5EC' : '#e2ecd6', color: order.status === 'Processing' ? '#706F65' : '#436132', borderRadius: '12px', fontWeight: 600, display: 'inline-block' }}>{order.status}</div>
-                </div>
+  const NotificationsView = () => (
+    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
+        <button 
+          onClick={() => setCurrentView('main')}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
+        >
+          <ArrowLeft size={18} strokeWidth={2} />
+        </button>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Connectivity</span>
+      </div>
+      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+        Tailor your LuqmanGo experience. Choose how and when you receive updates on orders, curated drops, and exclusive offers.
+      </p>
+      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '24px', padding: '1.5rem', border: '1px solid rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+        {[
+          { icon: <Bell size={16} />, title: 'Order Status', desc: 'Real-time updates on delivery' },
+          { icon: <Star size={16} />, title: 'Exclusive Offers', desc: 'Discounts and curated drops' },
+          { icon: <TreePine size={16} />, title: 'Planet Impact', desc: 'Monthly contribution reports' }
+        ].map((item, idx) => (
+          <div key={idx} style={{ padding: '1rem', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: idx !== 2 ? '1px solid #F3F2EE' : 'none' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ width: '36px', height: '36px', borderRadius: '10px', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {item.icon}
               </div>
-              <button style={{ width: '100%', background: 'none', border: '1.5px solid var(--color-border)', borderRadius: '16px', padding: '1rem', color: '#001d04', fontWeight: 600, cursor: 'pointer', transition: 'background-color 0.2s', ':hover': { backgroundColor: 'rgba(0,0,0,0.02)' } }}>
-                Track Order
-              </button>
+              <div>
+                <div style={{ fontWeight: 700, color: '#001d04', fontSize: '0.9rem' }}>{item.title}</div>
+                <div style={{ fontSize: '0.75rem', color: '#706F65' }}>{item.desc}</div>
+              </div>
             </div>
-          ))}
-        </div>
-      )}
+            <div style={{ width: '40px', height: '22px', backgroundColor: idx === 0 ? '#436132' : '#EAE1D3', borderRadius: '20px', padding: '2px', position: 'relative', cursor: 'pointer', transition: 'background-color 0.2s' }}>
+               <div style={{ width: '18px', height: '18px', backgroundColor: 'white', borderRadius: '50%', position: 'absolute', right: idx === 0 ? '2px' : 'auto', left: idx !== 0 ? '2px' : 'auto', transition: 'all 0.2s', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} />
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 
+  const OrdersView = () => {
+    const [selectedYear, setSelectedYear] = useState('All');
+    const [yearDropdownOpen, setYearDropdownOpen] = useState(false);
+    const [activeInvoice, setActiveInvoice] = useState(null);
+    const years = ['All', '2023', '2022', '2021'];
+
+    const inTransitOrders = [
+      { id: 'LG-99281', name: 'Handcrafted Glass Vessel', status: 'ARRIVING BY', date: '10 Oct 2023', year: '2023', image: '/images/products/glass-vessel.jpg' },
+      { id: 'LG-99245', name: 'Organic Fiber Tote', status: 'ARRIVING BY', date: '12 Oct 2023', year: '2023', image: '/images/products/tote.jpg' }
+    ];
+
+    const allPastOrders = [
+      { id: 'LG-88712', name: 'Teak Wood Servers & 2 others', status: 'DELIVERED', date: '15 SEP 2023', year: '2023', price: 142.00, items: [{ name: 'Teak Wood Servers', qty: 1, price: 68.00 }, { name: 'Organic Linen Napkins', qty: 2, price: 24.00 }, { name: 'Olive Oil Dispenser', qty: 1, price: 50.00 }] },
+      { id: 'LG-85600', name: 'Cedarwood Soy Candle', status: 'DELIVERED', date: '02 AUG 2023', year: '2023', price: 32.00, items: [{ name: 'Cedarwood Soy Candle', qty: 1, price: 32.00 }] },
+      { id: 'LG-82199', name: 'Sculptural Bone Vase', status: 'DELIVERED', date: '28 JUL 2023', year: '2023', price: 89.00, items: [{ name: 'Sculptural Bone Vase', qty: 1, price: 89.00 }] },
+      { id: 'LG-72100', name: 'Handwoven Jute Rug', status: 'DELIVERED', date: '12 NOV 2022', year: '2022', price: 215.00, items: [{ name: 'Handwoven Jute Rug', qty: 1, price: 215.00 }] },
+      { id: 'LG-68400', name: 'Artisan Ceramic Set', status: 'DELIVERED', date: '05 MAR 2022', year: '2022', price: 76.00, items: [{ name: 'Artisan Ceramic Bowl', qty: 2, price: 38.00 }] }
+    ];
+
+    const pastOrders = selectedYear === 'All' ? allPastOrders : allPastOrders.filter(o => o.year === selectedYear);
+
+    // Invoice Detail View
+    if (activeInvoice) {
+      const order = allPastOrders.find(o => o.id === activeInvoice);
+      if (!order) { setActiveInvoice(null); return null; }
+      return (
+        <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
+            <button 
+              onClick={() => setActiveInvoice(null)}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
+            >
+              <ArrowLeft size={18} strokeWidth={2} />
+            </button>
+            <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Invoice</span>
+          </div>
+          <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+            Your order receipt and itemized billing details for record-keeping and returns.
+          </p>
+
+          <div style={{ backgroundColor: '#EAE1D3', borderRadius: '24px', padding: '2rem', border: '1px solid rgba(0,0,0,0.02)' }}>
+            {/* Invoice Header */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem' }}>
+              <div>
+                <div style={{ fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.15em', color: '#706F65', marginBottom: '0.4rem' }}>INVOICE</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#001d04' }}>#{order.id}</div>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.15em', color: '#706F65', marginBottom: '0.4rem' }}>DATE</div>
+                <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#001d04' }}>{order.date}</div>
+              </div>
+            </div>
+
+            {/* Status Badge */}
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', backgroundColor: '#E4EDDB', color: '#436132', padding: '0.35rem 0.8rem', borderRadius: '8px', fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.05em', marginBottom: '2rem' }}>
+              <PackageCheck size={12} /> {order.status}
+            </div>
+
+            {/* Line Items */}
+            <div style={{ marginBottom: '1.5rem' }}>
+              <div style={{ fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.15em', color: '#706F65', marginBottom: '1rem' }}>ITEMS</div>
+              {order.items.map((item, i) => (
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.8rem 0', borderBottom: i < order.items.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none' }}>
+                  <div>
+                    <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#001d04' }}>{item.name}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#706F65', marginTop: '0.15rem' }}>Qty: {item.qty}</div>
+                  </div>
+                  <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#001d04' }}>${item.price.toFixed(2)}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Totals */}
+            <div style={{ borderTop: '1px solid rgba(0,0,0,0.08)', paddingTop: '1rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.85rem', color: '#706F65' }}>
+                <span>Subtotal</span>
+                <span>${order.price.toFixed(2)}</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.85rem', color: '#706F65' }}>
+                <span>Shipping</span>
+                <span style={{ color: '#436132', fontWeight: 600 }}>Free</span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.8rem', paddingTop: '0.8rem', borderTop: '1px solid rgba(0,0,0,0.08)', fontSize: '1.1rem', fontWeight: 700, color: '#001d04' }}>
+                <span>Total</span>
+                <span>${order.price.toFixed(2)}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Shipped To */}
+          <div style={{ marginTop: '1.5rem', backgroundColor: '#FBF5EC', borderRadius: '16px', padding: '1.5rem', border: '1px solid rgba(0,0,0,0.02)' }}>
+            <div style={{ fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.15em', color: '#706F65', marginBottom: '0.8rem' }}>SHIPPED TO</div>
+            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#001d04', marginBottom: '0.2rem' }}>Asnam Sanaf</div>
+            <div style={{ fontSize: '0.8rem', color: '#706F65', lineHeight: 1.6 }}>
+              Flat 402, Sylvan Heights<br/>
+              Central District, Luqman Street<br/>
+              Kochi, Kerala 682001
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+        <div style={{ padding: '0' }}>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
+            <button 
+              onClick={() => setCurrentView('main')}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
+            >
+              <ArrowLeft size={18} strokeWidth={2} />
+            </button>
+            <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>My Orders</span>
+          </div>
+          <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+            A curated history of your sustainable journeys. Track your ongoing deliveries or revisit past eco-friendly purchases.
+          </p>
+
+          {/* In Transit */}
+          <div style={{ marginBottom: '3rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.2rem' }}>
+              <Truck size={18} color="#436132" fill="#436132" fillOpacity={0.2} />
+              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#001d04' }}>In Transit</h3>
+            </div>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+              {inTransitOrders.map((order, idx) => (
+                <div key={idx} style={{ 
+                  backgroundColor: '#EAE1D3', 
+                  borderRadius: '16px', padding: '1.2rem', 
+                  display: 'flex', gap: '1.2rem',
+                  border: '1px solid rgba(0,0,0,0.02)'
+                }}>
+                  <div style={{ width: '70px', height: '70px', borderRadius: '10px', overflow: 'hidden', backgroundColor: 'rgba(255,255,255,0.4)' }}>
+                    <div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0,29,4,0.05)' }}></div>
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#001d04', marginBottom: '0.2rem' }}>{order.name}</h4>
+                    <div style={{ fontSize: '0.8rem', color: '#706F65', marginBottom: '0.8rem' }}>Order #{order.id}</div>
+                    
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                      <span style={{ fontSize: '0.65rem', fontWeight: 900, color: '#436132', letterSpacing: '0.06em' }}>{order.status}</span>
+                      <span style={{ fontWeight: 700, color: '#001d04', fontSize: '0.9rem' }}>{order.date}</span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Order History */}
+          <div style={{ marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#001d04' }}>Order History</h3>
+              
+              {/* Year Filter Dropdown */}
+              <div style={{ position: 'relative' }}>
+                <button 
+                  onClick={() => setYearDropdownOpen(!yearDropdownOpen)}
+                  style={{ 
+                    display: 'flex', alignItems: 'center', gap: '0.3rem', 
+                    color: '#706F65', fontSize: '0.8rem', fontWeight: 600,
+                    background: 'none', border: '1px solid rgba(0,0,0,0.08)', 
+                    padding: '0.4rem 0.8rem', borderRadius: '10px', cursor: 'pointer',
+                    backgroundColor: yearDropdownOpen ? '#EAE1D3' : 'transparent',
+                    transition: 'all 0.2s'
+                  }}
+                >
+                  {selectedYear === 'All' ? 'Filter by Year' : selectedYear} <ChevronDown size={14} style={{ transform: yearDropdownOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
+                </button>
+                {yearDropdownOpen && (
+                  <div style={{ 
+                    position: 'absolute', top: '100%', right: 0, marginTop: '0.4rem',
+                    backgroundColor: 'white', borderRadius: '14px', 
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.1)', border: '1px solid rgba(0,0,0,0.04)',
+                    overflow: 'hidden', zIndex: 20, minWidth: '130px'
+                  }}>
+                    {years.map(year => (
+                      <button 
+                        key={year}
+                        onClick={() => { setSelectedYear(year); setYearDropdownOpen(false); }}
+                        style={{ 
+                          display: 'block', width: '100%', textAlign: 'left',
+                          padding: '0.7rem 1rem', border: 'none', cursor: 'pointer',
+                          fontSize: '0.85rem', fontWeight: selectedYear === year ? 700 : 500,
+                          color: selectedYear === year ? '#001d04' : '#706F65',
+                          backgroundColor: selectedYear === year ? '#FBF5EC' : 'transparent',
+                          transition: 'background-color 0.15s'
+                        }}
+                        onMouseOver={(e) => { if (selectedYear !== year) e.currentTarget.style.backgroundColor = '#FAF8F5'; }}
+                        onMouseOut={(e) => { if (selectedYear !== year) e.currentTarget.style.backgroundColor = 'transparent'; }}
+                      >
+                        {year === 'All' ? 'All Years' : year}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {pastOrders.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '3rem 1rem', color: '#706F65', fontSize: '0.9rem' }}>
+                No orders found for {selectedYear}.
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+                {pastOrders.map((order, idx) => (
+                  <div key={idx} style={{ display: 'flex', gap: '1.2rem' }}>
+                    <div style={{ width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', backgroundColor: '#EAE1D3' }}>
+                      <div style={{ width: '100%', height: '100%', backgroundColor: '#D4CFC5' }}></div>
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#706F65', marginBottom: '0.3rem' }}>
+                        {order.status} • {order.date}
+                      </div>
+                      <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#001d04', marginBottom: '0.2rem' }}>{order.name}</h4>
+                      <div style={{ fontSize: '0.75rem', color: '#706F65', marginBottom: '0.8rem' }}>Order #{order.id} • ${order.price.toFixed(2)}</div>
+                      
+                      <div style={{ display: 'flex', gap: '0.8rem' }}>
+                        <button 
+                          onClick={() => setActiveInvoice(order.id)}
+                          style={{ 
+                            backgroundColor: 'white', border: '1px solid #D4CFC5', 
+                            color: '#001d04', padding: '0.4rem 1rem', 
+                            borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600,
+                            cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem',
+                            transition: 'all 0.2s'
+                          }}
+                          onMouseOver={(e) => e.currentTarget.style.borderColor = '#001d04'}
+                          onMouseOut={(e) => e.currentTarget.style.borderColor = '#D4CFC5'}
+                        >
+                          <FileText size={13} /> Invoice
+                        </button>
+                        <button 
+                          onClick={() => navigate('/')}
+                          style={{ 
+                            backgroundColor: '#001d04', border: 'none', 
+                            color: 'white', padding: '0.4rem 1rem', 
+                            borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600,
+                            cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem',
+                            transition: 'all 0.2s'
+                          }}
+                          onMouseOver={(e) => e.currentTarget.style.opacity = '0.85'}
+                          onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
+                        >
+                          <RefreshCw size={13} /> Buy Again
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const HelpCenterView = () => (
+    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
+        <button 
+          onClick={() => setCurrentView('main')}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
+        >
+          <ArrowLeft size={18} strokeWidth={2} />
+        </button>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Curator Support</span>
+      </div>
+      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+        Your direct line to the LuqmanGo concierge. We’re here 24/7 to ensure your journey is effortless and sustainable.
+      </p>
+      <div style={{ marginBottom: '2rem' }}>
+         <div style={{ backgroundColor: '#EAE1D3', borderRadius: '16px', padding: '1rem 1.2rem', display: 'flex', alignItems: 'center', gap: '0.8rem', border: '1px solid rgba(0,0,0,0.03)' }}>
+            <Link to="#" style={{ color: '#D4CFC5' }}><ChevronRight size={18} style={{ transform: 'rotate(90deg)' }} /></Link>
+            <input type="text" placeholder="Search for guidance..." style={{ border: 'none', width: '100%', fontSize: '0.95rem', outline: 'none', color: '#001d04', backgroundColor: 'transparent' }} />
+         </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '2.5rem' }}>
+        {[
+          { label: 'Orders', count: '12 articles' },
+          { label: 'Returns', count: '8 articles' },
+          { label: 'Shipping', count: '5 articles' },
+          { label: 'Account', count: '10 articles' }
+        ].map((cat, idx) => (
+          <div key={idx} style={{ backgroundColor: 'white', padding: '1.5rem 1.2rem', borderRadius: '20px', cursor: 'pointer', transition: 'transform 0.2s', border: '1px solid rgba(0,0,0,0.03)', boxShadow: '0 4px 15px rgba(0,0,0,0.02)' }}>
+             <h4 style={{ fontWeight: 700, color: '#001d04', marginBottom: '0.2rem', fontSize: '1rem' }}>{cat.label}</h4>
+             <p style={{ fontSize: '0.7rem', color: '#706F65', fontWeight: 500 }}>{cat.count}</p>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ backgroundColor: '#001d04', borderRadius: '32px', padding: '2.2rem 1.8rem', color: '#F7F3ED', textAlign: 'center', boxShadow: '0 15px 35px rgba(0,29,4,0.15)' }}>
+         <h4 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.8rem', color: '#FFFFFF' }}>Need direct assistance?</h4>
+         <p style={{ fontSize: '0.9rem', opacity: 0.9, marginBottom: '1.8rem', fontWeight: 400, color: '#F7F3ED', lineHeight: 1.5 }}>Our concierge team is available 24/7 for our gold members.</p>
+         
+         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+           <button className="btn" style={{ backgroundColor: '#FFFFFF', color: '#001d04', width: '100%', borderRadius: '14px', padding: '1rem', fontWeight: 700, fontSize: '0.9rem', border: 'none', cursor: 'pointer' }}>
+             Connect via Live Chat
+           </button>
+           
+           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.8rem' }}>
+             <a href="https://wa.me/919876543210" target="_blank" rel="noreferrer" style={{ textDecoration: 'none', backgroundColor: 'rgba(255,255,255,0.15)', color: '#FFFFFF', borderRadius: '14px', padding: '0.85rem', fontWeight: 700, fontSize: '0.8rem', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+               WhatsApp
+             </a>
+             <a href="mailto:curator@luqmango.com" style={{ textDecoration: 'none', backgroundColor: 'rgba(255,255,255,0.15)', color: '#FFFFFF', borderRadius: '14px', padding: '0.85rem', fontWeight: 700, fontSize: '0.8rem', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem' }}>
+               Email Us
+             </a>
+           </div>
+         </div>
+      </div>
+    </div>
+  );
+
+  const PrivacyPolicyView = () => (
+    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
+        <button 
+          onClick={() => setCurrentView('main')}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
+        >
+          <ArrowLeft size={18} strokeWidth={2} />
+        </button>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Legal & Integrity</span>
+      </div>
+      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+        Committed to transparency and your digital safety. Review our policies, terms, and how we protect your information.
+      </p>
+      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '24px', padding: '2rem 1.5rem', color: '#001d04', border: '1px solid rgba(0,0,0,0.02)' }}>
+         <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', letterSpacing: '0.1em', marginBottom: '1.5rem' }}>UPDATED MARCH 2024</div>
+         
+         {[
+           { h: "Commitment to Privacy", p: "We treat your data with the same respect we treat our artisans. This policy outlines how we source, use, and protect your identity." },
+           { h: "Data Sourcing", p: "We only collect information essential for your delivery experience: shipping coordination, secure gateways, and preferred metrics." },
+           { h: "Zero-Leads Policy", p: "We never sell your data to third-party advertisers. Your browsing history remains private perfectly." }
+         ].map((section, idx) => (
+           <div key={idx} style={{ marginBottom: '2rem' }}>
+              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.6rem', letterSpacing: '-0.01em' }}>{section.h}</h3>
+              <p style={{ fontSize: '0.9rem', lineHeight: 1.7, color: '#706F65', fontWeight: 400 }}>{section.p}</p>
+           </div>
+         ))}
+
+         <div style={{ marginTop: '2.5rem', padding: '1.2rem', backgroundColor: '#FBF5EC', borderRadius: '16px' }}>
+            <p style={{ fontSize: '0.8rem', color: '#706F65', margin: 0, fontStyle: 'italic', fontWeight: 500 }}>Questions? Concierge is at privacy@luqmango.com</p>
+         </div>
+      </div>
+    </div>
+  );
 
   // Render Sub-view if not main
   if (currentView === 'personal') return <PersonalInfoView />;
   if (currentView === 'addresses') return <AddressesView />;
+  if (currentView === 'add-address') return <AddAddressView />;
+  if (currentView === 'edit-address') return <EditAddressView />;
   if (currentView === 'payments') return <PaymentsView />;
+  if (currentView === 'add-payment') return <AddPaymentView />;
   if (currentView === 'notifications') return <NotificationsView />;
   if (currentView === 'orders') return <OrdersView />;
+  if (currentView === 'help') return <HelpCenterView />;
+  if (currentView === 'privacy') return <PrivacyPolicyView />;
 
   // --- Main Dashboard View ---
   return (
-    <div className="animate-fade-in" style={{ backgroundColor: '#FAF8F5', minHeight: '100vh', paddingBottom: '4rem' }}>
-      <div style={{ maxWidth: '600px', margin: '0 auto', padding: '3rem 1.5rem' }}>
+    <div className="animate-fade-in" style={{ backgroundColor: 'var(--color-bg-main)', minHeight: '100vh', paddingBottom: '4rem' }}>
+      <div style={{ maxWidth: '500px', margin: '0 auto', padding: '1rem' }}>
         
         {/* Header Section */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2.5rem' }}>
           <div style={{ position: 'relative', marginBottom: '1rem' }}>
-            {/* Avatar image replaced with initials for now, styled precisely to match ref */}
+            {/* Avatar container */}
             <div style={{ 
-              width: '110px', height: '110px', borderRadius: '50%', backgroundColor: '#001d04', 
+              width: '90px', height: '90px', borderRadius: '50%', backgroundColor: '#001d04', 
               color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '2.8rem', fontWeight: 400, border: '4px solid #FAF8F5', boxShadow: '0 0 0 2px rgba(0,0,0,0.1)'
+              fontSize: '2.2rem', fontWeight: 400, border: '3px solid #FAF8F5', boxShadow: '0 8px 25px rgba(0,29,4,0.06)'
             }}>
-              <User size={50} strokeWidth={1} />
+              <User size={40} strokeWidth={1.5} />
             </div>
           </div>
           
-          <h1 style={{ fontSize: '1.8rem', fontWeight: 600, color: '#001d04', marginBottom: '0.2rem', letterSpacing: '-0.02em' }}>{user.name}</h1>
+          <h1 style={{ fontSize: '1.6rem', fontWeight: 700, color: '#001d04', marginBottom: '0.2rem', letterSpacing: '-0.02em' }}>{user.name}</h1>
+          <div style={{ backgroundColor: '#E4EDDB', color: '#436132', padding: '0.3rem 0.8rem', borderRadius: '12px', fontSize: '0.65rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.4rem', letterSpacing: '0.05em' }}>
+             <Star size={10} fill="currentColor" /> GOLD CURATOR
+          </div>
         </div>
-
 
         {/* Account Management Menu */}
-        <div style={{ fontSize: '0.6rem', fontWeight: 700, letterSpacing: '0.15em', color: '#706F65', marginBottom: '1rem', marginLeft: '0.5rem' }}>
+        <div style={{ fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.15em', color: '#706F65', marginBottom: '0.8rem', marginLeft: '0.6rem' }}>
           ACCOUNT MANAGEMENT
         </div>
-        <div style={{ backgroundColor: 'white', borderRadius: '32px', padding: '0.5rem', boxShadow: '0 4px 20px rgba(0,0,0,0.02)', marginBottom: '2.5rem' }}>
+        <div style={{ backgroundColor: 'white', borderRadius: '24px', padding: '0.4rem', boxShadow: '0 8px 30px rgba(0,0,0,0.02)', marginBottom: '2.5rem', border: '1px solid rgba(0,0,0,0.03)' }}>
           
-          <button onClick={() => setCurrentView('orders')} style={{ width: '100%', background: 'none', border: 'none', display: 'flex', alignItems: 'center', padding: '1.25rem 1rem', cursor: 'pointer', borderBottom: '1px solid var(--color-border)' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem' }}>
+          <button onClick={() => setCurrentView('orders')} style={{ width: '100%', background: 'none', border: 'none', display: 'flex', alignItems: 'center', padding: '1rem', cursor: 'pointer', borderBottom: '1px solid #F3F2EE', transition: 'background-color 0.2s', borderRadius: '16px 16px 0 0' }}>
+            <div style={{ width: '38px', height: '38px', borderRadius: '12px', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem' }}>
               <Package size={18} color="#001d04" />
             </div>
             <div style={{ flexGrow: 1, textAlign: 'left' }}>
-              <div style={{ fontWeight: 600, color: '#001d04', fontSize: '0.9rem', marginBottom: '0.1rem' }}>My Orders</div>
-              <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 300 }}>History and tracking</div>
+              <div style={{ fontWeight: 700, color: '#001d04', fontSize: '0.95rem', marginBottom: '0.1rem' }}>My Orders</div>
+              <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 400 }}>History and tracking</div>
             </div>
-            <ChevronRight size={16} color="#D4CFC5" />
+            <ChevronRight size={16} color="#C5BBB0" />
           </button>
 
-          <button onClick={() => setCurrentView('addresses')} style={{ width: '100%', background: 'none', border: 'none', display: 'flex', alignItems: 'center', padding: '1.25rem 1rem', cursor: 'pointer', borderBottom: '1px solid var(--color-border)' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem' }}>
+          <button onClick={() => setCurrentView('addresses')} style={{ width: '100%', background: 'none', border: 'none', display: 'flex', alignItems: 'center', padding: '1rem', cursor: 'pointer', borderBottom: '1px solid #F3F2EE', transition: 'background-color 0.2s' }}>
+            <div style={{ width: '38px', height: '38px', borderRadius: '12px', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem' }}>
               <MapPin size={18} color="#001d04" />
             </div>
             <div style={{ flexGrow: 1, textAlign: 'left' }}>
-              <div style={{ fontWeight: 600, color: '#001d04', fontSize: '0.9rem', marginBottom: '0.1rem' }}>Shipping Addresses</div>
-              <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 300 }}>2 saved locations</div>
+              <div style={{ fontWeight: 700, color: '#001d04', fontSize: '0.95rem', marginBottom: '0.1rem' }}>Shipping Addresses</div>
+              <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 400 }}>2 saved locations</div>
             </div>
-            <ChevronRight size={16} color="#D4CFC5" />
+            <ChevronRight size={16} color="#C5BBB0" />
           </button>
 
-          <button onClick={() => setCurrentView('payments')} style={{ width: '100%', background: 'none', border: 'none', display: 'flex', alignItems: 'center', padding: '1.25rem 1rem', cursor: 'pointer', borderBottom: '1px solid var(--color-border)' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem' }}>
+          <button onClick={() => setCurrentView('payments')} style={{ width: '100%', background: 'none', border: 'none', display: 'flex', alignItems: 'center', padding: '1rem', cursor: 'pointer', borderBottom: '1px solid #F3F2EE', transition: 'background-color 0.2s' }}>
+            <div style={{ width: '38px', height: '38px', borderRadius: '12px', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem' }}>
               <CreditCard size={18} color="#001d04" />
             </div>
             <div style={{ flexGrow: 1, textAlign: 'left' }}>
-              <div style={{ fontWeight: 600, color: '#001d04', fontSize: '0.9rem', marginBottom: '0.1rem' }}>Payment Methods</div>
-              <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 300 }}>Visa ending in 4242</div>
+              <div style={{ fontWeight: 700, color: '#001d04', fontSize: '0.95rem', marginBottom: '0.1rem' }}>Payment Methods</div>
+              <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 400 }}>Visa ending in 4242</div>
             </div>
-            <ChevronRight size={16} color="#D4CFC5" />
+            <ChevronRight size={16} color="#C5BBB0" />
           </button>
 
-          <button onClick={() => setCurrentView('personal')} style={{ width: '100%', background: 'none', border: 'none', display: 'flex', alignItems: 'center', padding: '1.25rem 1rem', cursor: 'pointer', borderBottom: '1px solid var(--color-border)' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem' }}>
+          <button onClick={() => setCurrentView('personal')} style={{ width: '100%', background: 'none', border: 'none', display: 'flex', alignItems: 'center', padding: '1rem', cursor: 'pointer', borderBottom: '1px solid #F3F2EE', transition: 'background-color 0.2s' }}>
+            <div style={{ width: '38px', height: '38px', borderRadius: '12px', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem' }}>
               <User size={18} color="#001d04" />
             </div>
             <div style={{ flexGrow: 1, textAlign: 'left' }}>
-              <div style={{ fontWeight: 600, color: '#001d04', fontSize: '0.9rem', marginBottom: '0.1rem' }}>Personal Information</div>
-              <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 300 }}>Identity and contact</div>
+              <div style={{ fontWeight: 700, color: '#001d04', fontSize: '0.95rem', marginBottom: '0.1rem' }}>Personal Information</div>
+              <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 400 }}>Identity and contact</div>
             </div>
-            <ChevronRight size={16} color="#D4CFC5" />
+            <ChevronRight size={16} color="#C5BBB0" />
           </button>
 
-          <button onClick={() => setCurrentView('notifications')} style={{ width: '100%', background: 'none', border: 'none', display: 'flex', alignItems: 'center', padding: '1.25rem 1rem', cursor: 'pointer' }}>
-            <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem' }}>
+          <button onClick={() => setCurrentView('notifications')} style={{ width: '100%', background: 'none', border: 'none', display: 'flex', alignItems: 'center', padding: '1rem', cursor: 'pointer', borderRadius: '0 0 16px 16px', transition: 'background-color 0.2s' }}>
+            <div style={{ width: '38px', height: '38px', borderRadius: '12px', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem' }}>
               <Bell size={18} color="#001d04" />
             </div>
             <div style={{ flexGrow: 1, textAlign: 'left' }}>
-              <div style={{ fontWeight: 600, color: '#001d04', fontSize: '0.9rem', marginBottom: '0.1rem' }}>Notifications</div>
-              <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 300 }}>Email and SMS alerts</div>
+              <div style={{ fontWeight: 700, color: '#001d04', fontSize: '0.95rem', marginBottom: '0.1rem' }}>Notifications</div>
+              <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 400 }}>Email and SMS alerts</div>
             </div>
-            <ChevronRight size={16} color="#D4CFC5" />
+            <ChevronRight size={16} color="#C5BBB0" />
           </button>
 
         </div>
 
         {/* Footer Actions */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', marginBottom: '2.5rem', padding: '0 1rem' }}>
-          <button style={{ background: 'none', border: 'none', display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', color: '#001d04', fontWeight: 500, fontSize: '0.85rem' }}>
-            <HelpCircle size={16} /> Help Center
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', marginBottom: '2.5rem', padding: '0 1rem' }}>
+          <button onClick={() => setCurrentView('help')} style={{ background: 'none', border: 'none', display: 'flex', alignItems: 'center', gap: '0.8rem', cursor: 'pointer', color: '#001d04', fontWeight: 600, fontSize: '0.9rem', transition: 'opacity 0.2s', ':hover': { opacity: 0.7 } }}>
+            <HelpCircle size={18} /> Help Center
           </button>
-          <button style={{ background: 'none', border: 'none', display: 'flex', alignItems: 'center', gap: '1rem', cursor: 'pointer', color: '#001d04', fontWeight: 500, fontSize: '0.85rem' }}>
-            <ShieldCheck size={16} /> Privacy Policy
+          <button onClick={() => setCurrentView('privacy')} style={{ background: 'none', border: 'none', display: 'flex', alignItems: 'center', gap: '0.8rem', cursor: 'pointer', color: '#001d04', fontWeight: 600, fontSize: '0.9rem', transition: 'opacity 0.2s', ':hover': { opacity: 0.7 } }}>
+            <ShieldCheck size={18} /> Privacy Policy
           </button>
         </div>
 
         {/* Logout Button */}
-        <button onClick={handleLogout} style={{ width: '100%', backgroundColor: '#001d04', color: 'white', borderRadius: '24px', padding: '1.25rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', fontSize: '0.95rem', fontWeight: 600, border: 'none', cursor: 'pointer' }}>
-          <LogOut size={18} /> Logout
+        <button onClick={handleLogout} className="btn" style={{ width: '100%', backgroundColor: '#001d04', color: 'white', borderRadius: '16px', padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', fontSize: '0.9rem', fontWeight: 700, border: 'none', cursor: 'pointer', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}>
+          <LogOut size={18} /> Sign Out
         </button>
 
       </div>

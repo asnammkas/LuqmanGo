@@ -1,8 +1,9 @@
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
 import ProductCard from '../../components/storefront/ProductCard';
 import Footer from '../../components/storefront/Footer';
-import { SlidersHorizontal, ArrowUpDown } from 'lucide-react';
+import { SlidersHorizontal, ArrowUpDown, Check, ArrowLeft } from 'lucide-react';
 
 // Default descriptions for common categories to make them feel premium
 const categoryDescriptions = {
@@ -17,55 +18,68 @@ const categoryDescriptions = {
 const CategoryPage = () => {
   const { categoryName } = useParams();
   const { products, isProductsLoading, productsError } = useShop();
+  const [sortBy, setSortBy] = useState('default');
+  const [filterBy, setFilterBy] = useState('all');
+  const [showSort, setShowSort] = useState(false);
+  const [showFilter, setShowFilter] = useState(false);
 
   // If navigating to "All" or a specific category
   const activeCategory = categoryName || 'All';
   
   // Filter products based on URL param
-  const categoryProducts = activeCategory === 'All' 
+  let categoryProducts = activeCategory === 'All' 
     ? products 
     : products.filter(p => p.category === activeCategory);
 
+  // Apply filter
+  if (filterBy === 'in-stock') {
+    categoryProducts = categoryProducts.filter(p => p.stock > 0);
+  } else if (filterBy === 'featured') {
+    categoryProducts = categoryProducts.filter(p => p.featured);
+  }
+
+  // Apply sorting
+  if (sortBy === 'price-low') {
+    categoryProducts = [...categoryProducts].sort((a, b) => a.price - b.price);
+  } else if (sortBy === 'price-high') {
+    categoryProducts = [...categoryProducts].sort((a, b) => b.price - a.price);
+  } else if (sortBy === 'newest') {
+    categoryProducts = [...categoryProducts].reverse();
+  }
+
   const description = categoryDescriptions[activeCategory] || 'Explore our thoughtfully curated collection focusing on quality craftsmanship and timeless design.';
 
+  const sortOptions = [
+    { value: 'default', label: 'Default' },
+    { value: 'price-low', label: 'Price: Low → High' },
+    { value: 'price-high', label: 'Price: High → Low' },
+    { value: 'newest', label: 'Newest First' },
+  ];
+
+  const filterOptions = [
+    { value: 'all', label: 'All Items' },
+    { value: 'in-stock', label: 'In Stock' },
+    { value: 'featured', label: 'Featured Only' },
+  ];
+
   return (
-    <div>
-      <div className="container" style={{ padding: '1.5rem 1.5rem 2rem' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', width: '100%', boxSizing: 'border-box', margin: '0 auto', flex: 1 }}>
         
-        {/* Editorial Header */}
-        <div style={{ marginBottom: '3rem', maxWidth: '800px' }}>
-          <h4 style={{ 
-            fontSize: '0.7rem', 
-            fontWeight: 600, 
-            letterSpacing: '0.15em', 
-            textTransform: 'uppercase', 
-            color: 'var(--color-text-sage)',
-            marginBottom: '0.5rem'
-          }}>
-            {activeCategory === 'All' ? 'The Collection' : 'Selected Collection'}
-          </h4>
-          
-          <h1 style={{ 
-            fontSize: 'clamp(2.5rem, 6vw, 4rem)', 
-            fontWeight: 600, 
-            color: 'var(--color-text-main)', 
-            letterSpacing: '-0.02em',
-            lineHeight: 1.1,
-            marginBottom: '1.5rem'
-          }}>
-            {activeCategory}
-          </h1>
-          
-          <p style={{ 
-            fontSize: '1.1rem', 
-            lineHeight: 1.6, 
-            color: 'var(--color-text-muted)',
-            fontWeight: 300,
-            maxWidth: '650px'
-          }}>
-            {description}
-          </p>
+        {/* Editorial Header - Unified Pattern */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
+          <Link 
+            to="/"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
+          >
+            <ArrowLeft size={18} strokeWidth={2} />
+          </Link>
+          <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>{activeCategory}</span>
         </div>
+        <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+          {description}
+        </p>
+
 
         {/* Filters Row */}
         <div style={{ 
@@ -73,40 +87,104 @@ const CategoryPage = () => {
           gap: '12px',
           marginBottom: '3rem',
           borderBottom: '1px solid var(--color-border)',
-          paddingBottom: '2rem'
+          paddingBottom: '2rem',
+          position: 'relative'
         }}>
-          <button style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '8px',
-            backgroundColor: '#F2E7D2', 
-            border: 'none', 
-            padding: '0.75rem 1.25rem',
-            borderRadius: 'var(--radius-md)', 
-            fontSize: '0.8rem', 
-            fontWeight: 600,
-            cursor: 'pointer', 
-            color: '#333',
-            transition: 'all 0.2s ease',
-          }}>
-            <SlidersHorizontal size={14} /> Filter
-          </button>
-          <button style={{ 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '8px',
-            backgroundColor: '#F2E7D2', 
-            border: 'none', 
-            padding: '0.75rem 1.25rem',
-            borderRadius: 'var(--radius-md)', 
-            fontSize: '0.8rem', 
-            fontWeight: 600,
-            cursor: 'pointer', 
-            color: '#333',
-            transition: 'all 0.2s ease',
-          }}>
-            <ArrowUpDown size={14} /> Sort
-          </button>
+          {/* Filter Button */}
+          <div style={{ position: 'relative' }}>
+            <button 
+              onClick={() => { setShowFilter(!showFilter); setShowSort(false); }}
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px',
+                backgroundColor: filterBy !== 'all' ? '#001d04' : '#F2E7D2', 
+                border: 'none', 
+                padding: '0.75rem 1.25rem',
+                borderRadius: 'var(--radius-md)', 
+                fontSize: '0.8rem', 
+                fontWeight: 600,
+                cursor: 'pointer', 
+                color: filterBy !== 'all' ? 'white' : '#333',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <SlidersHorizontal size={14} /> Filter {filterBy !== 'all' && '•'}
+            </button>
+            {showFilter && (
+              <div style={{
+                position: 'absolute', top: '110%', left: 0, zIndex: 20,
+                backgroundColor: 'white', borderRadius: '16px', padding: '0.5rem',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.12)', border: '1px solid rgba(0,0,0,0.05)',
+                minWidth: '180px', animation: 'fadeIn 0.2s ease'
+              }}>
+                {filterOptions.map(opt => (
+                  <button
+                    key={opt.value}
+                    onClick={() => { setFilterBy(opt.value); setShowFilter(false); }}
+                    style={{
+                      width: '100%', padding: '0.7rem 1rem', borderRadius: '10px',
+                      border: 'none', background: filterBy === opt.value ? '#F2E7D2' : 'transparent',
+                      textAlign: 'left', cursor: 'pointer', fontSize: '0.85rem',
+                      fontWeight: filterBy === opt.value ? 700 : 400, color: '#001d04',
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+                    }}
+                  >
+                    {opt.label}
+                    {filterBy === opt.value && <Check size={14} strokeWidth={3} />}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Sort Button */}
+          <div style={{ position: 'relative' }}>
+            <button 
+              onClick={() => { setShowSort(!showSort); setShowFilter(false); }}
+              style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '8px',
+                backgroundColor: sortBy !== 'default' ? '#001d04' : '#F2E7D2', 
+                border: 'none', 
+                padding: '0.75rem 1.25rem',
+                borderRadius: 'var(--radius-md)', 
+                fontSize: '0.8rem', 
+                fontWeight: 600,
+                cursor: 'pointer', 
+                color: sortBy !== 'default' ? 'white' : '#333',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <ArrowUpDown size={14} /> Sort {sortBy !== 'default' && '•'}
+            </button>
+            {showSort && (
+              <div style={{
+                position: 'absolute', top: '110%', left: 0, zIndex: 20,
+                backgroundColor: 'white', borderRadius: '16px', padding: '0.5rem',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.12)', border: '1px solid rgba(0,0,0,0.05)',
+                minWidth: '200px', animation: 'fadeIn 0.2s ease'
+              }}>
+                {sortOptions.map(opt => (
+                  <button
+                    key={opt.value}
+                    onClick={() => { setSortBy(opt.value); setShowSort(false); }}
+                    style={{
+                      width: '100%', padding: '0.7rem 1rem', borderRadius: '10px',
+                      border: 'none', background: sortBy === opt.value ? '#F2E7D2' : 'transparent',
+                      textAlign: 'left', cursor: 'pointer', fontSize: '0.85rem',
+                      fontWeight: sortBy === opt.value ? 700 : 400, color: '#001d04',
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between'
+                    }}
+                  >
+                    {opt.label}
+                    {sortBy === opt.value && <Check size={14} strokeWidth={3} />}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Product Grid */}
@@ -123,8 +201,14 @@ const CategoryPage = () => {
         ) : categoryProducts.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '6rem 1rem' }}>
                <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>No products found</h3>
-               <p style={{ color: 'var(--color-text-muted)', marginBottom: '2rem' }}>We couldn't find any items in this collection.</p>
-               <Link to="/" className="btn btn-outline" style={{ padding: '0.8rem 2rem' }}>Back to Home</Link>
+               <p style={{ color: 'var(--color-text-muted)', marginBottom: '2rem' }}>We couldn't find any items matching your filters.</p>
+               <button 
+                 onClick={() => { setFilterBy('all'); setSortBy('default'); }}
+                 className="btn btn-outline" 
+                 style={{ padding: '0.8rem 2rem', cursor: 'pointer' }}
+               >
+                 Clear Filters
+               </button>
             </div>
         ) : (
             <div className="product-grid">

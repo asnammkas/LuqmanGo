@@ -27,10 +27,24 @@ const ProductDetail = () => {
   }
 
   return (
-    <div>
-      <div className="container" style={{ padding: '2rem 1.5rem 8rem' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '800px', width: '100%', boxSizing: 'border-box', margin: '0 auto', flex: 1 }}>
         
-        <div className="product-detail-grid" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '5rem', alignItems: 'start' }}>
+        {/* Editorial Header - Unified Pattern */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
+          <Link 
+            to="/"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
+          >
+            <ArrowLeft size={18} strokeWidth={2} />
+          </Link>
+          <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>{product.category}</span>
+        </div>
+        <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+          Selected for its uncompromising quality, sustainable sourcing, and timeless appeal.
+        </p>
+
+        <div className="product-detail-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.2fr) minmax(0, 1fr)', gap: '2rem', alignItems: 'start' }}>
           
           {/* Left Column - Large Focused Image with Wishlist Button */}
           <div style={{ 

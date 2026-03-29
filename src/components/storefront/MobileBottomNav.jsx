@@ -21,13 +21,13 @@ const MobileBottomNav = ({ onOpenDrawer }) => {
       right: 0,
       height: '80px',
       backgroundColor: '#F7F3ED',
-      borderTop: '1px solid rgba(0,0,0,0.05)',
+      borderTop: '1px solid rgba(0,0,0,0.03)',
       display: 'flex',
       justifyContent: 'space-around',
       alignItems: 'center',
       zIndex: 100,
       paddingBottom: 'env(safe-area-inset-bottom)',
-      boxShadow: '0 -1px 0 rgba(0,0,0,0.02)'
+      boxShadow: '0 -1px 10px rgba(0,0,0,0.03)'
     }}>
       {navItems.map((item) => {
         const Icon = item.icon;

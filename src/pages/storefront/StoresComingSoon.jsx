@@ -4,72 +4,58 @@ import Footer from '../../components/storefront/Footer';
 
 const StoresComingSoon = () => {
   return (
-    <div style={{ backgroundColor: '#FBF5EC', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <div className="container" style={{ 
-        flex: 1, 
-        display: 'flex', 
-        flexDirection: 'column', 
-        alignItems: 'center', 
-        justifyContent: 'center',
-        padding: '6rem 1.5rem',
-        textAlign: 'center'
-      }}>
-        <div style={{ 
-          backgroundColor: '#fffcf7', 
-          width: '100px', 
-          height: '100px', 
-          borderRadius: '50%', 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          marginBottom: '2rem',
-          boxShadow: '0 10px 30px rgba(0,0,0,0.03)'
-        }}>
-          <Store size={40} color="#0C2311" strokeWidth={1.2} />
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', backgroundColor: 'var(--color-bg-main)' }}>
+      <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', width: '100%', boxSizing: 'border-box', margin: '0 auto', flex: 1 }}>
+        
+        {/* Editorial Header - Unified Pattern */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
+          <Link 
+            to="/"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
+          >
+            <ArrowLeft size={18} strokeWidth={2} />
+          </Link>
+          <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Physical Boutiques</span>
         </div>
-
-        <h1 style={{ 
-          fontSize: 'clamp(2rem, 8vw, 3.5rem)', 
-          fontWeight: 600, 
-          color: '#0C2311', 
-          letterSpacing: '-0.02em',
-          marginBottom: '1rem' 
-        }}>
-          Stores Coming Soon
-        </h1>
-
-        <p style={{ 
-          fontSize: '1.1rem', 
-          lineHeight: 1.6, 
-          color: '#706F65', 
-          maxWidth: '500px', 
-          marginBottom: '3rem',
-          fontWeight: 300
-        }}>
-          We are building a multi-outlet experience to bring LuqmanGo closer to you. Soon, you'll be able to browse and shop from individual branch locations with ease.
+        <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+          Our physical spaces are being meticulously crafted to offer a sensory experience of our curated collection across multiple locations.
         </p>
 
-        <Link 
-          to="/" 
-          style={{ 
-            display: 'inline-flex', 
-            alignItems: 'center', 
-            gap: '0.8rem', 
-            backgroundColor: '#0C2311', 
-            color: 'white', 
-            padding: '1rem 2.5rem', 
-            borderRadius: 'var(--radius-md)', 
-            textDecoration: 'none',
-            fontSize: '0.9rem',
-            fontWeight: 600,
-            transition: 'transform 0.2s ease'
-          }}
-          onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-          onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-        >
-          <ArrowLeft size={16} /> Back to Showcase
-        </Link>
+        <div style={{ 
+          textAlign: 'center', 
+          padding: '4rem 1.5rem', 
+          backgroundColor: '#EAE1D3', 
+          borderRadius: '24px',
+          border: '1px solid rgba(0,0,0,0.02)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center'
+        }}>
+          <div style={{ 
+            width: '70px', height: '70px', borderRadius: '50%', 
+            backgroundColor: '#FBF5EC', margin: '0 auto 1.5rem',
+            display: 'flex', alignItems: 'center', justifyContent: 'center'
+          }}>
+            <Store size={28} color="#706F65" strokeWidth={1.5} />
+          </div>
+          <h2 style={{ fontSize: '1.2rem', marginBottom: '0.5rem', fontWeight: 700, color: '#001d04' }}>Coming Soon</h2>
+          <p style={{ color: '#706F65', marginBottom: '2rem', maxWidth: '300px', margin: '0 auto 2rem', fontSize: '0.9rem', lineHeight: 1.6 }}>
+            We are building a multi-outlet experience to bring LuqmanGo closer to your doorstep.
+          </p>
+          <Link 
+            to="/" 
+            style={{ 
+              display: 'inline-flex', alignItems: 'center', gap: '0.8rem',
+              backgroundColor: '#001d04', color: 'white',
+              padding: '1rem 2rem', borderRadius: '16px',
+              textDecoration: 'none', fontWeight: 700, fontSize: '0.9rem'
+            }}
+          >
+            Stay Notified
+          </Link>
+        </div>
       </div>
+
       <Footer />
     </div>
   );

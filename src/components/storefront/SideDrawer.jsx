@@ -229,10 +229,10 @@ const SideDrawer = ({ isOpen, onClose }) => {
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', marginBottom: '2.5rem' }}>
           {[
-            { label: 'About LuqmanGo', path: '#' },
-            { label: 'Privacy Policy', path: '#' },
-            { label: 'Terms of Service', path: '#' },
-            { label: 'Delivery Policy', path: '#' }
+            { label: 'About LuqmanGo', path: '/about' },
+            { label: 'Privacy Policy', path: '/privacy' },
+            { label: 'Terms of Service', path: '/terms' },
+            { label: 'Delivery Policy', path: '/delivery-policy' }
           ].map((item) => (
             <Link key={item.label} to={item.path} onClick={onClose} style={{ 
               padding: '0.5rem 1rem', color: '#001d04', textDecoration: 'none', fontSize: '1rem', fontWeight: 400 

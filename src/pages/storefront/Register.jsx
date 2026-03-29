@@ -16,15 +16,25 @@ const Register = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
-      <div className="container" style={{ flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem 1.5rem' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', backgroundColor: 'var(--color-bg-main)' }}>
+      <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', width: '100%', boxSizing: 'border-box', margin: '0 auto', flex: 1 }}>
         
-        <div className="auth-container card">
-          
-          <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-            <h1 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--color-secondary)', marginBottom: '0.5rem' }}>Create Account</h1>
-            <p style={{ color: 'var(--color-text-muted)', fontSize: '0.95rem' }}>Join LuqmanGo for faster checkout.</p>
-          </div>
+        {/* Editorial Header - Unified Pattern */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
+          <Link 
+            to="/"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
+          >
+            <ArrowLeft size={18} strokeWidth={2} />
+          </Link>
+          <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Join the Collection</span>
+        </div>
+        <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+          Create an account to secure your personal curation and experience faster checkout across our entire selection.
+        </p>
+
+        <div className="auth-container card" style={{ padding: '2rem' }}>
+
 
           <form onSubmit={handleRegister} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
             

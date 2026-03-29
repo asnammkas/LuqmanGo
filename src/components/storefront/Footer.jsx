@@ -6,7 +6,7 @@ const Footer = () => {
     <footer style={{ 
       backgroundColor: '#EAE1D3', 
       color: '#2C2C2C', 
-      padding: '3rem 1.5rem 7rem',
+      padding: '5rem 1.5rem 7rem',
       marginTop: 'auto',
     }}>
       <div className="container" style={{ maxWidth: '600px', margin: '0 auto' }}>

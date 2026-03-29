@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useShop } from '../../context/ShopContext';
-import { Trash2, ArrowRight, CheckCircle, Heart } from 'lucide-react';
+import { Trash2, ArrowRight, CheckCircle, Heart, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import Footer from '../../components/storefront/Footer';
 
 const CartCheckout = () => {
   const { cart, removeFromCart, updateCartQuantity, getCartTotal, checkout, toggleWishlist, isInWishlist } = useShop();
@@ -57,7 +58,24 @@ const CartCheckout = () => {
   }
 
   return (
-    <div className="container sidebar-layout animate-fade-in" style={{ padding: '1.5rem 1.5rem 8rem' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', width: '100%', boxSizing: 'border-box', margin: '0 auto', flex: 1 }}>
+        
+        {/* Editorial Header - Unified Pattern */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
+          <Link 
+            to="/"
+            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
+          >
+            <ArrowLeft size={18} strokeWidth={2} />
+          </Link>
+          <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Boutique Bag</span>
+        </div>
+        <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+          A final review of your chosen pieces before they reach your doorstep.
+        </p>
+
+        <div className="cart-content-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       
       {/* Cart Items */}
       <div className="cart-items-section">
@@ -293,9 +311,11 @@ const CartCheckout = () => {
           </form>
         )}
       </div>
-
     </div>
-  );
+  </div>
+  <Footer />
+</div>
+);
 };
 
 export default CartCheckout;

@@ -87,6 +87,12 @@ textarea:-webkit-autofill:focus {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-sage);
+  outline-offset: 2px;
 }
 
 body {
@@ -305,6 +311,40 @@ a:hover {
   animation: pulse-glow 2s infinite;
 }
 
+/* --- Startup Loader Animations --- */
+@keyframes logoEntrance {
+  0% { opacity: 0; transform: scale(0.9) translateY(20px); filter: blur(10px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+}
+
+@keyframes arrowDraw {
+  0% { width: 0; opacity: 0; }
+  100% { width: 100%; opacity: 1; }
+}
+
+@keyframes taglineFade {
+  0% { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes arrowDrawSVG {
+  to { stroke-dashoffset: 0; }
+}
+
+.animate-loader-logo { animation: logoEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+.animate-loader-arrow { animation: arrowDraw 1.2s cubic-bezier(0.65, 0, 0.35, 1) 0.6s forwards; }
+.animate-tagline { opacity: 0; animation: taglineFade 0.8s ease-out 1.2s forwards; }
+
+@keyframes ambientPulse {
+  0% { transform: scale(1); opacity: 0.3; }
+  50% { transform: scale(1.1); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 0.3; }
+}
+
+.animate-ambient-glow {
+  animation: ambientPulse 4s ease-in-out infinite;
+}
+
 /* Badges */
 .badge {
   display: inline-flex;
@@ -439,9 +479,11 @@ a:hover {
   }
 
   .hero-slideshow {
-    aspect-ratio: 16 / 9;
-    width: 100%;
-    margin: 0;
+    aspect-ratio: 21 / 11;
+    width: calc(100% - 2rem);
+    margin: 0.5rem auto 1.5rem auto;
+    border-radius: 24px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
   }
   
   .product-grid {
