@@ -34,7 +34,7 @@ function AppContent() {
     const timer = setTimeout(() => {
       setFadeOut(true);
       setTimeout(() => setIsLoading(false), 600);
-    }, 1500);
+    }, 3200); // Extended to allow animations to complete
     return () => clearTimeout(timer);
   }, []);
 
@@ -74,18 +74,18 @@ function AppContent() {
           <div className="animate-loader-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 1, width: '90%' }}>
             
             {/* Logo Text Section */}
-            <h2 style={{ fontSize: 'clamp(2.5rem, 12vw, 4.5rem)', fontWeight: 700, margin: 0, display: 'flex', alignItems: 'baseline', letterSpacing: '-0.02em', color: '#00C853' }}>
+            <h2 style={{ fontSize: 'clamp(4rem, 20vw, 7.5rem)', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'baseline', letterSpacing: '-0.02em', color: '#00C853', textShadow: '0 4px 30px rgba(0,200,83,0.2)' }}>
               <span>Luqman</span>
               <span style={{ color: '#C4D300' }}>Go</span>
             </h2>
 
             {/* Hand-drawn Arrow SVG Underline */}
-            <div style={{ width: 'clamp(180px, 50vw, 240px)', height: '20px', marginTop: '-0.4rem', position: 'relative' }}>
+            <div style={{ width: 'clamp(250px, 70vw, 350px)', height: '30px', marginTop: '-0.6rem', position: 'relative' }}>
                <svg width="100%" height="100%" viewBox="0 0 240 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path 
                     d="M10 10 C 50 8, 180 8, 225 10 L 220 5 L 230 10 L 220 15 L 225 10" 
                     stroke="#00C853" 
-                    strokeWidth="3" 
+                    strokeWidth="3.5" 
                     strokeLinecap="round" 
                     strokeLinejoin="round" 
                     className="animate-loader-arrow"
@@ -103,20 +103,20 @@ function AppContent() {
             <div 
               style={{ 
                 marginTop: '3.5rem', opacity: 0, 
-                animation: 'fadeIn 1s ease-out 1.8s forwards',
+                animation: 'fadeIn 1s ease-out 1.5s forwards',
                 fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.4em',
                 color: '#706F65'
               }}
             >
-              PIONEERING SUSTAINABLE LUXURY
+              PIONEERING PREMIUM UTILITY
             </div>
             
           </div>
 
           {/* Branding Detail at Bottom */}
-          <div style={{ position: 'absolute', bottom: '8vh', opacity: 0, animation: 'fadeIn 1s ease-out 2.5s forwards', textAlign: 'center' }}>
-             <div style={{ fontSize: '0.65rem', fontWeight: 900, letterSpacing: '0.2rem', color: '#001d04', marginBottom: '0.5rem' }}>GLOBAL SUSTAINABLE NETWORK</div>
-             <div className="animate-pulse-glow" style={{ width: '40px', height: '1.5px', backgroundColor: '#00C853', margin: '0 auto', opacity: 0.2 }}></div>
+          <div style={{ position: 'absolute', bottom: '8vh', opacity: 0, animation: 'fadeIn 1s ease-out 2.2s forwards', textAlign: 'center' }}>
+             <div style={{ fontSize: '0.65rem', fontWeight: 900, letterSpacing: '0.2rem', color: '#001d04', marginBottom: '0.5rem' }}>GLOBAL CURATED NETWORK</div>
+             <div className="animate-pulse-glow" style={{ width: '40px', height: '1.5px', backgroundColor: '#436132', margin: '0 auto', opacity: 0.2 }}></div>
           </div>
           
         </div>

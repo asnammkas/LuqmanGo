@@ -64,16 +64,6 @@ const MobileBottomNav = ({ onOpenDrawer }) => {
               {item.name}
             </span>
             
-            {isActive && (
-              <div style={{
-                position: 'absolute',
-                bottom: '0px',
-                width: '5px',
-                height: '5px',
-                borderRadius: '50%',
-                backgroundColor: '#5C7444'
-              }} />
-            )}
           </div>
         );
 
