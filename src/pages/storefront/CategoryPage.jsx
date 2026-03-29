@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
 import ProductCard from '../../components/storefront/ProductCard';
 import Footer from '../../components/storefront/Footer';
-import { SlidersHorizontal, ArrowUpDown, Check, ArrowLeft } from 'lucide-react';
+import { SlidersHorizontal, ArrowUpDown, Check, ArrowLeft, Search as SearchIcon, XCircle } from 'lucide-react';
 
 // Default descriptions for common categories to make them feel premium
 const categoryDescriptions = {
@@ -17,6 +17,9 @@ const categoryDescriptions = {
 
 const CategoryPage = () => {
   const { categoryName } = useParams();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('search');
   const { products, isProductsLoading, productsError } = useShop();
   const [sortBy, setSortBy] = useState('default');
   const [filterBy, setFilterBy] = useState('all');
@@ -36,6 +39,16 @@ const CategoryPage = () => {
     categoryProducts = categoryProducts.filter(p => p.stock > 0);
   } else if (filterBy === 'featured') {
     categoryProducts = categoryProducts.filter(p => p.featured);
+  }
+
+  // Apply search filtering
+  if (searchQuery) {
+    const q = searchQuery.toLowerCase();
+    categoryProducts = categoryProducts.filter(p => 
+      p.title.toLowerCase().includes(q) || 
+      p.category.toLowerCase().includes(q) ||
+      (p.description && p.description.toLowerCase().includes(q))
+    );
   }
 
   // Apply sorting
@@ -74,10 +87,17 @@ const CategoryPage = () => {
           >
             <ArrowLeft size={18} strokeWidth={2} />
           </Link>
-          <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>{activeCategory}</span>
+          {searchQuery ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+               <SearchIcon size={18} />
+               <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Search Results</span>
+            </div>
+          ) : (
+            <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>{activeCategory}</span>
+          )}
         </div>
         <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
-          {description}
+          {searchQuery ? `Showing matches for "${searchQuery}" across ${activeCategory === 'All' ? 'the whole store' : activeCategory}.` : description}
         </p>
 
 
@@ -200,14 +220,21 @@ const CategoryPage = () => {
             </div>
         ) : categoryProducts.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '6rem 1rem' }}>
-               <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>No products found</h3>
-               <p style={{ color: 'var(--color-text-muted)', marginBottom: '2rem' }}>We couldn't find any items matching your filters.</p>
+               <XCircle size={40} strokeWidth={1} style={{ color: '#D4CFC5', marginBottom: '1rem' }} />
+               <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem', color: '#001d04' }}>
+                 {searchQuery ? 'No matches found' : 'No products found'}
+               </h3>
+               <p style={{ color: 'var(--color-text-muted)', marginBottom: '2rem', fontSize: '0.9rem' }}>
+                 {searchQuery 
+                   ? `We couldn't find any items matching "${searchQuery}".` 
+                   : "We couldn't find any items matching your filters."}
+               </p>
                <button 
-                 onClick={() => { setFilterBy('all'); setSortBy('default'); }}
+                 onClick={() => { setFilterBy('all'); setSortBy('default'); if (searchQuery) navigate(`/category/${activeCategory}`); }}
                  className="btn btn-outline" 
-                 style={{ padding: '0.8rem 2rem', cursor: 'pointer' }}
+                 style={{ padding: '0.8rem 2rem', cursor: 'pointer', borderRadius: '12px' }}
                >
-                 Clear Filters
+                 {searchQuery ? 'Clear Search' : 'Clear Filters'}
                </button>
             </div>
         ) : (

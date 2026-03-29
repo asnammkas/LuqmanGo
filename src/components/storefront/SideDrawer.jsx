@@ -1,13 +1,26 @@
-import { Link, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
+import { useAuth } from '../../context/AuthContext';
 import { 
   X, Search, LayoutGrid, Smartphone, Shirt, Leaf, Sofa, Flower2, 
-  LogIn, UserPlus, ChevronRight, LayoutDashboard, Store
+  LogIn, LogOut, UserPlus, ChevronRight, LayoutDashboard, Store
 } from 'lucide-react';
 
 const SideDrawer = ({ isOpen, onClose }) => {
   const { } = useShop();
+  const { currentUser, isAdmin, logout, loading } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const handleSearch = (e) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      navigate(`/category/All?search=${encodeURIComponent(searchQuery.trim())}`);
+      onClose();
+      setSearchQuery('');
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -86,6 +99,9 @@ const SideDrawer = ({ isOpen, onClose }) => {
             <input 
               type="text" 
               placeholder="Explore the archive..." 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={handleSearch}
               style={{
                 border: 'none',
                 background: 'transparent',
@@ -193,24 +209,49 @@ const SideDrawer = ({ isOpen, onClose }) => {
           </div>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-            <Link to="/signin" onClick={onClose} style={{ 
-              display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.8rem 1rem', 
-              color: '#001d04', textDecoration: 'none', fontSize: '1.05rem', fontWeight: 400 
-            }}>
-              <LogIn size={20} strokeWidth={1.5} /> Sign In
-            </Link>
-            <Link to="/register" onClick={onClose} style={{ 
-              display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.8rem 1rem', 
-              color: '#001d04', textDecoration: 'none', fontSize: '1.05rem', fontWeight: 400 
-            }}>
-              <UserPlus size={20} strokeWidth={1.5} /> Create Account
-            </Link>
-            <Link to="/admin" onClick={onClose} style={{ 
-              display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.8rem 1rem', 
-              color: '#001d04', textDecoration: 'none', fontSize: '1.05rem', fontWeight: 400 
-            }}>
-              <LayoutDashboard size={20} strokeWidth={1.5} /> Admin Panel
-            </Link>
+            {currentUser ? (
+              <>
+                <Link to="/profile" onClick={onClose} style={{ 
+                  display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.8rem 1rem', 
+                  color: '#001d04', textDecoration: 'none', fontSize: '1.05rem', fontWeight: 400 
+                }}>
+                  <UserPlus size={20} strokeWidth={1.5} /> My Account
+                </Link>
+                <button 
+                  onClick={() => { logout(); onClose(); }} 
+                  style={{ 
+                    display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.8rem 1rem', 
+                    color: '#001d04', fontSize: '1.05rem', fontWeight: 400,
+                    background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left'
+                  }}
+                >
+                  <LogOut size={20} strokeWidth={1.5} /> Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/signin" onClick={onClose} style={{ 
+                  display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.8rem 1rem', 
+                  color: '#001d04', textDecoration: 'none', fontSize: '1.05rem', fontWeight: 400 
+                }}>
+                  <LogIn size={20} strokeWidth={1.5} /> Sign In
+                </Link>
+                <Link to="/register" onClick={onClose} style={{ 
+                  display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.8rem 1rem', 
+                  color: '#001d04', textDecoration: 'none', fontSize: '1.05rem', fontWeight: 400 
+                }}>
+                  <UserPlus size={20} strokeWidth={1.5} /> Create Account
+                </Link>
+              </>
+            )}
+            {!loading && isAdmin && (
+              <Link to="/admin" onClick={onClose} style={{ 
+                display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.8rem 1rem', 
+                color: '#001d04', textDecoration: 'none', fontSize: '1.05rem', fontWeight: 400 
+              }}>
+                <LayoutDashboard size={20} strokeWidth={1.5} /> Admin Panel
+              </Link>
+            )}
           </div>
 
           <div style={{ height: '3rem' }} />

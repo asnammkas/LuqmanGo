@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
 import Navbar from './components/storefront/Navbar';
 import SideDrawer from './components/storefront/SideDrawer';
 import MobileBottomNav from './components/storefront/MobileBottomNav';
@@ -19,18 +22,17 @@ import DeliveryPolicyPage from './pages/storefront/DeliveryPolicyPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ProductManagement from './pages/admin/ProductManagement';
 import OrderManagement from './pages/admin/OrderManagement';
+import NotFound from './pages/storefront/NotFound';
 
-function App() {
+function AppContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
-    // Simulate initial loading sequence for a premium feel
     const timer = setTimeout(() => {
       setFadeOut(true);
-      // Remove from DOM after fade animation completes
       setTimeout(() => setIsLoading(false), 600);
     }, 1500);
     return () => clearTimeout(timer);
@@ -126,7 +128,7 @@ function App() {
         {/* Animated Page Transition Wrapper */}
         <div key={location.pathname} className="animate-fade-in" style={{ animationDuration: '0.4s' }}>
           <Routes>
-            {/* Storefront Routes */}
+            {/* Storefront Routes - Public */}
             <Route path="/" element={<Home />} />
             <Route path="/category/:categoryName" element={<CategoryPage />} />
             <Route path="/product/:id" element={<ProductDetail />} />
@@ -135,16 +137,21 @@ function App() {
             <Route path="/signin" element={<SignIn />} />
             <Route path="/register" element={<Register />} />
             <Route path="/cart" element={<CartCheckout />} />
-            <Route path="/profile" element={<UserProfile />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsPage />} />
             <Route path="/delivery-policy" element={<DeliveryPolicyPage />} />
             
-            {/* Admin Routes */}
-            <Route path="/admin" element={<AdminDashboard />} />
-            <Route path="/admin/products" element={<ProductManagement />} />
-            <Route path="/admin/orders" element={<OrderManagement />} />
+            {/* Protected Routes - Requires Authentication */}
+            <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+            
+            {/* Admin Routes - Requires Admin Role */}
+            <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+            <Route path="/admin/products" element={<AdminRoute><ProductManagement /></AdminRoute>} />
+            <Route path="/admin/orders" element={<AdminRoute><OrderManagement /></AdminRoute>} />
+
+            {/* Catch-all 404 Route */}
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
       </main>
@@ -152,6 +159,14 @@ function App() {
       {/* Persistent Bottom Nav for Mobile */}
       <MobileBottomNav onOpenDrawer={() => setIsDrawerOpen(true)} />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

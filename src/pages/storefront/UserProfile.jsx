@@ -1,5 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useShop } from '../../context/ShopContext';
+import { useAuth } from '../../context/AuthContext';
+import { doc, getDoc, setDoc, updateDoc, collection, addDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
+import { updateProfile } from 'firebase/auth';
+import { db } from '../../config/firebase';
 import { 
   User, Package, Settings, LogOut, ChevronRight, MapPin, CreditCard, Bell, HelpCircle, ShieldCheck, ArrowLeft, TreePine, Star,
   Truck, ChevronDown, FileText, PackageCheck, RefreshCw
@@ -8,23 +12,171 @@ import { Link, useNavigate } from 'react-router-dom';
 
 const UserProfile = () => {
   const { orders } = useShop();
+  const { currentUser, logout } = useAuth();
   const myOrders = orders.slice(0, 2); 
-  const [currentView, setCurrentView] = useState('main'); // 'main', 'orders', 'addresses', 'payments', 'personal', 'notifications', 'help', 'privacy'
+  const [currentView, setCurrentView] = useState('main');
+  const [loading, setLoading] = useState(false);
+  const [addresses, setAddresses] = useState([]);
+  const [editingAddress, setEditingAddress] = useState(null);
+  const [message, setMessage] = useState({ type: '', text: '' });
   const navigate = useNavigate();
 
-  // Mock User Data
+  // Address Form State
+  const [addressForm, setAddressForm] = useState({
+    title: '',
+    addressLine1: '',
+    city: '',
+    pinCode: '',
+    isDefault: false
+  });
+
+  // Form states
+  const [profileData, setProfileData] = useState({
+    name: currentUser?.displayName || '',
+    email: currentUser?.email || '',
+    phone: '',
+    notifications: {
+      orderStatus: true,
+      exclusiveOffers: false,
+      planetImpact: true
+    }
+  });
+
+  // Fetch extra profile data & Addresses
+  useEffect(() => {
+    if (!currentUser) return;
+    
+    // 1. Fetch Profile Info
+    const fetchProfile = async () => {
+      try {
+        const docSnap = await getDoc(doc(db, 'users', currentUser.uid));
+        if (docSnap.exists()) {
+          setProfileData(prev => ({ ...prev, ...docSnap.data() }));
+        }
+      } catch (err) { console.error(err); }
+    };
+    fetchProfile();
+
+    // 2. Real-time Addresses
+    const q = query(collection(db, 'users', currentUser.uid, 'addresses'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const addrList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setAddresses(addrList);
+    });
+
+    return () => unsubscribe();
+  }, [currentUser]);
+
+  const handleSaveAddress = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      if (editingAddress) {
+        // Update Existing
+        await updateDoc(doc(db, 'users', currentUser.uid, 'addresses', editingAddress.id), {
+          ...addressForm,
+          updatedAt: serverTimestamp()
+        });
+      } else {
+        // Create New
+        await addDoc(collection(db, 'users', currentUser.uid, 'addresses'), {
+          ...addressForm,
+          createdAt: serverTimestamp()
+        });
+      }
+      setCurrentView('addresses');
+      setEditingAddress(null);
+      setAddressForm({ title: '', addressLine1: '', city: '', pinCode: '', isDefault: false });
+    } catch (err) {
+      console.error(err);
+      alert("Failed to save address.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteAddress = async (id) => {
+    if (!window.confirm("Are you sure you want to remove this location?")) return;
+    try {
+      await deleteDoc(doc(db, 'users', currentUser.uid, 'addresses', id));
+      setCurrentView('addresses');
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const openEditAddress = (addr) => {
+    setEditingAddress(addr);
+    setAddressForm({
+      title: addr.title,
+      addressLine1: addr.addressLine1,
+      city: addr.city,
+      pinCode: addr.pinCode,
+      isDefault: addr.isDefault || false
+    });
+    setCurrentView('edit-address');
+  };
+
+  const handleUpdateProfile = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage({ type: '', text: '' });
+
+    try {
+      // 1. Update Firebase Auth Profile (Name)
+      if (profileData.name !== currentUser.displayName) {
+        await updateProfile(currentUser, { displayName: profileData.name });
+      }
+
+      // 2. Update Firestore Document (Phone & metadata)
+      await setDoc(doc(db, 'users', currentUser.uid), {
+        name: profileData.name, // Keep in sync
+        phone: profileData.phone,
+        updatedAt: new Date().toISOString()
+      }, { merge: true });
+
+      setMessage({ type: 'success', text: 'Profile updated successfully!' });
+      setTimeout(() => setMessage({ type: '', text: '' }), 3000);
+    } catch (err) {
+      console.error(err);
+      setMessage({ type: 'error', text: 'Failed to update profile. Please try again.' });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const toggleNotification = async (key) => {
+    if (!currentUser) return;
+    const newVal = !profileData.notifications[key];
+    const updatedNotifications = { ...profileData.notifications, [key]: newVal };
+    setProfileData({ ...profileData, notifications: updatedNotifications });
+    
+    try {
+      await setDoc(doc(db, 'users', currentUser.uid), {
+        notifications: updatedNotifications
+      }, { merge: true });
+    } catch (err) {
+      console.error("Error updating notifications:", err);
+    }
+  };
+
+  // Use real authenticated user data
   const user = {
-    name: "Asnam Sanaf",
-    email: "asnam.sanaf@luqmango.com",
-    initials: "AS",
-    points: "2,450",
+    name: currentUser?.displayName || 'LuqmanGo Member',
+    email: currentUser?.email || '',
+    initials: (currentUser?.displayName || 'U').split(' ').map(n => n[0]).join('').toUpperCase(),
+    points: '2,450',
     trees: 12,
     ordersInTransit: 3
   };
 
-  const handleLogout = () => {
-    // In a real app, clear auth state here
-    navigate('/');
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
   };
 
   const BackButton = ({ title }) => (
@@ -55,21 +207,64 @@ const UserProfile = () => {
         Manage your identity and how we connect with you. Keep your personal information secure and up to date.
       </p>
       <div style={{ backgroundColor: '#EAE1D3', borderRadius: '24px', padding: '2rem', border: '1px solid rgba(0,0,0,0.02)' }}>
-        <form style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+        <form onSubmit={handleUpdateProfile} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+          {message.text && (
+            <div style={{ 
+              padding: '1rem', 
+              borderRadius: '12px', 
+              backgroundColor: message.type === 'success' ? '#E4EDDB' : '#FDE8E8',
+              color: message.type === 'success' ? '#436132' : '#C81E1E',
+              fontSize: '0.85rem',
+              fontWeight: 600,
+              textAlign: 'center'
+            }}>
+              {message.text}
+            </div>
+          )}
           <div>
             <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>FULL NAME</label>
-            <input type="text" className="input" defaultValue={user.name} style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.03)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+            <input 
+              type="text" 
+              className="input" 
+              value={profileData.name} 
+              onChange={(e) => setProfileData({...profileData, name: e.target.value})}
+              style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.03)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} 
+              required
+            />
           </div>
           <div>
             <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>EMAIL ADDRESS</label>
-            <input type="email" className="input" defaultValue={user.email} style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.03)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+            <input 
+              type="email" 
+              className="input" 
+              value={profileData.email} 
+              disabled
+              style={{ backgroundColor: '#F3F2EE', border: '1px solid rgba(0,0,0,0.03)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500, opacity: 0.7, cursor: 'not-allowed' }} 
+            />
           </div>
           <div>
             <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>PHONE NUMBER</label>
-            <input type="tel" className="input" defaultValue="+91 98765 43210" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.03)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+            <input 
+              type="tel" 
+              className="input" 
+              value={profileData.phone} 
+              onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
+              placeholder="+94 77 123 4567"
+              style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.03)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} 
+            />
           </div>
-          <button type="button" className="btn btn-primary" style={{ backgroundColor: '#001d04', color: 'white', border: 'none', padding: '1rem', width: '100%', borderRadius: '12px', marginTop: '0.5rem', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}>
-            Update Profile
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="btn btn-primary" 
+            style={{ 
+              backgroundColor: '#001d04', color: 'white', border: 'none', padding: '1rem', width: '100%', 
+              borderRadius: '12px', marginTop: '0.5rem', fontWeight: 700, fontSize: '0.95rem', 
+              cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
+              boxShadow: '0 8px 25px rgba(0,29,4,0.1)' 
+            }}
+          >
+            {loading ? 'Updating...' : 'Update Profile'}
           </button>
         </form>
       </div>
@@ -85,34 +280,40 @@ const UserProfile = () => {
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </button>
-        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Saved Locations</span>
+      <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Saved Locations</span>
       </div>
       <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
         Your curated network of delivery destinations. Add, edit, or remove your frequent stops for faster checkouts.
       </p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <div style={{ backgroundColor: '#EAE1D3', borderRadius: '24px', padding: '1.5rem', border: '1px solid #001d04', position: 'relative' }}>
-          <div style={{ position: 'absolute', top: '1.2rem', right: '1.2rem', backgroundColor: '#E4EDDB', color: '#436132', fontSize: '0.6rem', fontWeight: 800, padding: '0.3rem 0.6rem', borderRadius: '6px' }}>DEFAULT</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.8rem' }}>
-             <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <MapPin size={16} color="#001d04" />
-             </div>
-             <span style={{ fontWeight: 700, color: '#001d04', fontSize: '1rem' }}>Home</span>
+        {addresses.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '2rem', backgroundColor: '#EAE1D3', borderRadius: '24px', opacity: 0.6 }}>
+            <p style={{ fontSize: '0.85rem' }}>No addresses saved yet.</p>
           </div>
-          <p style={{ color: '#706F65', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.2rem', fontWeight: 400 }}>
-            Flat 402, Sylvan Heights<br/>
-            Central District, Luqman Street<br/>
-            Kochi, Kerala 682001
-          </p>
-          <button 
-            onClick={() => setCurrentView('edit-address')}
-            style={{ color: '#001d04', background: 'transparent', border: '1px solid #001d04', padding: '0.4rem 1.2rem', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
-          >
-            Modify Details
-          </button>
-        </div>
+        )}
+        {addresses.map(addr => (
+          <div key={addr.id} style={{ backgroundColor: '#EAE1D3', borderRadius: '24px', padding: '1.5rem', border: addr.isDefault ? '1px solid #001d04' : '1px solid rgba(0,0,0,0.05)', position: 'relative' }}>
+            {addr.isDefault && <div style={{ position: 'absolute', top: '1.2rem', right: '1.2rem', backgroundColor: '#E4EDDB', color: '#436132', fontSize: '0.6rem', fontWeight: 800, padding: '0.3rem 0.6rem', borderRadius: '6px' }}>DEFAULT</div>}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.8rem' }}>
+               <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <MapPin size={16} color="#001d04" />
+               </div>
+               <span style={{ fontWeight: 700, color: '#001d04', fontSize: '1rem' }}>{addr.title}</span>
+            </div>
+            <p style={{ color: '#706F65', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.2rem', fontWeight: 400 }}>
+              {addr.addressLine1}<br/>
+              {addr.city}, {addr.pinCode}
+            </p>
+            <button 
+              onClick={() => openEditAddress(addr)}
+              style={{ color: '#001d04', background: 'transparent', border: '1px solid #001d04', padding: '0.4rem 1.2rem', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+            >
+              Modify Details
+            </button>
+          </div>
+        ))}
         <button 
-          onClick={() => setCurrentView('add-address')}
+          onClick={() => { setAddressForm({ title: '', addressLine1: '', city: '', pinCode: '', isDefault: false }); setEditingAddress(null); setCurrentView('add-address'); }}
           style={{ backgroundColor: '#001d04', border: 'none', color: 'white', padding: '1.5rem', borderRadius: '24px', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}
         >
           + Add New Address
@@ -137,27 +338,53 @@ const UserProfile = () => {
       </p>
       
       <div style={{ backgroundColor: '#EAE1D3', borderRadius: '32px', padding: '2.2rem', border: '1px solid rgba(0,0,0,0.02)' }}>
-        <form style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+        <form onSubmit={handleSaveAddress} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
           <div>
             <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>ADDRESS TITLE (E.G. OFFICE)</label>
-            <input type="text" className="input" placeholder="Home / Work / Other" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+            <input 
+              type="text" className="input" placeholder="Home / Work / Other" required
+              value={addressForm.title} onChange={(e) => setAddressForm({...addressForm, title: e.target.value})}
+              style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} 
+            />
           </div>
           <div>
             <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>ADDRESS LINE 1</label>
-            <input type="text" className="input" placeholder="Building, Street Name" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+            <input 
+              type="text" className="input" placeholder="Building, Street Name" required
+              value={addressForm.addressLine1} onChange={(e) => setAddressForm({...addressForm, addressLine1: e.target.value})}
+              style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} 
+            />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div>
               <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>CITY</label>
-              <input type="text" className="input" placeholder="Kochi" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+              <input 
+                type="text" className="input" placeholder="Kochi" required
+                value={addressForm.city} onChange={(e) => setAddressForm({...addressForm, city: e.target.value})}
+                style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} 
+              />
             </div>
             <div>
               <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>PIN CODE</label>
-              <input type="text" className="input" placeholder="682001" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+              <input 
+                type="text" className="input" placeholder="682001" required
+                value={addressForm.pinCode} onChange={(e) => setAddressForm({...addressForm, pinCode: e.target.value})}
+                style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} 
+              />
             </div>
           </div>
-          <button type="button" onClick={() => setCurrentView('addresses')} className="btn btn-primary" style={{ backgroundColor: '#001d04', color: 'white', border: 'none', padding: '1.2rem', width: '100%', borderRadius: '16px', marginTop: '1rem', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}>
-            Save Address
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="btn btn-primary" 
+            style={{ 
+              backgroundColor: '#001d04', color: 'white', border: 'none', padding: '1.2rem', width: '100%', 
+              borderRadius: '16px', marginTop: '1rem', fontWeight: 700, fontSize: '0.95rem', 
+              cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
+              boxShadow: '0 8px 25_px rgba(0,29,4,0.1)' 
+            }}
+          >
+            {loading ? 'Saving...' : 'Save Address'}
           </button>
         </form>
       </div>
@@ -180,31 +407,62 @@ const UserProfile = () => {
       </p>
       
       <div style={{ backgroundColor: '#EAE1D3', borderRadius: '32px', padding: '2.2rem', border: '1px solid rgba(0,0,0,0.02)' }}>
-        <form style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+        <form onSubmit={handleSaveAddress} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
           <div>
             <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>ADDRESS TITLE</label>
-            <input type="text" className="input" defaultValue="Home" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+            <input 
+              type="text" className="input" placeholder="Home" required
+              value={addressForm.title} onChange={(e) => setAddressForm({...addressForm, title: e.target.value})}
+              style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} 
+            />
           </div>
           <div>
             <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>ADDRESS LINE 1</label>
-            <input type="text" className="input" defaultValue="Flat 402, Sylvan Heights" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+            <input 
+              type="text" className="input" placeholder="Flat 402, ..." required
+              value={addressForm.addressLine1} onChange={(e) => setAddressForm({...addressForm, addressLine1: e.target.value})}
+              style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} 
+            />
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
             <div>
               <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>CITY</label>
-              <input type="text" className="input" defaultValue="Kochi" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+              <input 
+                type="text" className="input" placeholder="Kochi" required
+                value={addressForm.city} onChange={(e) => setAddressForm({...addressForm, city: e.target.value})}
+                style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} 
+              />
             </div>
             <div>
               <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>PIN CODE</label>
-              <input type="text" className="input" defaultValue="682001" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
+              <input 
+                type="text" className="input" placeholder="682001" required
+                value={addressForm.pinCode} onChange={(e) => setAddressForm({...addressForm, pinCode: e.target.value})}
+                style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} 
+              />
             </div>
           </div>
-          <button type="button" onClick={() => setCurrentView('addresses')} className="btn btn-primary" style={{ backgroundColor: '#001d04', color: 'white', border: 'none', padding: '1.2rem', width: '100%', borderRadius: '16px', marginTop: '1rem', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}>
-            Update Location
+          <button 
+            type="submit" 
+            disabled={loading}
+            className="btn btn-primary" 
+            style={{ 
+              backgroundColor: '#001d04', color: 'white', border: 'none', padding: '1.2rem', width: '100%', 
+              borderRadius: '16px', marginTop: '1rem', fontWeight: 700, fontSize: '0.95rem', 
+              cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
+              boxShadow: '0 8px 25_px rgba(0,29,4,0.1)' 
+            }}
+          >
+            {loading ? 'Updating...' : 'Update Location'}
           </button>
         </form>
       </div>
-      <button style={{ width: '100%', padding: '1rem', marginTop: '1.5rem', color: '#E53E3E', background: 'none', border: 'none', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer' }}>Delete Location</button>
+      <button 
+        onClick={() => handleDeleteAddress(editingAddress.id)}
+        style={{ width: '100%', padding: '1rem', marginTop: '1.5rem', color: '#E53E3E', background: 'none', border: 'none', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer' }}
+      >
+        Delete Location
+      </button>
     </div>
   );
 
@@ -317,9 +575,9 @@ const UserProfile = () => {
       </p>
       <div style={{ backgroundColor: '#EAE1D3', borderRadius: '24px', padding: '1.5rem', border: '1px solid rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
         {[
-          { icon: <Bell size={16} />, title: 'Order Status', desc: 'Real-time updates on delivery' },
-          { icon: <Star size={16} />, title: 'Exclusive Offers', desc: 'Discounts and curated drops' },
-          { icon: <TreePine size={16} />, title: 'Planet Impact', desc: 'Monthly contribution reports' }
+          { key: 'orderStatus', icon: <Bell size={16} />, title: 'Order Status', desc: 'Real-time updates on delivery' },
+          { key: 'exclusiveOffers', icon: <Star size={16} />, title: 'Exclusive Offers', desc: 'Discounts and curated drops' },
+          { key: 'planetImpact', icon: <TreePine size={16} />, title: 'Planet Impact', desc: 'Monthly contribution reports' }
         ].map((item, idx) => (
           <div key={idx} style={{ padding: '1rem', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: idx !== 2 ? '1px solid #F3F2EE' : 'none' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -331,8 +589,17 @@ const UserProfile = () => {
                 <div style={{ fontSize: '0.75rem', color: '#706F65' }}>{item.desc}</div>
               </div>
             </div>
-            <div style={{ width: '40px', height: '22px', backgroundColor: idx === 0 ? '#436132' : '#EAE1D3', borderRadius: '20px', padding: '2px', position: 'relative', cursor: 'pointer', transition: 'background-color 0.2s' }}>
-               <div style={{ width: '18px', height: '18px', backgroundColor: 'white', borderRadius: '50%', position: 'absolute', right: idx === 0 ? '2px' : 'auto', left: idx !== 0 ? '2px' : 'auto', transition: 'all 0.2s', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }} />
+            <div 
+              onClick={() => toggleNotification(item.key)}
+              style={{ width: '40px', height: '22px', backgroundColor: profileData.notifications?.[item.key] ? '#436132' : '#C5BBB0', borderRadius: '20px', padding: '2px', position: 'relative', cursor: 'pointer', transition: 'background-color 0.2s' }}
+            >
+               <div style={{ 
+                 width: '18px', height: '18px', backgroundColor: 'white', borderRadius: '50%', 
+                 position: 'absolute', 
+                 right: profileData.notifications?.[item.key] ? '2px' : 'auto', 
+                 left: profileData.notifications?.[item.key] ? 'auto' : '2px', 
+                 transition: 'all 0.2s', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' 
+               }} />
             </div>
           </div>
         ))}

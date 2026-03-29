@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useShop } from '../../context/ShopContext';
-import { Plus, Edit2, Trash2, ArrowLeft, Image as ImageIcon, LayoutGrid, DollarSign, Package, AlertCircle } from 'lucide-react';
+import { Plus, Edit2, Trash2, ArrowLeft, Image as ImageIcon, LayoutGrid, DollarSign, Package, AlertCircle, Upload, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { storage } from '../../config/firebase';
+import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
 
 const ProductManagement = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useShop();
@@ -10,17 +12,106 @@ const ProductManagement = () => {
   const [formData, setFormData] = useState({
     title: '', price: '', category: '', description: '', image: '', stock: '', featured: false
   });
+  
+  // Image upload state
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadError, setUploadError] = useState('');
+  const [isDragOver, setIsDragOver] = useState(false);
+  const fileInputRef = useRef(null);
 
   const handleEdit = (product) => {
     setCurrentProduct(product);
     setFormData({ ...product, price: product.price.toString(), stock: product.stock.toString() });
     setIsEditing(true);
+    setUploadError('');
+    setUploadProgress(0);
   };
 
   const handleAddNew = () => {
     setCurrentProduct(null);
     setFormData({ title: '', price: '', category: '', description: '', image: '', stock: '', featured: false });
     setIsEditing(true);
+    setUploadError('');
+    setUploadProgress(0);
+  };
+
+  // Image Upload Handler
+  const handleImageUpload = (file) => {
+    if (!file) return;
+    
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
+    if (!allowedTypes.includes(file.type)) {
+      setUploadError('Please upload a JPG, PNG, or WebP image.');
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setUploadError('Image must be under 5MB.');
+      return;
+    }
+
+    setUploading(true);
+    setUploadError('');
+    setUploadProgress(0);
+
+    const fileName = `products/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on('state_changed',
+      (snapshot) => {
+        const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+        setUploadProgress(progress);
+      },
+      (error) => {
+        console.error('Upload error:', error);
+        setUploadError('Upload failed. Please try again.');
+        setUploading(false);
+      },
+      async () => {
+        try {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          setFormData(prev => ({ ...prev, image: downloadURL }));
+          setUploading(false);
+        } catch (err) {
+          console.error('Error getting download URL:', err);
+          setUploadError('Failed to get image URL.');
+          setUploading(false);
+        }
+      }
+    );
+  };
+
+  // Drag and Drop handlers
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setIsDragOver(false);
+    const file = e.dataTransfer.files[0];
+    if (file) handleImageUpload(file);
+  };
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files[0];
+    if (file) handleImageUpload(file);
+  };
+
+  const handleRemoveImage = () => {
+    setFormData(prev => ({ ...prev, image: '' }));
+    setUploadProgress(0);
+    setUploadError('');
   };
 
   const handleSubmit = (e) => {
@@ -117,7 +208,7 @@ const ProductManagement = () => {
             </div>
           </div>
 
-          {/* Section 3: Media Management */}
+          {/* Section 3: Media Management — Image Upload */}
           <div style={{ backgroundColor: '#EAE1D3', borderRadius: '32px', padding: '2.5rem', boxShadow: '0 10px 40px rgba(0,0,0,0.02)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
               <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -126,39 +217,147 @@ const ProductManagement = () => {
               <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#001d04', margin: 0 }}>Product Media</h3>
             </div>
 
-            <div>
-              <label className="label" style={{ fontSize: '0.8rem', color: '#706F65', marginBottom: '0.1rem', display: 'block', fontWeight: 600 }}>IMAGE SOURCE</label>
-              {/* Future Dropzone Area */}
+            {/* Upload Error */}
+            {uploadError && (
               <div style={{ 
-                border: '2px dashed rgba(0,29,4,0.1)', 
-                borderRadius: '16px', 
-                padding: '1.5rem', 
-                backgroundColor: 'rgba(255,255,255,0.4)',
-                textAlign: 'center',
-                marginBottom: '1rem'
+                display: 'flex', alignItems: 'center', gap: '0.6rem',
+                backgroundColor: '#FEF2F2', border: '1px solid #FECACA', 
+                borderRadius: '12px', padding: '0.8rem 1rem', marginBottom: '1rem',
+                color: '#991B1B', fontSize: '0.85rem', fontWeight: 500
               }}>
-                {formData.image ? (
-                   <img src={formData.image} alt="Preview" style={{ height: '120px', borderRadius: '8px', objectFit: 'cover' }} />
+                <AlertCircle size={16} />
+                {uploadError}
+              </div>
+            )}
+
+            {/* Drag & Drop Dropzone or Image Preview */}
+            {formData.image ? (
+              // Image Preview
+              <div style={{ position: 'relative', marginBottom: '1rem' }}>
+                <div style={{ 
+                  border: '2px solid rgba(0,29,4,0.08)', 
+                  borderRadius: '16px', 
+                  overflow: 'hidden',
+                  backgroundColor: 'white'
+                }}>
+                  <img 
+                    src={formData.image} 
+                    alt="Product Preview" 
+                    style={{ width: '100%', height: '220px', objectFit: 'cover', display: 'block' }}
+                    onError={(e) => { e.target.style.display = 'none'; }}
+                  />
+                </div>
+                <button 
+                  type="button"
+                  onClick={handleRemoveImage}
+                  style={{ 
+                    position: 'absolute', top: '0.8rem', right: '0.8rem',
+                    width: '32px', height: '32px', borderRadius: '50%',
+                    backgroundColor: 'rgba(0,0,0,0.6)', border: 'none',
+                    color: 'white', cursor: 'pointer',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    transition: 'background-color 0.2s'
+                  }}
+                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(220,38,38,0.9)'}
+                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.6)'}
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            ) : (
+              // Upload Dropzone
+              <div 
+                onClick={() => !uploading && fileInputRef.current?.click()}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                style={{ 
+                  border: `2px dashed ${isDragOver ? '#001d04' : 'rgba(0,29,4,0.15)'}`, 
+                  borderRadius: '16px', 
+                  padding: '2.5rem 1.5rem', 
+                  backgroundColor: isDragOver ? 'rgba(0,29,4,0.03)' : 'rgba(255,255,255,0.4)',
+                  textAlign: 'center',
+                  marginBottom: '1rem',
+                  cursor: uploading ? 'default' : 'pointer',
+                  transition: 'all 0.2s'
+                }}
+              >
+                {uploading ? (
+                  // Upload Progress
+                  <div>
+                    <div style={{ 
+                      width: '60px', height: '60px', borderRadius: '50%', 
+                      backgroundColor: '#E4EDDB', margin: '0 auto 1rem',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center'
+                    }}>
+                      <Upload size={24} color="#436132" />
+                    </div>
+                    <p style={{ fontSize: '0.9rem', fontWeight: 600, color: '#001d04', marginBottom: '0.8rem' }}>
+                      Uploading... {uploadProgress}%
+                    </p>
+                    {/* Progress Bar */}
+                    <div style={{ 
+                      width: '80%', maxWidth: '250px', margin: '0 auto',
+                      height: '6px', borderRadius: '3px', backgroundColor: 'rgba(0,29,4,0.08)',
+                      overflow: 'hidden'
+                    }}>
+                      <div style={{ 
+                        height: '100%', borderRadius: '3px',
+                        backgroundColor: '#436132',
+                        width: `${uploadProgress}%`,
+                        transition: 'width 0.3s ease'
+                      }} />
+                    </div>
+                  </div>
                 ) : (
-                   <div style={{ color: '#706F65', opacity: 0.6 }}>
-                      <ImageIcon size={32} style={{ margin: '0 auto 0.5rem' }} />
-                      <p style={{ fontSize: '0.85rem', margin: 0 }}>Image Preview</p>
-                   </div>
+                  // Idle State
+                  <div>
+                    <div style={{ 
+                      width: '60px', height: '60px', borderRadius: '50%', 
+                      backgroundColor: 'white', margin: '0 auto 1rem',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      boxShadow: '0 4px 15px rgba(0,0,0,0.04)'
+                    }}>
+                      <Upload size={24} color="#706F65" />
+                    </div>
+                    <p style={{ fontSize: '0.95rem', fontWeight: 600, color: '#001d04', marginBottom: '0.3rem' }}>
+                      Drop your image here
+                    </p>
+                    <p style={{ fontSize: '0.8rem', color: '#706F65', margin: 0 }}>
+                      or click to browse · JPG, PNG, WebP · Max 5MB
+                    </p>
+                  </div>
                 )}
               </div>
+            )}
+
+            {/* Hidden File Input */}
+            <input 
+              ref={fileInputRef}
+              type="file" 
+              accept="image/jpeg,image/png,image/webp,image/avif"
+              onChange={handleFileSelect}
+              style={{ display: 'none' }}
+            />
+
+            {/* Fallback URL Input */}
+            <div style={{ marginTop: '0.5rem' }}>
+              <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#706F65', letterSpacing: '0.1em', marginBottom: '0.5rem', textAlign: 'center' }}>
+                OR PASTE IMAGE URL
+              </div>
               <input 
-                required type="url" className="input" 
+                type="url" className="input" 
                 value={formData.image} 
                 onChange={e => setFormData({...formData, image: e.target.value})} 
-                placeholder="Product image URL (https://...)" 
-                style={{ backgroundColor: 'white', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '12px', padding: '1.2rem', width: '100%' }} 
+                placeholder="https://..." 
+                style={{ backgroundColor: 'white', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.85rem' }} 
               />
             </div>
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1.2rem', marginTop: '1rem', marginBottom: '4rem' }}>
              <button type="button" className="btn" style={{ color: '#001d04', fontWeight: 600, padding: '1rem 2rem', background: 'none', border: 'none', cursor: 'pointer' }} onClick={() => setIsEditing(false)}>Discard</button>
-             <button type="submit" className="btn" style={{ backgroundColor: '#001d04', color: 'white', padding: '1rem 3rem', borderRadius: '16px', fontWeight: 600, border: 'none', cursor: 'pointer' }}>
+             <button type="submit" className="btn" disabled={uploading} style={{ backgroundColor: '#001d04', color: 'white', padding: '1rem 3rem', borderRadius: '16px', fontWeight: 600, border: 'none', cursor: uploading ? 'not-allowed' : 'pointer', opacity: uploading ? 0.6 : 1 }}>
                {currentProduct ? 'Apply Updates' : 'Publish Product'}
              </button>
           </div>
@@ -249,4 +448,3 @@ const ProductManagement = () => {
 };
 
 export default ProductManagement;
-
