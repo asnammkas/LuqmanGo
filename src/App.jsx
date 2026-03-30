@@ -74,7 +74,7 @@ function AppContent() {
           <div className="animate-loader-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 1, width: '90%' }}>
             
             {/* Logo Text Section */}
-            <h2 style={{ fontSize: 'clamp(4rem, 20vw, 7.5rem)', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'baseline', letterSpacing: '-0.02em', color: '#00C853', textShadow: '0 4px 30px rgba(0,200,83,0.2)' }}>
+            <h2 style={{ fontSize: 'clamp(4rem, 20vw, 7.5rem)', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'baseline', letterSpacing: '-0.02em', color: '#1d4d20', textShadow: '0 4px 30px rgba(0,200,83,0.2)' }}>
               <span>Luqman</span>
               <span style={{ color: '#C4D300' }}>Go</span>
             </h2>
@@ -84,7 +84,7 @@ function AppContent() {
                <svg width="100%" height="100%" viewBox="0 0 240 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path 
                     d="M10 10 C 50 8, 180 8, 225 10 L 220 5 L 230 10 L 220 15 L 225 10" 
-                    stroke="#00C853" 
+                    stroke="#1d4d20" 
                     strokeWidth="3.5" 
                     strokeLinecap="round" 
                     strokeLinejoin="round" 
@@ -95,7 +95,7 @@ function AppContent() {
             </div>
 
             {/* Tagline Section */}
-            <div className="animate-tagline" style={{ marginTop: '0.8rem', fontFamily: '"Georgia", serif', fontStyle: 'italic', fontSize: '1.5rem', color: '#001d04', letterSpacing: '0.02em' }}>
+            <div className="animate-tagline" style={{ marginTop: '0.8rem', fontFamily: '"Georgia", serif', fontStyle: 'italic', fontSize: '1.5rem', color: '#123014', letterSpacing: '0.02em' }}>
               Shop. Click. Done.
             </div>
 
@@ -115,8 +115,8 @@ function AppContent() {
 
           {/* Branding Detail at Bottom */}
           <div style={{ position: 'absolute', bottom: '8vh', opacity: 0, animation: 'fadeIn 1s ease-out 2.2s forwards', textAlign: 'center' }}>
-             <div style={{ fontSize: '0.65rem', fontWeight: 900, letterSpacing: '0.2rem', color: '#001d04', marginBottom: '0.5rem' }}>GLOBAL CURATED NETWORK</div>
-             <div className="animate-pulse-glow" style={{ width: '40px', height: '1.5px', backgroundColor: '#436132', margin: '0 auto', opacity: 0.2 }}></div>
+             <div style={{ fontSize: '0.65rem', fontWeight: 900, letterSpacing: '0.2rem', color: '#123014', marginBottom: '0.5rem' }}>GLOBAL CURATED NETWORK</div>
+             <div className="animate-pulse-glow" style={{ width: '40px', height: '1.5px', backgroundColor: '#354c25', margin: '0 auto', opacity: 0.2 }}></div>
           </div>
           
         </div>
