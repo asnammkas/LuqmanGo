@@ -80,13 +80,19 @@ const CategoryPage = () => {
       <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', width: '100%', boxSizing: 'border-box', margin: '0 auto', flex: 1 }}>
         
         {/* Editorial Header - Unified Pattern */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
-          <Link 
-            to="/"
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '0.4rem', 
+          marginBottom: '1.2rem',
+          animation: 'cardEntrance 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) backwards'
+        }}>
+          <button 
+            onClick={() => navigate(-1)}
             style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
           >
             <ArrowLeft size={18} strokeWidth={2} />
-          </Link>
+          </button>
           {searchQuery ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                <SearchIcon size={18} />
@@ -96,7 +102,15 @@ const CategoryPage = () => {
             <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>{activeCategory}</span>
           )}
         </div>
-        <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+        <p style={{ 
+          fontSize: '0.85rem', 
+          color: '#706F65', 
+          lineHeight: '1.6', 
+          fontWeight: 400, 
+          marginTop: '-0.3rem', 
+          marginBottom: '1.5rem',
+          animation: 'cardEntrance 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.05s backwards'
+        }}>
           {searchQuery ? `Showing matches for "${searchQuery}" across ${activeCategory === 'All' ? 'the whole store' : activeCategory}.` : description}
         </p>
 
@@ -105,10 +119,11 @@ const CategoryPage = () => {
         <div style={{ 
           display: 'flex', 
           gap: '12px',
-          marginBottom: '3rem',
+          marginBottom: '1rem',
           borderBottom: '1px solid var(--color-border)',
-          paddingBottom: '2rem',
-          position: 'relative'
+          paddingBottom: '0.8rem',
+          position: 'relative',
+          animation: 'cardEntrance 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 0.1s backwards'
         }}>
           {/* Filter Button */}
           <div style={{ position: 'relative' }}>

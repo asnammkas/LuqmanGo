@@ -133,32 +133,32 @@ const ProductDetail = () => {
               color: '#001d04', 
               fontSize: '0.95rem', 
               lineHeight: 1.5, 
-              marginBottom: '1.5rem',
+              marginBottom: '0.8rem',
               opacity: 0.8,
               fontWeight: 300
             }}>
               {product.description}
             </p>
 
-            {/* Actions Grid - Single Line Alignment (Swapped) */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.5rem' }}>
-              <button 
-                onClick={() => addToCart(product, quantity)}
-                className="btn"
-                style={{ 
-                  flexGrow: 1, 
-                  height: '3.5rem', 
-                  backgroundColor: '#001d04', 
-                  color: 'white', 
-                  borderRadius: '12px',
-                  fontWeight: 600,
-                  fontSize: '0.85rem',
-                  letterSpacing: '0.05em'
-                }}
-              >
-                ADD TO BAG — ${(product.price * quantity).toFixed(2)}
-              </button>
+            {/* Total Price Display - Compact Layout */}
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              alignItems: 'center', 
+              marginBottom: '0.6rem',
+              marginTop: '0.5rem',
+              padding: '0 0.2rem'
+            }}>
+              <span style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: '#706F65', letterSpacing: '0.1em' }}>
+                Subtotal
+              </span>
+              <span style={{ fontSize: '1.25rem', fontWeight: 600, color: '#001d04' }}>
+                ${(product.price * quantity).toFixed(2)}
+              </span>
+            </div>
 
+            {/* Actions Grid - Swapped Positions for Ergonomics */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
               <div style={{ 
                 display: 'flex', 
                 alignItems: 'center', 
@@ -182,6 +182,25 @@ const ProductDetail = () => {
                   <Plus size={16} />
                 </button>
               </div>
+
+              <button 
+                onClick={() => addToCart(product, quantity)}
+                className="btn"
+                style={{ 
+                  flexGrow: 1, 
+                  height: '3.5rem', 
+                  backgroundColor: '#001d04', 
+                  color: 'white', 
+                  borderRadius: '12px',
+                  fontWeight: 600,
+                  fontSize: '0.85rem',
+                  letterSpacing: '0.15em',
+                  transition: 'all 0.2s ease',
+                  cursor: 'pointer'
+                }}
+              >
+                ADD TO BAG
+              </button>
             </div>
 
             <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>

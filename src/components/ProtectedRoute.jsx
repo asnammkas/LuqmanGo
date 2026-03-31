@@ -1,9 +1,10 @@
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Loader } from 'lucide-react';
 
 const ProtectedRoute = ({ children }) => {
   const { currentUser, loading } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -17,7 +18,8 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (!currentUser) {
-    return <Navigate to="/signin" replace />;
+    // Pass the current location in the state object
+    return <Navigate to="/signin" state={{ from: location }} replace />;
   }
 
   return children;

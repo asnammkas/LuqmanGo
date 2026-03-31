@@ -13,6 +13,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
+  const [isWaHovered, setIsWaHovered] = useState(false);
 
   const handleSearch = (e) => {
     if (e.key === 'Enter' && searchQuery.trim()) {
@@ -302,19 +303,26 @@ const SideDrawer = ({ isOpen, onClose }) => {
           target="_blank" 
           rel="noreferrer"
           style={{ 
-            margin: '1rem 1.5rem 1.5rem',
-            backgroundColor: '#001d04', 
+            margin: '0.5rem 1.5rem 1.5rem',
+            backgroundColor: isWaHovered ? '#003308' : '#001d04', 
             color: 'white', 
-            borderRadius: '12px',
-            padding: '1.25rem',
+            borderRadius: '100px', // Pill shape for elegance
+            padding: '0.75rem 1.25rem',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
+            gap: '0.6rem',
             cursor: 'pointer',
             fontWeight: 500,
-            fontSize: '0.9rem',
-            textDecoration: 'none'
+            fontSize: '0.75rem',
+            letterSpacing: '0.15em', // Added elegant spacing
+            textDecoration: 'none',
+            transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            boxShadow: isWaHovered ? '0 10px 15px -3px rgba(0, 0, 0, 0.2)' : 'none',
+            transform: isWaHovered ? 'translateY(-2px)' : 'none'
           }}
+          onMouseEnter={() => setIsWaHovered(true)}
+          onMouseLeave={() => setIsWaHovered(false)}
           onClick={onClose}
         >
           ORDER VIA WHATSAPP

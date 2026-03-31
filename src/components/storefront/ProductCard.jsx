@@ -12,7 +12,7 @@ const ProductCard = ({ product }) => {
 
   return (
     <div 
-      className="animate-fade-in" 
+      className="card" 
       style={{ 
         display: 'flex', 
         flexDirection: 'column', 
@@ -34,7 +34,8 @@ const ProductCard = ({ product }) => {
           aspectRatio: '4 / 5', 
           overflow: 'hidden', 
           borderRadius: 'var(--radius-lg)',
-          backgroundColor: '#F3F2EE'
+          backgroundColor: '#F3F2EE',
+          border: '1px solid rgba(0,0,0,0.08)'
         }}>
           {!imgError ? (
             <img 
@@ -109,39 +110,41 @@ const ProductCard = ({ product }) => {
 
         {/* Info Section - Left aligned as per reference */}
         <div style={{ 
-          padding: '1rem 0', 
+          padding: '0.8rem 0.4rem', 
           display: 'flex', 
           flexDirection: 'column', 
           alignItems: 'flex-start',
           textAlign: 'left' 
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'baseline', gap: '0.5rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'flex-start', gap: '0.75rem' }}>
             <h3 style={{ 
-              fontSize: '1rem', 
+              fontSize: '0.95rem', 
               fontWeight: 500, 
               color: '#001d04', 
               margin: 0,
               letterSpacing: '-0.01em',
-              lineHeight: 1.3
+              lineHeight: 1.4,
+              flex: 1
             }}>
               {product.title}
             </h3>
             <span style={{ 
               fontSize: '1rem', 
-              fontWeight: 400, 
-              color: '#2a2418' 
+              fontWeight: 600, 
+              color: '#2a2418',
+              flexShrink: 0
             }}>
               ${Math.round(product.price)}
             </span>
           </div>
           
           <span style={{ 
-            fontSize: '0.7rem', 
-            fontWeight: 600, 
+            fontSize: '0.65rem', 
+            fontWeight: 700, 
             color: '#587541',
             textTransform: 'uppercase',
-            letterSpacing: '0.1em',
-            marginTop: '0.4rem'
+            letterSpacing: '0.12em',
+            marginTop: '0.6rem'
           }}>
             {product.category}
           </span>

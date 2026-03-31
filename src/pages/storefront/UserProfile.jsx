@@ -639,68 +639,140 @@ const UserProfile = () => {
               onClick={() => setActiveInvoice(null)}
               style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
             >
-              <ArrowLeft size={18} strokeWidth={2} />
+              <ArrowLeft size={18} strokeWidth={2.5} />
             </button>
-            <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Invoice</span>
+            <span style={{ fontSize: '1rem', fontWeight: 600, color: '#001d04', letterSpacing: '0.02em' }}>Order Receipt</span>
           </div>
-          <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
-            Your order receipt and itemized billing details for record-keeping and returns.
-          </p>
-
-          <div style={{ backgroundColor: '#EAE1D3', borderRadius: '24px', padding: '2rem', border: '1px solid rgba(0,0,0,0.02)' }}>
-            {/* Invoice Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem' }}>
+          
+          <div style={{ 
+            backgroundColor: '#EAE1D3', 
+            borderRadius: '32px', 
+            padding: '2.5rem 2rem', 
+            boxShadow: '0 20px 40px rgba(0,0,0,0.04)',
+            border: '1px solid rgba(0,0,0,0.02)',
+            position: 'relative'
+          }}>
+            {/* Header Section */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
               <div>
-                <div style={{ fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.15em', color: '#706F65', marginBottom: '0.4rem' }}>INVOICE</div>
-                <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#001d04' }}>#{order.id}</div>
+                <div style={{ fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.15em', color: '#706F65', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Invoice</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#001d04', letterSpacing: '-0.01em' }}>#{order.id}</div>
               </div>
               <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.15em', color: '#706F65', marginBottom: '0.4rem' }}>DATE</div>
+                <div style={{ fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.15em', color: '#706F65', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Date</div>
                 <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#001d04' }}>{order.date}</div>
               </div>
             </div>
 
-            {/* Status Badge */}
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', backgroundColor: '#E4EDDB', color: '#436132', padding: '0.35rem 0.8rem', borderRadius: '8px', fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.05em', marginBottom: '2rem' }}>
-              <PackageCheck size={12} /> {order.status}
+            {/* Delivery Status */}
+            <div style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              gap: '0.4rem', 
+              backgroundColor: 'white', 
+              color: '#436132', 
+              padding: '0.4rem 0.8rem', 
+              borderRadius: '100px', 
+              fontSize: '0.65rem', 
+              fontWeight: 700, 
+              letterSpacing: '0.05em', 
+              marginBottom: '1.5rem',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
+              border: '1px solid rgba(67, 97, 50, 0.1)'
+            }}>
+              <PackageCheck size={14} strokeWidth={2.5} /> {order.status}
             </div>
 
-            {/* Line Items */}
-            <div style={{ marginBottom: '1.5rem' }}>
-              <div style={{ fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.15em', color: '#706F65', marginBottom: '1rem' }}>ITEMS</div>
+            {/* Line Items Label */}
+            <div style={{ 
+              fontSize: '0.6rem', 
+              fontWeight: 800, 
+              letterSpacing: '0.15em', 
+              color: '#706F65', 
+              marginBottom: '0.8rem', 
+              textTransform: 'uppercase',
+              borderBottom: '1px solid rgba(0,0,0,0.05)',
+              paddingBottom: '0.6rem'
+            }}>
+              Items
+            </div>
+
+            {/* Items List */}
+            <div style={{ marginBottom: '1.2rem' }}>
               {order.items.map((item, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.8rem 0', borderBottom: i < order.items.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none' }}>
-                  <div>
-                    <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#001d04' }}>{item.name}</div>
-                    <div style={{ fontSize: '0.75rem', color: '#706F65', marginTop: '0.15rem' }}>Qty: {item.qty}</div>
+                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '0.8rem 0' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.95rem', fontWeight: 600, color: '#001d04', lineHeight: 1.3 }}>{item.name}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#706F65', marginTop: '0.2rem', fontWeight: 400 }}>Qty: {item.qty}</div>
                   </div>
-                  <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#001d04' }}>${item.price.toFixed(2)}</div>
+                  <div style={{ fontSize: '1rem', fontWeight: 700, color: '#001d04', marginLeft: '1rem' }}>
+                    ${item.price.toFixed(2)}
+                  </div>
                 </div>
               ))}
             </div>
 
-            {/* Totals */}
-            <div style={{ borderTop: '1px solid rgba(0,0,0,0.08)', paddingTop: '1rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.85rem', color: '#706F65' }}>
+            {/* Billing Summary */}
+            <div style={{ 
+              borderTop: '1.5px solid rgba(0,0,0,0.06)', 
+              paddingTop: '1.2rem',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '0.6rem'
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#706F65', fontWeight: 400 }}>
                 <span>Subtotal</span>
-                <span>${order.price.toFixed(2)}</span>
+                <span style={{ color: '#001d04', fontWeight: 500 }}>${order.price.toFixed(2)}</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.85rem', color: '#706F65' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#706F65', fontWeight: 400 }}>
                 <span>Shipping</span>
-                <span style={{ color: '#436132', fontWeight: 600 }}>Free</span>
+                <span style={{ color: '#436132', fontWeight: 700, letterSpacing: '0.05em' }}>COMPLIMENTARY</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.8rem', paddingTop: '0.8rem', borderTop: '1px solid rgba(0,0,0,0.08)', fontSize: '1.1rem', fontWeight: 700, color: '#001d04' }}>
+              
+              <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                marginTop: '0.8rem', 
+                paddingTop: '1rem', 
+                borderTop: '1.5px solid rgba(0,0,0,0.05)', 
+                fontSize: '1.2rem', 
+                fontWeight: 700, 
+                color: '#001d04',
+                letterSpacing: '-0.02em'
+              }}>
                 <span>Total</span>
                 <span>${order.price.toFixed(2)}</span>
               </div>
             </div>
+
+            {/* Brand Signature */}
+            <div style={{ 
+              marginTop: '2rem', 
+              textAlign: 'center', 
+              borderTop: '1px solid rgba(0,0,0,0.03)', 
+              paddingTop: '1.5rem',
+              opacity: 0.6
+            }}>
+                <div style={{ fontSize: '0.75rem', fontWeight: 500, color: '#001d04', letterSpacing: '0.05em', fontStyle: 'italic' }}>
+                  Thank you for curating with LuqmanGo
+                </div>
+                <div style={{ fontSize: '0.6rem', marginTop: '0.4rem', letterSpacing: '0.1em', fontWeight: 400 }}>
+                  WWW.LUQMANGO.COM
+                </div>
+            </div>
           </div>
 
-          {/* Shipped To */}
-          <div style={{ marginTop: '1.5rem', backgroundColor: '#FBF5EC', borderRadius: '16px', padding: '1.5rem', border: '1px solid rgba(0,0,0,0.02)' }}>
-            <div style={{ fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.15em', color: '#706F65', marginBottom: '0.8rem' }}>SHIPPED TO</div>
-            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#001d04', marginBottom: '0.2rem' }}>Asnam Sanaf</div>
-            <div style={{ fontSize: '0.8rem', color: '#706F65', lineHeight: 1.6 }}>
+          {/* Shipping Address Section - Improved Design */}
+          <div style={{ 
+            marginTop: '1.5rem', 
+            backgroundColor: '#E4EDDB', 
+            borderRadius: '24px', 
+            padding: '1.75rem', 
+            border: '1px solid rgba(67, 97, 50, 0.1)'
+          }}>
+            <div style={{ fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.15em', color: '#706F65', marginBottom: '1rem', textTransform: 'uppercase' }}>Shipped To</div>
+            <div style={{ fontSize: '1rem', fontWeight: 700, color: '#001d04', marginBottom: '0.4rem' }}>Asnam Sanaf</div>
+            <div style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: 1.6, fontWeight: 400 }}>
               Flat 402, Sylvan Heights<br/>
               Central District, Luqman Street<br/>
               Kochi, Kerala 682001
@@ -723,12 +795,12 @@ const UserProfile = () => {
             </button>
             <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>My Orders</span>
           </div>
-          <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+          <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '1.5rem' }}>
             A curated history of your sustainable journeys. Track your ongoing deliveries or revisit past eco-friendly purchases.
           </p>
 
           {/* In Transit */}
-          <div style={{ marginBottom: '3rem' }}>
+          <div style={{ marginBottom: '1.5rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.2rem' }}>
               <Truck size={18} color="#436132" fill="#436132" fillOpacity={0.2} />
               <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#001d04' }}>In Transit</h3>
@@ -761,7 +833,7 @@ const UserProfile = () => {
 
           {/* Order History */}
           <div style={{ marginBottom: '2rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem' }}>
               <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#001d04' }}>Order History</h3>
               
               {/* Year Filter Dropdown */}
@@ -978,7 +1050,7 @@ const UserProfile = () => {
       <div style={{ maxWidth: '500px', margin: '0 auto', padding: '1rem' }}>
         
         {/* Header Section */}
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2.5rem' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '1.5rem' }}>
           <div style={{ position: 'relative', marginBottom: '1rem' }}>
             {/* Avatar container */}
             <div style={{ 
@@ -990,10 +1062,7 @@ const UserProfile = () => {
             </div>
           </div>
           
-          <h1 style={{ fontSize: '1.6rem', fontWeight: 700, color: '#001d04', marginBottom: '0.2rem', letterSpacing: '-0.02em' }}>{user.name}</h1>
-          <div style={{ backgroundColor: '#E4EDDB', color: '#436132', padding: '0.3rem 0.8rem', borderRadius: '12px', fontSize: '0.65rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.4rem', letterSpacing: '0.05em' }}>
-             <Star size={10} fill="currentColor" /> GOLD CURATOR
-          </div>
+          <h1 style={{ fontSize: '1.6rem', fontWeight: 700, color: '#001d04', marginBottom: '0', letterSpacing: '-0.02em' }}>{user.name}</h1>
         </div>
 
         {/* Account Management Menu */}

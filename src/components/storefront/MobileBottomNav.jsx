@@ -14,63 +14,94 @@ const MobileBottomNav = ({ onOpenDrawer }) => {
   ];
 
   return (
-    <nav className="show-on-mobile" style={{
+    <nav className="show-on-mobile animate-fade-in" style={{
       position: 'fixed',
-      bottom: 0,
-      left: 0,
-      right: 0,
-      height: '80px',
-      backgroundColor: '#F7F3ED',
-      borderTop: '1px solid rgba(0,0,0,0.03)',
+      bottom: '12px',
+      left: '12px',
+      right: '12px',
+      height: '66px',
+      backgroundColor: 'rgba(247, 243, 237, 0.85)',
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      borderRadius: '24px',
+      border: '1px solid rgba(255, 255, 255, 0.5)',
       display: 'flex',
       justifyContent: 'space-around',
       alignItems: 'center',
-      zIndex: 100,
-      paddingBottom: 'env(safe-area-inset-bottom)',
-      boxShadow: '0 -1px 10px rgba(0,0,0,0.03)'
+      zIndex: 1000,
+      paddingBottom: 0,
+      boxShadow: '0 8px 32px rgba(0,29,4,0.12)',
     }}>
       {navItems.map((item) => {
         const Icon = item.icon;
         const isActive = (item.path === '/' && location.pathname === '/') || 
                         (item.path !== '/' && item.path && location.pathname.startsWith(item.path));
         
-        const content = (
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '8px',
-            color: isActive ? '#0C2311' : '#706F65',
-            position: 'relative',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            padding: '10px 0'
-          }}>
-            <Icon 
-              size={22} 
-              strokeWidth={isActive ? 2 : 1.5} 
-              style={{ 
-                opacity: isActive ? 1 : 0.8,
-                color: (item.name === 'WISHLIST' && isActive) ? '#EF4444' : (isActive ? '#0C2311' : '#706F65')
-              }} 
-              fill={(item.name === 'WISHLIST' && isActive) ? '#EF4444' : 'transparent'}
-            />
-            <span style={{ 
-              fontSize: '0.65rem', 
-              fontWeight: 500, 
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase'
+        return (
+          <Link 
+            key={item.name} 
+            to={item.path} 
+            style={{ 
+              textDecoration: 'none', 
+              color: 'inherit',
+              flex: 1,
+              display: 'flex',
+              justifyContent: 'center',
+              height: '100%'
+            }}
+          >
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '4px',
+              color: isActive ? '#0C2311' : '#706F65',
+              position: 'relative',
+              cursor: 'pointer',
+              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+              width: '100%',
+              transform: isActive ? 'scale(1.05)' : 'scale(1)',
             }}>
-              {item.name}
-            </span>
-            
-          </div>
-        );
+              {/* Floating Active Background Pill */}
+              {isActive && (
+                <div style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  width: '45px',
+                  height: '45px',
+                  backgroundColor: 'rgba(0, 29, 4, 0.04)',
+                  borderRadius: '50%',
+                  zIndex: -1,
+                  animation: 'fadeIn 0.3s ease-out'
+                }} />
+              )}
 
-        if (item.path) {
-          return <Link key={item.name} to={item.path} style={{ textDecoration: 'none', color: 'inherit' }}>{content}</Link>;
-        }
-        return <div key={item.name} onClick={item.onClick}>{content}</div>;
+              <Icon 
+                size={22} 
+                strokeWidth={isActive ? 2.5 : 1.8} 
+                style={{ 
+                  color: (item.name === 'WISHLIST' && isActive) ? '#EF4444' : (isActive ? '#0C2311' : '#706F65'),
+                  transition: 'all 0.3s ease'
+                }} 
+                fill={(item.name === 'WISHLIST' && isActive) ? '#EF4444' : 'transparent'}
+              />
+              <span style={{ 
+                fontSize: '0.58rem', 
+                fontWeight: isActive ? 700 : 500, 
+                letterSpacing: '0.08em',
+                textTransform: 'uppercase',
+                opacity: isActive ? 1 : 0.7,
+                transition: 'all 0.3s ease'
+              }}>
+                {item.name}
+              </span>
+
+            </div>
+          </Link>
+        );
       })}
     </nav>
   );

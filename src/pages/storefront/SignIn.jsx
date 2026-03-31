@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, LogIn, ArrowRight, ArrowLeft, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import Footer from '../../components/storefront/Footer';
@@ -11,13 +11,17 @@ const SignIn = () => {
   const [isLoading, setIsLoading] = useState(false);
   const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Get the redirect destination from state, defaulting to home
+  const from = location.state?.from?.pathname || '/';
 
   const handleGoogleSignIn = async () => {
     setError('');
     setIsLoading(true);
     try {
       await loginWithGoogle();
-      navigate('/');
+      navigate(from, { replace: true });
     } catch (err) {
       console.error('Google SignIn Error:', err);
       const code = err.code;
@@ -38,7 +42,7 @@ const SignIn = () => {
 
     try {
       await login(email, password);
-      navigate('/');
+      navigate(from, { replace: true });
     } catch (err) {
       console.error('SignIn Error:', err);
       const code = err.code;
@@ -62,12 +66,12 @@ const SignIn = () => {
         
         {/* Editorial Header */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
-          <Link 
-            to="/"
+          <button 
+            onClick={() => navigate(-1)}
             style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
           >
             <ArrowLeft size={18} strokeWidth={2} />
-          </Link>
+          </button>
           <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Welcome Back</span>
         </div>
         <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>

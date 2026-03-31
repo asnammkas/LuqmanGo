@@ -148,7 +148,7 @@ const Home = () => {
       <CategoryGrid />
 
       {/* Product Grid */}
-      <section className="container" style={{ padding: '2rem 1.5rem 6rem' }}>
+      <section className="container" style={{ padding: '0.8rem 1.5rem 6rem' }}>
         <div style={{ 
           display: 'flex', 
           alignItems: 'center', 

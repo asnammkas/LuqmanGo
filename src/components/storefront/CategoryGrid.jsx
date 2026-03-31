@@ -44,13 +44,13 @@ const CategoryGrid = () => {
   };
 
   return (
-    <section className="container" style={{ padding: '0 1.5rem 2rem' }}>
+    <section className="container" style={{ padding: '0 1.5rem 1rem' }}>
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(3, 1fr)',
         gap: '12px',
       }}>
-        {categories.map((cat) => (
+        {categories.map((cat, i) => (
           <div
             key={cat.name}
             onClick={() => handleCategoryClick(cat)}
@@ -60,6 +60,7 @@ const CategoryGrid = () => {
               alignItems: 'center',
               cursor: 'pointer',
               transition: 'transform 0.2s ease',
+              animation: `cardEntrance 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) ${i * 0.04}s backwards`
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'translateY(-2px)';

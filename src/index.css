@@ -47,13 +47,13 @@ textarea:-webkit-autofill:focus {
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 3rem 1.5rem;
+  gap: 1.5rem;
 }
 
 @media (max-width: 768px) {
   .product-grid {
     grid-template-columns: repeat(2, 1fr) !important; /* Force 2 columns on mobile */
-    gap: 2rem 1rem !important;
+    gap: 0.8rem 1rem !important;
   }
 }
 
@@ -423,22 +423,43 @@ a:hover {
 /* Footer responsive grid */
 .footer-bottom { text-align: center; justify-content: center; }
 
-/* Staggered card entrance */
+/* Staggered card entrance - Extended to 20 items */
 .product-grid .card {
-  animation: cardEntrance 0.5s ease-out backwards;
+  animation: cardEntrance 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
 }
-.product-grid .card:nth-child(1) { animation-delay: 0s; }
-.product-grid .card:nth-child(2) { animation-delay: 0.05s; }
-.product-grid .card:nth-child(3) { animation-delay: 0.1s; }
-.product-grid .card:nth-child(4) { animation-delay: 0.15s; }
-.product-grid .card:nth-child(5) { animation-delay: 0.2s; }
-.product-grid .card:nth-child(6) { animation-delay: 0.25s; }
-.product-grid .card:nth-child(7) { animation-delay: 0.3s; }
-.product-grid .card:nth-child(8) { animation-delay: 0.35s; }
+
+.product-grid .card:nth-child(1) { animation-delay: 0.02s; }
+.product-grid .card:nth-child(2) { animation-delay: 0.04s; }
+.product-grid .card:nth-child(3) { animation-delay: 0.06s; }
+.product-grid .card:nth-child(4) { animation-delay: 0.08s; }
+.product-grid .card:nth-child(5) { animation-delay: 0.1s; }
+.product-grid .card:nth-child(6) { animation-delay: 0.12s; }
+.product-grid .card:nth-child(7) { animation-delay: 0.14s; }
+.product-grid .card:nth-child(8) { animation-delay: 0.16s; }
+.product-grid .card:nth-child(9) { animation-delay: 0.18s; }
+.product-grid .card:nth-child(10) { animation-delay: 0.2s; }
+.product-grid .card:nth-child(11) { animation-delay: 0.22s; }
+.product-grid .card:nth-child(12) { animation-delay: 0.24s; }
+.product-grid .card:nth-child(13) { animation-delay: 0.26s; }
+.product-grid .card:nth-child(14) { animation-delay: 0.28s; }
+.product-grid .card:nth-child(15) { animation-delay: 0.3s; }
+.product-grid .card:nth-child(16) { animation-delay: 0.32s; }
+.product-grid .card:nth-child(17) { animation-delay: 0.34s; }
+.product-grid .card:nth-child(18) { animation-delay: 0.36s; }
+.product-grid .card:nth-child(19) { animation-delay: 0.38s; }
+.product-grid .card:nth-child(20) { animation-delay: 0.4s; }
 
 @keyframes cardEntrance {
-  from { opacity: 0; transform: translateY(20px) scale(0.97); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
+  from { 
+    opacity: 0; 
+    transform: translateY(30px) scale(0.98); 
+    filter: blur(5px);
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1); 
+    filter: blur(0);
+  }
 }
 
 /* Custom scrollbar */
