@@ -83,17 +83,17 @@ const CategoryPage = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
           <Link 
             to="/"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#123014', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
           >
             <ArrowLeft size={18} strokeWidth={2} />
           </Link>
           {searchQuery ? (
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
                <SearchIcon size={18} />
-               <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#123014' }}>Search Results</span>
+               <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Search Results</span>
             </div>
           ) : (
-            <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#123014' }}>{activeCategory}</span>
+            <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>{activeCategory}</span>
           )}
         </div>
         <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
@@ -118,7 +118,7 @@ const CategoryPage = () => {
                 display: 'flex', 
                 alignItems: 'center', 
                 gap: '8px',
-                backgroundColor: filterBy !== 'all' ? '#123014' : '#F2E7D2', 
+                backgroundColor: filterBy !== 'all' ? '#001d04' : '#F2E7D2', 
                 border: 'none', 
                 padding: '0.75rem 1.25rem',
                 borderRadius: 'var(--radius-md)', 
@@ -146,7 +146,7 @@ const CategoryPage = () => {
                       width: '100%', padding: '0.7rem 1rem', borderRadius: '10px',
                       border: 'none', background: filterBy === opt.value ? '#F2E7D2' : 'transparent',
                       textAlign: 'left', cursor: 'pointer', fontSize: '0.85rem',
-                      fontWeight: filterBy === opt.value ? 700 : 400, color: '#123014',
+                      fontWeight: filterBy === opt.value ? 700 : 400, color: '#001d04',
                       display: 'flex', alignItems: 'center', justifyContent: 'space-between'
                     }}
                   >
@@ -166,7 +166,7 @@ const CategoryPage = () => {
                 display: 'flex', 
                 alignItems: 'center', 
                 gap: '8px',
-                backgroundColor: sortBy !== 'default' ? '#123014' : '#F2E7D2', 
+                backgroundColor: sortBy !== 'default' ? '#001d04' : '#F2E7D2', 
                 border: 'none', 
                 padding: '0.75rem 1.25rem',
                 borderRadius: 'var(--radius-md)', 
@@ -194,7 +194,7 @@ const CategoryPage = () => {
                       width: '100%', padding: '0.7rem 1rem', borderRadius: '10px',
                       border: 'none', background: sortBy === opt.value ? '#F2E7D2' : 'transparent',
                       textAlign: 'left', cursor: 'pointer', fontSize: '0.85rem',
-                      fontWeight: sortBy === opt.value ? 700 : 400, color: '#123014',
+                      fontWeight: sortBy === opt.value ? 700 : 400, color: '#001d04',
                       display: 'flex', alignItems: 'center', justifyContent: 'space-between'
                     }}
                   >
@@ -221,7 +221,7 @@ const CategoryPage = () => {
         ) : categoryProducts.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '6rem 1rem' }}>
                <XCircle size={40} strokeWidth={1} style={{ color: '#D4CFC5', marginBottom: '1rem' }} />
-               <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem', color: '#123014' }}>
+               <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem', color: '#001d04' }}>
                  {searchQuery ? 'No matches found' : 'No products found'}
                </h3>
                <p style={{ color: 'var(--color-text-muted)', marginBottom: '2rem', fontSize: '0.9rem' }}>

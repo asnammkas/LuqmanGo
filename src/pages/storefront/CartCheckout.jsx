@@ -65,11 +65,11 @@ const CartCheckout = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
           <Link 
             to="/"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#123014', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
           >
             <ArrowLeft size={18} strokeWidth={2} />
           </Link>
-          <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#123014' }}>Boutique Bag</span>
+          <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Boutique Bag</span>
         </div>
         <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
           A final review of your chosen pieces before they reach your doorstep.

@@ -82,7 +82,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
             }}>
               LuqmanGo
             </h1>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#123014', cursor: 'pointer', padding: '0.5rem' }}>
+            <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#001d04', cursor: 'pointer', padding: '0.5rem' }}>
               <X size={20} strokeWidth={1.5} />
             </button>
           </div>
@@ -95,7 +95,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
             paddingBottom: '0.5rem',
             marginBottom: '2rem'
           }}>
-            <Search size={16} color="#123014" style={{ marginRight: '0.75rem', opacity: 0.8 }} />
+            <Search size={16} color="#001d04" style={{ marginRight: '0.75rem', opacity: 0.8 }} />
             <input 
               type="text" 
               placeholder="Explore the archive..." 
@@ -107,7 +107,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
                 background: 'transparent',
                 width: '100%',
                 fontSize: '0.85rem',
-                color: '#123014',
+                color: '#001d04',
                 outline: 'none'
               }}
             />
@@ -143,8 +143,8 @@ const SideDrawer = ({ isOpen, onClose }) => {
                     padding: '0.8rem 1rem',
                     border: 'none',
                     borderRadius: '8px',
-                    background: isActive ? '#123014' : 'transparent',
-                    color: isActive ? 'white' : '#123014',
+                    background: isActive ? '#001d04' : 'transparent',
+                    color: isActive ? 'white' : '#001d04',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -155,7 +155,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
                   }}
                 >
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <Icon size={20} strokeWidth={isActive ? 2 : 1.5} color={isActive ? 'white' : '#123014'} />
+                    <Icon size={20} strokeWidth={isActive ? 2 : 1.5} color={isActive ? 'white' : '#001d04'} />
                     <span style={{ fontSize: '1.05rem' }}>{cat.label}</span>
                   </div>
                   {isActive && <ChevronRight size={14} strokeWidth={2.5} color="white" />}
@@ -171,8 +171,8 @@ const SideDrawer = ({ isOpen, onClose }) => {
                 padding: '0.8rem 1rem',
                 border: 'none',
                 borderRadius: '8px',
-                background: location.pathname === '/stores' ? '#123014' : 'transparent',
-                color: location.pathname === '/stores' ? 'white' : '#123014',
+                background: location.pathname === '/stores' ? '#001d04' : 'transparent',
+                color: location.pathname === '/stores' ? 'white' : '#001d04',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
@@ -186,7 +186,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <Store size={20} strokeWidth={location.pathname === '/stores' ? 2 : 1.5} color={location.pathname === '/stores' ? 'white' : '#123014'} />
+                <Store size={20} strokeWidth={location.pathname === '/stores' ? 2 : 1.5} color={location.pathname === '/stores' ? 'white' : '#001d04'} />
                 <span style={{ fontSize: '1.05rem' }}>Available Stores</span>
               </div>
               <ChevronRight size={14} strokeWidth={1.5} color={location.pathname === '/stores' ? 'white' : '#706F65'} />
@@ -213,7 +213,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
               <>
                 <Link to="/profile" onClick={onClose} style={{ 
                   display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.8rem 1rem', 
-                  color: '#123014', textDecoration: 'none', fontSize: '1.05rem', fontWeight: 400 
+                  color: '#001d04', textDecoration: 'none', fontSize: '1.05rem', fontWeight: 400 
                 }}>
                   <UserPlus size={20} strokeWidth={1.5} /> My Account
                 </Link>
@@ -221,7 +221,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
                   onClick={() => { logout(); onClose(); }} 
                   style={{ 
                     display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.8rem 1rem', 
-                    color: '#123014', fontSize: '1.05rem', fontWeight: 400,
+                    color: '#001d04', fontSize: '1.05rem', fontWeight: 400,
                     background: 'none', border: 'none', cursor: 'pointer', width: '100%', textAlign: 'left'
                   }}
                 >
@@ -232,13 +232,13 @@ const SideDrawer = ({ isOpen, onClose }) => {
               <>
                 <Link to="/signin" onClick={onClose} style={{ 
                   display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.8rem 1rem', 
-                  color: '#123014', textDecoration: 'none', fontSize: '1.05rem', fontWeight: 400 
+                  color: '#001d04', textDecoration: 'none', fontSize: '1.05rem', fontWeight: 400 
                 }}>
                   <LogIn size={20} strokeWidth={1.5} /> Sign In
                 </Link>
                 <Link to="/register" onClick={onClose} style={{ 
                   display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.8rem 1rem', 
-                  color: '#123014', textDecoration: 'none', fontSize: '1.05rem', fontWeight: 400 
+                  color: '#001d04', textDecoration: 'none', fontSize: '1.05rem', fontWeight: 400 
                 }}>
                   <UserPlus size={20} strokeWidth={1.5} /> Create Account
                 </Link>
@@ -247,7 +247,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
             {!loading && isAdmin && (
               <Link to="/admin" onClick={onClose} style={{ 
                 display: 'flex', alignItems: 'center', gap: '1rem', padding: '0.8rem 1rem', 
-                color: '#123014', textDecoration: 'none', fontSize: '1.05rem', fontWeight: 400 
+                color: '#001d04', textDecoration: 'none', fontSize: '1.05rem', fontWeight: 400 
               }}>
                 <LayoutDashboard size={20} strokeWidth={1.5} /> Admin Panel
               </Link>
@@ -276,7 +276,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
             { label: 'Delivery Policy', path: '/delivery-policy' }
           ].map((item) => (
             <Link key={item.label} to={item.path} onClick={onClose} style={{ 
-              padding: '0.5rem 1rem', color: '#123014', textDecoration: 'none', fontSize: '1rem', fontWeight: 400 
+              padding: '0.5rem 1rem', color: '#001d04', textDecoration: 'none', fontSize: '1rem', fontWeight: 400 
             }}>
               {item.label}
             </Link>
@@ -285,7 +285,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
 
           {/* Support / Contact Section */}
           <div style={{ paddingLeft: '0.5rem' }}>
-            <div style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.5rem', color: '#123014' }}>
+            <div style={{ fontSize: '0.8rem', fontWeight: 600, marginBottom: '0.5rem', color: '#001d04' }}>
               Need Help?
             </div>
             <div style={{ color: '#706F65', fontSize: '0.8rem', display: 'flex', flexDirection: 'column', gap: '0.4rem', fontWeight: 300 }}>
@@ -303,7 +303,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
           rel="noreferrer"
           style={{ 
             margin: '1rem 1.5rem 1.5rem',
-            backgroundColor: '#123014', 
+            backgroundColor: '#001d04', 
             color: 'white', 
             borderRadius: '12px',
             padding: '1.25rem',

@@ -2,20 +2,20 @@
 @import './slideshow.css';
 
 :root {
-  --color-primary: #123014; 
-  --color-primary-hover: #1d4d20;
+  --color-primary: #113013; 
+  --color-primary-hover: #1b4d1e;
   --color-secondary: #4A4A4A; 
   --color-secondary-hover: #666666;
   
   --color-bg-main: #F7F3ED; 
   --color-bg-card: #FFFFFF;
-  --color-text-main: #123014; /* Updated user-requested deep green */
+  --color-text-main: #113013; /* Updated user-requested deep green */
   --color-text-muted: #6b7a6d;
   --color-accent-sage: #C5D1B8; /* Sage green for badges */
   --color-text-sage: #4A5D43;
   
-  --color-forest-green: #123014;
-  --color-leaf-green: #436132;
+  --color-forest-green: #0C2311;
+  --color-leaf-green: #5C7444;
   --color-taupe: #706F65;
   
   --color-border: #E8E8E8;
@@ -444,8 +444,8 @@ a:hover {
 /* Custom scrollbar */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: var(--color-bg-main); }
-::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--color-primary), #436132); border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: #1d4d20; }
+::-webkit-scrollbar-thumb { background: linear-gradient(180deg, var(--color-primary), var(--color-secondary)); border-radius: 999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-primary-hover); }
 
 /* Featured badge - clean, no animation */
 

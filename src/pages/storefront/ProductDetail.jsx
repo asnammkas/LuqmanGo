@@ -34,11 +34,11 @@ const ProductDetail = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
           <Link 
             to="/"
-            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#123014', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
           >
             <ArrowLeft size={18} strokeWidth={2} />
           </Link>
-          <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#123014' }}>{product.category}</span>
+          <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>{product.category}</span>
         </div>
         <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
           Selected for its uncompromising quality, sustainable sourcing, and timeless appeal.
@@ -81,7 +81,7 @@ const ProductDetail = () => {
                 <Heart 
                   size={18} 
                   fill={isHearted ? '#EF4444' : 'transparent'} 
-                  color={isHearted ? '#EF4444' : '#123014'} 
+                  color={isHearted ? '#EF4444' : '#113013'} 
                   strokeWidth={isHearted ? 1 : 1.5}
                 />
               </button>
@@ -112,7 +112,7 @@ const ProductDetail = () => {
             <h1 style={{ 
               fontSize: '2.5rem', 
               fontWeight: 700, 
-              color: '#123014', 
+              color: '#001d04', 
               lineHeight: 1.1, 
               marginBottom: '0.4rem',
               letterSpacing: '-0.02em'
@@ -130,7 +130,7 @@ const ProductDetail = () => {
             </div>
 
             <p style={{ 
-              color: '#123014', 
+              color: '#001d04', 
               fontSize: '0.95rem', 
               lineHeight: 1.5, 
               marginBottom: '1.5rem',
@@ -148,7 +148,7 @@ const ProductDetail = () => {
                 style={{ 
                   flexGrow: 1, 
                   height: '3.5rem', 
-                  backgroundColor: '#123014', 
+                  backgroundColor: '#001d04', 
                   color: 'white', 
                   borderRadius: '12px',
                   fontWeight: 600,
@@ -185,11 +185,11 @@ const ProductDetail = () => {
             </div>
 
             <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.8rem', color: '#123014' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.8rem', color: '#001d04' }}>
                     <Truck size={16} strokeWidth={1} />
                     <span style={{ fontWeight: 300 }}>Complimentary shipping on orders over $150</span>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.8rem', color: '#123014' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.8rem', color: '#001d04' }}>
                     <ShieldCheck size={16} strokeWidth={1} />
                     <span style={{ fontWeight: 300 }}>Secure payment processing</span>
                 </div>

@@ -183,11 +183,11 @@ const UserProfile = () => {
     <div style={{ display: 'flex', alignItems: 'center', marginBottom: title ? '1.5rem' : '0.5rem', padding: '0' }}>
       <button 
         onClick={() => setCurrentView('main')}
-        style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0.4rem', marginRight: '0.5rem', color: '#123014', marginLeft: '-0.4rem', transition: 'transform 0.2s' }}
+        style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0.4rem', marginRight: '0.5rem', color: '#001d04', marginLeft: '-0.4rem', transition: 'transform 0.2s' }}
       >
         <ArrowLeft size={20} strokeWidth={2} />
       </button>
-      {title && <h1 style={{ fontSize: '1.2rem', fontWeight: 500, color: '#123014', margin: 0, letterSpacing: '-0.01em' }}>{title}</h1>}
+      {title && <h1 style={{ fontSize: '1.2rem', fontWeight: 500, color: '#001d04', margin: 0, letterSpacing: '-0.01em' }}>{title}</h1>}
     </div>
   );
 
@@ -197,11 +197,11 @@ const UserProfile = () => {
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
         <button 
           onClick={() => setCurrentView('main')}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#123014', padding: '0.3rem', marginLeft: '-0.3rem' }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </button>
-        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#123014' }}>Profile Details</span>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Profile Details</span>
       </div>
       <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
         Manage your identity and how we connect with you. Keep your personal information secure and up to date.
@@ -213,7 +213,7 @@ const UserProfile = () => {
               padding: '1rem', 
               borderRadius: '12px', 
               backgroundColor: message.type === 'success' ? '#E4EDDB' : '#FDE8E8',
-              color: message.type === 'success' ? '#354c25' : '#C81E1E',
+              color: message.type === 'success' ? '#436132' : '#C81E1E',
               fontSize: '0.85rem',
               fontWeight: 600,
               textAlign: 'center'
@@ -258,7 +258,7 @@ const UserProfile = () => {
             disabled={loading}
             className="btn btn-primary" 
             style={{ 
-              backgroundColor: '#123014', color: 'white', border: 'none', padding: '1rem', width: '100%', 
+              backgroundColor: '#001d04', color: 'white', border: 'none', padding: '1rem', width: '100%', 
               borderRadius: '12px', marginTop: '0.5rem', fontWeight: 700, fontSize: '0.95rem', 
               cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
               boxShadow: '0 8px 25px rgba(0,29,4,0.1)' 
@@ -276,11 +276,11 @@ const UserProfile = () => {
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
         <button 
           onClick={() => setCurrentView('main')}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#123014', padding: '0.3rem', marginLeft: '-0.3rem' }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </button>
-      <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#123014' }}>Saved Locations</span>
+      <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Saved Locations</span>
       </div>
       <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
         Your curated network of delivery destinations. Add, edit, or remove your frequent stops for faster checkouts.
@@ -292,13 +292,13 @@ const UserProfile = () => {
           </div>
         )}
         {addresses.map(addr => (
-          <div key={addr.id} style={{ backgroundColor: '#EAE1D3', borderRadius: '24px', padding: '1.5rem', border: addr.isDefault ? '1px solid #123014' : '1px solid rgba(0,0,0,0.05)', position: 'relative' }}>
-            {addr.isDefault && <div style={{ position: 'absolute', top: '1.2rem', right: '1.2rem', backgroundColor: '#E4EDDB', color: '#354c25', fontSize: '0.6rem', fontWeight: 800, padding: '0.3rem 0.6rem', borderRadius: '6px' }}>DEFAULT</div>}
+          <div key={addr.id} style={{ backgroundColor: '#EAE1D3', borderRadius: '24px', padding: '1.5rem', border: addr.isDefault ? '1px solid #001d04' : '1px solid rgba(0,0,0,0.05)', position: 'relative' }}>
+            {addr.isDefault && <div style={{ position: 'absolute', top: '1.2rem', right: '1.2rem', backgroundColor: '#E4EDDB', color: '#436132', fontSize: '0.6rem', fontWeight: 800, padding: '0.3rem 0.6rem', borderRadius: '6px' }}>DEFAULT</div>}
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.8rem' }}>
                <div style={{ width: '36px', height: '36px', borderRadius: '50%', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <MapPin size={16} color="#123014" />
+                  <MapPin size={16} color="#001d04" />
                </div>
-               <span style={{ fontWeight: 700, color: '#123014', fontSize: '1rem' }}>{addr.title}</span>
+               <span style={{ fontWeight: 700, color: '#001d04', fontSize: '1rem' }}>{addr.title}</span>
             </div>
             <p style={{ color: '#706F65', fontSize: '0.9rem', lineHeight: 1.6, marginBottom: '1.2rem', fontWeight: 400 }}>
               {addr.addressLine1}<br/>
@@ -306,7 +306,7 @@ const UserProfile = () => {
             </p>
             <button 
               onClick={() => openEditAddress(addr)}
-              style={{ color: '#123014', background: 'transparent', border: '1px solid #123014', padding: '0.4rem 1.2rem', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+              style={{ color: '#001d04', background: 'transparent', border: '1px solid #001d04', padding: '0.4rem 1.2rem', borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
             >
               Modify Details
             </button>
@@ -314,7 +314,7 @@ const UserProfile = () => {
         ))}
         <button 
           onClick={() => { setAddressForm({ title: '', addressLine1: '', city: '', pinCode: '', isDefault: false }); setEditingAddress(null); setCurrentView('add-address'); }}
-          style={{ backgroundColor: '#123014', border: 'none', color: 'white', padding: '1.5rem', borderRadius: '24px', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}
+          style={{ backgroundColor: '#001d04', border: 'none', color: 'white', padding: '1.5rem', borderRadius: '24px', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}
         >
           + Add New Address
         </button>
@@ -327,11 +327,11 @@ const UserProfile = () => {
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
         <button 
           onClick={() => setCurrentView('addresses')}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#123014', padding: '0.3rem', marginLeft: '-0.3rem' }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </button>
-        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#123014' }}>Add New Address</span>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Add New Address</span>
       </div>
       <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
         Provide your shipping details below. We deliver to your doorstep with zero-carbon logistics.
@@ -378,7 +378,7 @@ const UserProfile = () => {
             disabled={loading}
             className="btn btn-primary" 
             style={{ 
-              backgroundColor: '#123014', color: 'white', border: 'none', padding: '1.2rem', width: '100%', 
+              backgroundColor: '#001d04', color: 'white', border: 'none', padding: '1.2rem', width: '100%', 
               borderRadius: '16px', marginTop: '1rem', fontWeight: 700, fontSize: '0.95rem', 
               cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
               boxShadow: '0 8px 25_px rgba(0,29,4,0.1)' 
@@ -396,11 +396,11 @@ const UserProfile = () => {
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
         <button 
           onClick={() => setCurrentView('addresses')}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#123014', padding: '0.3rem', marginLeft: '-0.3rem' }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </button>
-        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#123014' }}>Edit Saved Location</span>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Edit Saved Location</span>
       </div>
       <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
         Refine your delivery details below. Ensure your sustainable journey reaches the right destination.
@@ -447,7 +447,7 @@ const UserProfile = () => {
             disabled={loading}
             className="btn btn-primary" 
             style={{ 
-              backgroundColor: '#123014', color: 'white', border: 'none', padding: '1.2rem', width: '100%', 
+              backgroundColor: '#001d04', color: 'white', border: 'none', padding: '1.2rem', width: '100%', 
               borderRadius: '16px', marginTop: '1rem', fontWeight: 700, fontSize: '0.95rem', 
               cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1,
               boxShadow: '0 8px 25_px rgba(0,29,4,0.1)' 
@@ -471,11 +471,11 @@ const UserProfile = () => {
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
         <button 
           onClick={() => setCurrentView('main')}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#123014', padding: '0.3rem', marginLeft: '-0.3rem' }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </button>
-        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#123014' }}>Payments</span>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Payments</span>
       </div>
       <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
         Securely manage your preferred payment methods. Your financial integrity is our primary commitment.
@@ -483,7 +483,7 @@ const UserProfile = () => {
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div style={{ 
           backgroundColor: '#EAE1D3', 
-          color: '#123014', borderRadius: '24px', padding: '1.5rem 1.8rem', 
+          color: '#001d04', borderRadius: '24px', padding: '1.5rem 1.8rem', 
           border: '1px solid rgba(0,0,0,0.05)',
           position: 'relative', overflow: 'hidden'
         }}>
@@ -492,7 +492,7 @@ const UserProfile = () => {
           </div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2.5rem', alignItems: 'center' }}>
             <span style={{ fontWeight: 800, letterSpacing: '0.15em', fontStyle: 'italic', fontSize: '1.1rem' }}>VISA</span>
-            <div style={{ padding: '0.2rem 0.6rem', backgroundColor: '#123014', color: 'white', borderRadius: '6px', fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.05em' }}>DEFAULT</div>
+            <div style={{ padding: '0.2rem 0.6rem', backgroundColor: '#001d04', color: 'white', borderRadius: '6px', fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.05em' }}>DEFAULT</div>
           </div>
           <div style={{ fontSize: '1.2rem', letterSpacing: '0.2em', marginBottom: '1.5rem', fontFamily: 'monospace', fontWeight: 700 }}>**** **** **** 4242</div>
           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -508,7 +508,7 @@ const UserProfile = () => {
         </div>
         <button 
           onClick={() => setCurrentView('add-payment')}
-          style={{ backgroundColor: '#123014', border: 'none', color: 'white', padding: '1.5rem', borderRadius: '24px', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}
+          style={{ backgroundColor: '#001d04', border: 'none', color: 'white', padding: '1.5rem', borderRadius: '24px', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}
         >
           + Register New Card
         </button>
@@ -521,11 +521,11 @@ const UserProfile = () => {
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
         <button 
           onClick={() => setCurrentView('payments')}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#123014', padding: '0.3rem', marginLeft: '-0.3rem' }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </button>
-        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#123014' }}>Register New Card</span>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Register New Card</span>
       </div>
       <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
         Add a secure payment method for your next curated purchase. Built with industry-standard integrity.
@@ -551,7 +551,7 @@ const UserProfile = () => {
               <input type="password" size="3" className="input" placeholder="***" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
             </div>
           </div>
-          <button type="button" onClick={() => setCurrentView('payments')} className="btn btn-primary" style={{ backgroundColor: '#123014', color: 'white', border: 'none', padding: '1.2rem', width: '100%', borderRadius: '16px', marginTop: '1rem', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}>
+          <button type="button" onClick={() => setCurrentView('payments')} className="btn btn-primary" style={{ backgroundColor: '#001d04', color: 'white', border: 'none', padding: '1.2rem', width: '100%', borderRadius: '16px', marginTop: '1rem', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}>
             Register Card
           </button>
         </form>
@@ -564,11 +564,11 @@ const UserProfile = () => {
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
         <button 
           onClick={() => setCurrentView('main')}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#123014', padding: '0.3rem', marginLeft: '-0.3rem' }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </button>
-        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#123014' }}>Connectivity</span>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Connectivity</span>
       </div>
       <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
         Tailor your LuqmanGo experience. Choose how and when you receive updates on orders, curated drops, and exclusive offers.
@@ -585,13 +585,13 @@ const UserProfile = () => {
                 {item.icon}
               </div>
               <div>
-                <div style={{ fontWeight: 700, color: '#123014', fontSize: '0.9rem' }}>{item.title}</div>
+                <div style={{ fontWeight: 700, color: '#001d04', fontSize: '0.9rem' }}>{item.title}</div>
                 <div style={{ fontSize: '0.75rem', color: '#706F65' }}>{item.desc}</div>
               </div>
             </div>
             <div 
               onClick={() => toggleNotification(item.key)}
-              style={{ width: '40px', height: '22px', backgroundColor: profileData.notifications?.[item.key] ? '#354c25' : '#C5BBB0', borderRadius: '20px', padding: '2px', position: 'relative', cursor: 'pointer', transition: 'background-color 0.2s' }}
+              style={{ width: '40px', height: '22px', backgroundColor: profileData.notifications?.[item.key] ? '#436132' : '#C5BBB0', borderRadius: '20px', padding: '2px', position: 'relative', cursor: 'pointer', transition: 'background-color 0.2s' }}
             >
                <div style={{ 
                  width: '18px', height: '18px', backgroundColor: 'white', borderRadius: '50%', 
@@ -637,11 +637,11 @@ const UserProfile = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
             <button 
               onClick={() => setActiveInvoice(null)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#123014', padding: '0.3rem', marginLeft: '-0.3rem' }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
             >
               <ArrowLeft size={18} strokeWidth={2} />
             </button>
-            <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#123014' }}>Invoice</span>
+            <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Invoice</span>
           </div>
           <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
             Your order receipt and itemized billing details for record-keeping and returns.
@@ -652,16 +652,16 @@ const UserProfile = () => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem' }}>
               <div>
                 <div style={{ fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.15em', color: '#706F65', marginBottom: '0.4rem' }}>INVOICE</div>
-                <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#123014' }}>#{order.id}</div>
+                <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#001d04' }}>#{order.id}</div>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.15em', color: '#706F65', marginBottom: '0.4rem' }}>DATE</div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#123014' }}>{order.date}</div>
+                <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#001d04' }}>{order.date}</div>
               </div>
             </div>
 
             {/* Status Badge */}
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', backgroundColor: '#E4EDDB', color: '#354c25', padding: '0.35rem 0.8rem', borderRadius: '8px', fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.05em', marginBottom: '2rem' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', backgroundColor: '#E4EDDB', color: '#436132', padding: '0.35rem 0.8rem', borderRadius: '8px', fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.05em', marginBottom: '2rem' }}>
               <PackageCheck size={12} /> {order.status}
             </div>
 
@@ -671,10 +671,10 @@ const UserProfile = () => {
               {order.items.map((item, i) => (
                 <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.8rem 0', borderBottom: i < order.items.length - 1 ? '1px solid rgba(0,0,0,0.05)' : 'none' }}>
                   <div>
-                    <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#123014' }}>{item.name}</div>
+                    <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#001d04' }}>{item.name}</div>
                     <div style={{ fontSize: '0.75rem', color: '#706F65', marginTop: '0.15rem' }}>Qty: {item.qty}</div>
                   </div>
-                  <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#123014' }}>${item.price.toFixed(2)}</div>
+                  <div style={{ fontSize: '0.9rem', fontWeight: 700, color: '#001d04' }}>${item.price.toFixed(2)}</div>
                 </div>
               ))}
             </div>
@@ -687,9 +687,9 @@ const UserProfile = () => {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.85rem', color: '#706F65' }}>
                 <span>Shipping</span>
-                <span style={{ color: '#354c25', fontWeight: 600 }}>Free</span>
+                <span style={{ color: '#436132', fontWeight: 600 }}>Free</span>
               </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.8rem', paddingTop: '0.8rem', borderTop: '1px solid rgba(0,0,0,0.08)', fontSize: '1.1rem', fontWeight: 700, color: '#123014' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '0.8rem', paddingTop: '0.8rem', borderTop: '1px solid rgba(0,0,0,0.08)', fontSize: '1.1rem', fontWeight: 700, color: '#001d04' }}>
                 <span>Total</span>
                 <span>${order.price.toFixed(2)}</span>
               </div>
@@ -699,7 +699,7 @@ const UserProfile = () => {
           {/* Shipped To */}
           <div style={{ marginTop: '1.5rem', backgroundColor: '#FBF5EC', borderRadius: '16px', padding: '1.5rem', border: '1px solid rgba(0,0,0,0.02)' }}>
             <div style={{ fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.15em', color: '#706F65', marginBottom: '0.8rem' }}>SHIPPED TO</div>
-            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#123014', marginBottom: '0.2rem' }}>Asnam Sanaf</div>
+            <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#001d04', marginBottom: '0.2rem' }}>Asnam Sanaf</div>
             <div style={{ fontSize: '0.8rem', color: '#706F65', lineHeight: 1.6 }}>
               Flat 402, Sylvan Heights<br/>
               Central District, Luqman Street<br/>
@@ -717,11 +717,11 @@ const UserProfile = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
             <button 
               onClick={() => setCurrentView('main')}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#123014', padding: '0.3rem', marginLeft: '-0.3rem' }}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
             >
               <ArrowLeft size={18} strokeWidth={2} />
             </button>
-            <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#123014' }}>My Orders</span>
+            <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>My Orders</span>
           </div>
           <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
             A curated history of your sustainable journeys. Track your ongoing deliveries or revisit past eco-friendly purchases.
@@ -730,8 +730,8 @@ const UserProfile = () => {
           {/* In Transit */}
           <div style={{ marginBottom: '3rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.2rem' }}>
-              <Truck size={18} color="#354c25" fill="#354c25" fillOpacity={0.2} />
-              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#123014' }}>In Transit</h3>
+              <Truck size={18} color="#436132" fill="#436132" fillOpacity={0.2} />
+              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#001d04' }}>In Transit</h3>
             </div>
             
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
@@ -746,12 +746,12 @@ const UserProfile = () => {
                     <div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0,29,4,0.05)' }}></div>
                   </div>
                   <div style={{ flex: 1 }}>
-                    <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#123014', marginBottom: '0.2rem' }}>{order.name}</h4>
+                    <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#001d04', marginBottom: '0.2rem' }}>{order.name}</h4>
                     <div style={{ fontSize: '0.8rem', color: '#706F65', marginBottom: '0.8rem' }}>Order #{order.id}</div>
                     
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span style={{ fontSize: '0.65rem', fontWeight: 900, color: '#354c25', letterSpacing: '0.06em' }}>{order.status}</span>
-                      <span style={{ fontWeight: 700, color: '#123014', fontSize: '0.9rem' }}>{order.date}</span>
+                      <span style={{ fontSize: '0.65rem', fontWeight: 900, color: '#436132', letterSpacing: '0.06em' }}>{order.status}</span>
+                      <span style={{ fontWeight: 700, color: '#001d04', fontSize: '0.9rem' }}>{order.date}</span>
                     </div>
                   </div>
                 </div>
@@ -762,7 +762,7 @@ const UserProfile = () => {
           {/* Order History */}
           <div style={{ marginBottom: '2rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#123014' }}>Order History</h3>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#001d04' }}>Order History</h3>
               
               {/* Year Filter Dropdown */}
               <div style={{ position: 'relative' }}>
@@ -794,7 +794,7 @@ const UserProfile = () => {
                           display: 'block', width: '100%', textAlign: 'left',
                           padding: '0.7rem 1rem', border: 'none', cursor: 'pointer',
                           fontSize: '0.85rem', fontWeight: selectedYear === year ? 700 : 500,
-                          color: selectedYear === year ? '#123014' : '#706F65',
+                          color: selectedYear === year ? '#001d04' : '#706F65',
                           backgroundColor: selectedYear === year ? '#FBF5EC' : 'transparent',
                           transition: 'background-color 0.15s'
                         }}
@@ -824,7 +824,7 @@ const UserProfile = () => {
                       <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#706F65', marginBottom: '0.3rem' }}>
                         {order.status} • {order.date}
                       </div>
-                      <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#123014', marginBottom: '0.2rem' }}>{order.name}</h4>
+                      <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#001d04', marginBottom: '0.2rem' }}>{order.name}</h4>
                       <div style={{ fontSize: '0.75rem', color: '#706F65', marginBottom: '0.8rem' }}>Order #{order.id} • ${order.price.toFixed(2)}</div>
                       
                       <div style={{ display: 'flex', gap: '0.8rem' }}>
@@ -832,12 +832,12 @@ const UserProfile = () => {
                           onClick={() => setActiveInvoice(order.id)}
                           style={{ 
                             backgroundColor: 'white', border: '1px solid #D4CFC5', 
-                            color: '#123014', padding: '0.4rem 1rem', 
+                            color: '#001d04', padding: '0.4rem 1rem', 
                             borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600,
                             cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem',
                             transition: 'all 0.2s'
                           }}
-                          onMouseOver={(e) => e.currentTarget.style.borderColor = '#123014'}
+                          onMouseOver={(e) => e.currentTarget.style.borderColor = '#001d04'}
                           onMouseOut={(e) => e.currentTarget.style.borderColor = '#D4CFC5'}
                         >
                           <FileText size={13} /> Invoice
@@ -845,7 +845,7 @@ const UserProfile = () => {
                         <button 
                           onClick={() => navigate('/')}
                           style={{ 
-                            backgroundColor: '#123014', border: 'none', 
+                            backgroundColor: '#001d04', border: 'none', 
                             color: 'white', padding: '0.4rem 1rem', 
                             borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600,
                             cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem',
@@ -873,11 +873,11 @@ const UserProfile = () => {
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
         <button 
           onClick={() => setCurrentView('main')}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#123014', padding: '0.3rem', marginLeft: '-0.3rem' }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </button>
-        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#123014' }}>Curator Support</span>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Curator Support</span>
       </div>
       <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
         Your direct line to the LuqmanGo concierge. We’re here 24/7 to ensure your journey is effortless and sustainable.
@@ -885,7 +885,7 @@ const UserProfile = () => {
       <div style={{ marginBottom: '2rem' }}>
          <div style={{ backgroundColor: '#EAE1D3', borderRadius: '16px', padding: '1rem 1.2rem', display: 'flex', alignItems: 'center', gap: '0.8rem', border: '1px solid rgba(0,0,0,0.03)' }}>
             <Link to="#" style={{ color: '#D4CFC5' }}><ChevronRight size={18} style={{ transform: 'rotate(90deg)' }} /></Link>
-            <input type="text" placeholder="Search for guidance..." style={{ border: 'none', width: '100%', fontSize: '0.95rem', outline: 'none', color: '#123014', backgroundColor: 'transparent' }} />
+            <input type="text" placeholder="Search for guidance..." style={{ border: 'none', width: '100%', fontSize: '0.95rem', outline: 'none', color: '#001d04', backgroundColor: 'transparent' }} />
          </div>
       </div>
 
@@ -897,18 +897,18 @@ const UserProfile = () => {
           { label: 'Account', count: '10 articles' }
         ].map((cat, idx) => (
           <div key={idx} style={{ backgroundColor: 'white', padding: '1.5rem 1.2rem', borderRadius: '20px', cursor: 'pointer', transition: 'transform 0.2s', border: '1px solid rgba(0,0,0,0.03)', boxShadow: '0 4px 15px rgba(0,0,0,0.02)' }}>
-             <h4 style={{ fontWeight: 700, color: '#123014', marginBottom: '0.2rem', fontSize: '1rem' }}>{cat.label}</h4>
+             <h4 style={{ fontWeight: 700, color: '#001d04', marginBottom: '0.2rem', fontSize: '1rem' }}>{cat.label}</h4>
              <p style={{ fontSize: '0.7rem', color: '#706F65', fontWeight: 500 }}>{cat.count}</p>
           </div>
         ))}
       </div>
 
-      <div style={{ backgroundColor: '#123014', borderRadius: '32px', padding: '2.2rem 1.8rem', color: '#F7F3ED', textAlign: 'center', boxShadow: '0 15px 35px rgba(0,29,4,0.15)' }}>
+      <div style={{ backgroundColor: '#001d04', borderRadius: '32px', padding: '2.2rem 1.8rem', color: '#F7F3ED', textAlign: 'center', boxShadow: '0 15px 35px rgba(0,29,4,0.15)' }}>
          <h4 style={{ fontSize: '1.2rem', fontWeight: 700, marginBottom: '0.8rem', color: '#FFFFFF' }}>Need direct assistance?</h4>
          <p style={{ fontSize: '0.9rem', opacity: 0.9, marginBottom: '1.8rem', fontWeight: 400, color: '#F7F3ED', lineHeight: 1.5 }}>Our concierge team is available 24/7 for our gold members.</p>
          
          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-           <button className="btn" style={{ backgroundColor: '#FFFFFF', color: '#123014', width: '100%', borderRadius: '14px', padding: '1rem', fontWeight: 700, fontSize: '0.9rem', border: 'none', cursor: 'pointer' }}>
+           <button className="btn" style={{ backgroundColor: '#FFFFFF', color: '#001d04', width: '100%', borderRadius: '14px', padding: '1rem', fontWeight: 700, fontSize: '0.9rem', border: 'none', cursor: 'pointer' }}>
              Connect via Live Chat
            </button>
            
@@ -930,16 +930,16 @@ const UserProfile = () => {
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
         <button 
           onClick={() => setCurrentView('main')}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#123014', padding: '0.3rem', marginLeft: '-0.3rem' }}
+          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
         >
           <ArrowLeft size={18} strokeWidth={2} />
         </button>
-        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#123014' }}>Legal & Integrity</span>
+        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Legal & Integrity</span>
       </div>
       <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
         Committed to transparency and your digital safety. Review our policies, terms, and how we protect your information.
       </p>
-      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '24px', padding: '2rem 1.5rem', color: '#123014', border: '1px solid rgba(0,0,0,0.02)' }}>
+      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '24px', padding: '2rem 1.5rem', color: '#001d04', border: '1px solid rgba(0,0,0,0.02)' }}>
          <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', letterSpacing: '0.1em', marginBottom: '1.5rem' }}>UPDATED MARCH 2024</div>
          
          {[
@@ -982,7 +982,7 @@ const UserProfile = () => {
           <div style={{ position: 'relative', marginBottom: '1rem' }}>
             {/* Avatar container */}
             <div style={{ 
-              width: '90px', height: '90px', borderRadius: '50%', backgroundColor: '#123014', 
+              width: '90px', height: '90px', borderRadius: '50%', backgroundColor: '#001d04', 
               color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '2.2rem', fontWeight: 400, border: '3px solid #FAF8F5', boxShadow: '0 8px 25px rgba(0,29,4,0.06)'
             }}>
@@ -990,8 +990,8 @@ const UserProfile = () => {
             </div>
           </div>
           
-          <h1 style={{ fontSize: '1.6rem', fontWeight: 700, color: '#123014', marginBottom: '0.2rem', letterSpacing: '-0.02em' }}>{user.name}</h1>
-          <div style={{ backgroundColor: '#E4EDDB', color: '#354c25', padding: '0.3rem 0.8rem', borderRadius: '12px', fontSize: '0.65rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.4rem', letterSpacing: '0.05em' }}>
+          <h1 style={{ fontSize: '1.6rem', fontWeight: 700, color: '#001d04', marginBottom: '0.2rem', letterSpacing: '-0.02em' }}>{user.name}</h1>
+          <div style={{ backgroundColor: '#E4EDDB', color: '#436132', padding: '0.3rem 0.8rem', borderRadius: '12px', fontSize: '0.65rem', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '0.3rem', marginTop: '0.4rem', letterSpacing: '0.05em' }}>
              <Star size={10} fill="currentColor" /> GOLD CURATOR
           </div>
         </div>
@@ -1004,10 +1004,10 @@ const UserProfile = () => {
           
           <button onClick={() => setCurrentView('orders')} style={{ width: '100%', background: 'none', border: 'none', display: 'flex', alignItems: 'center', padding: '1rem', cursor: 'pointer', borderBottom: '1px solid #F3F2EE', transition: 'background-color 0.2s', borderRadius: '16px 16px 0 0' }}>
             <div style={{ width: '38px', height: '38px', borderRadius: '12px', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem' }}>
-              <Package size={18} color="#123014" />
+              <Package size={18} color="#001d04" />
             </div>
             <div style={{ flexGrow: 1, textAlign: 'left' }}>
-              <div style={{ fontWeight: 700, color: '#123014', fontSize: '0.95rem', marginBottom: '0.1rem' }}>My Orders</div>
+              <div style={{ fontWeight: 700, color: '#001d04', fontSize: '0.95rem', marginBottom: '0.1rem' }}>My Orders</div>
               <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 400 }}>History and tracking</div>
             </div>
             <ChevronRight size={16} color="#C5BBB0" />
@@ -1015,10 +1015,10 @@ const UserProfile = () => {
 
           <button onClick={() => setCurrentView('addresses')} style={{ width: '100%', background: 'none', border: 'none', display: 'flex', alignItems: 'center', padding: '1rem', cursor: 'pointer', borderBottom: '1px solid #F3F2EE', transition: 'background-color 0.2s' }}>
             <div style={{ width: '38px', height: '38px', borderRadius: '12px', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem' }}>
-              <MapPin size={18} color="#123014" />
+              <MapPin size={18} color="#001d04" />
             </div>
             <div style={{ flexGrow: 1, textAlign: 'left' }}>
-              <div style={{ fontWeight: 700, color: '#123014', fontSize: '0.95rem', marginBottom: '0.1rem' }}>Shipping Addresses</div>
+              <div style={{ fontWeight: 700, color: '#001d04', fontSize: '0.95rem', marginBottom: '0.1rem' }}>Shipping Addresses</div>
               <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 400 }}>2 saved locations</div>
             </div>
             <ChevronRight size={16} color="#C5BBB0" />
@@ -1026,10 +1026,10 @@ const UserProfile = () => {
 
           <button onClick={() => setCurrentView('payments')} style={{ width: '100%', background: 'none', border: 'none', display: 'flex', alignItems: 'center', padding: '1rem', cursor: 'pointer', borderBottom: '1px solid #F3F2EE', transition: 'background-color 0.2s' }}>
             <div style={{ width: '38px', height: '38px', borderRadius: '12px', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem' }}>
-              <CreditCard size={18} color="#123014" />
+              <CreditCard size={18} color="#001d04" />
             </div>
             <div style={{ flexGrow: 1, textAlign: 'left' }}>
-              <div style={{ fontWeight: 700, color: '#123014', fontSize: '0.95rem', marginBottom: '0.1rem' }}>Payment Methods</div>
+              <div style={{ fontWeight: 700, color: '#001d04', fontSize: '0.95rem', marginBottom: '0.1rem' }}>Payment Methods</div>
               <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 400 }}>Visa ending in 4242</div>
             </div>
             <ChevronRight size={16} color="#C5BBB0" />
@@ -1037,10 +1037,10 @@ const UserProfile = () => {
 
           <button onClick={() => setCurrentView('personal')} style={{ width: '100%', background: 'none', border: 'none', display: 'flex', alignItems: 'center', padding: '1rem', cursor: 'pointer', borderBottom: '1px solid #F3F2EE', transition: 'background-color 0.2s' }}>
             <div style={{ width: '38px', height: '38px', borderRadius: '12px', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem' }}>
-              <User size={18} color="#123014" />
+              <User size={18} color="#001d04" />
             </div>
             <div style={{ flexGrow: 1, textAlign: 'left' }}>
-              <div style={{ fontWeight: 700, color: '#123014', fontSize: '0.95rem', marginBottom: '0.1rem' }}>Personal Information</div>
+              <div style={{ fontWeight: 700, color: '#001d04', fontSize: '0.95rem', marginBottom: '0.1rem' }}>Personal Information</div>
               <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 400 }}>Identity and contact</div>
             </div>
             <ChevronRight size={16} color="#C5BBB0" />
@@ -1048,10 +1048,10 @@ const UserProfile = () => {
 
           <button onClick={() => setCurrentView('notifications')} style={{ width: '100%', background: 'none', border: 'none', display: 'flex', alignItems: 'center', padding: '1rem', cursor: 'pointer', borderRadius: '0 0 16px 16px', transition: 'background-color 0.2s' }}>
             <div style={{ width: '38px', height: '38px', borderRadius: '12px', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem' }}>
-              <Bell size={18} color="#123014" />
+              <Bell size={18} color="#001d04" />
             </div>
             <div style={{ flexGrow: 1, textAlign: 'left' }}>
-              <div style={{ fontWeight: 700, color: '#123014', fontSize: '0.95rem', marginBottom: '0.1rem' }}>Notifications</div>
+              <div style={{ fontWeight: 700, color: '#001d04', fontSize: '0.95rem', marginBottom: '0.1rem' }}>Notifications</div>
               <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 400 }}>Email and SMS alerts</div>
             </div>
             <ChevronRight size={16} color="#C5BBB0" />
@@ -1061,16 +1061,16 @@ const UserProfile = () => {
 
         {/* Footer Actions */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', marginBottom: '2.5rem', padding: '0 1rem' }}>
-          <button onClick={() => setCurrentView('help')} style={{ background: 'none', border: 'none', display: 'flex', alignItems: 'center', gap: '0.8rem', cursor: 'pointer', color: '#123014', fontWeight: 600, fontSize: '0.9rem', transition: 'opacity 0.2s', ':hover': { opacity: 0.7 } }}>
+          <button onClick={() => setCurrentView('help')} style={{ background: 'none', border: 'none', display: 'flex', alignItems: 'center', gap: '0.8rem', cursor: 'pointer', color: '#001d04', fontWeight: 600, fontSize: '0.9rem', transition: 'opacity 0.2s', ':hover': { opacity: 0.7 } }}>
             <HelpCircle size={18} /> Help Center
           </button>
-          <button onClick={() => setCurrentView('privacy')} style={{ background: 'none', border: 'none', display: 'flex', alignItems: 'center', gap: '0.8rem', cursor: 'pointer', color: '#123014', fontWeight: 600, fontSize: '0.9rem', transition: 'opacity 0.2s', ':hover': { opacity: 0.7 } }}>
+          <button onClick={() => setCurrentView('privacy')} style={{ background: 'none', border: 'none', display: 'flex', alignItems: 'center', gap: '0.8rem', cursor: 'pointer', color: '#001d04', fontWeight: 600, fontSize: '0.9rem', transition: 'opacity 0.2s', ':hover': { opacity: 0.7 } }}>
             <ShieldCheck size={18} /> Privacy Policy
           </button>
         </div>
 
         {/* Logout Button */}
-        <button onClick={handleLogout} className="btn" style={{ width: '100%', backgroundColor: '#123014', color: 'white', borderRadius: '16px', padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', fontSize: '0.9rem', fontWeight: 700, border: 'none', cursor: 'pointer', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}>
+        <button onClick={handleLogout} className="btn" style={{ width: '100%', backgroundColor: '#001d04', color: 'white', borderRadius: '16px', padding: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', fontSize: '0.9rem', fontWeight: 700, border: 'none', cursor: 'pointer', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}>
           <LogOut size={18} /> Sign Out
         </button>
 

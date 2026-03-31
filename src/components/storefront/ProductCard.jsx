@@ -77,7 +77,7 @@ const ProductCard = ({ product }) => {
             <Heart 
               size={15} 
               fill={isHearted ? '#EF4444' : 'transparent'} 
-              color={isHearted ? '#EF4444' : '#123014'} 
+              color={isHearted ? '#EF4444' : '#113013'} 
               strokeWidth={isHearted ? 1 : 1.5}
             />
           </button>
@@ -102,7 +102,7 @@ const ProductCard = ({ product }) => {
               size={14} 
               strokeWidth={isBagged ? 2.5 : 1.5} 
               fill="none" 
-              color={isBagged ? '#3B82F6' : '#123014'} 
+              color={isBagged ? '#3B82F6' : '#113013'} 
             />
           </button>
         </div>
@@ -119,7 +119,7 @@ const ProductCard = ({ product }) => {
             <h3 style={{ 
               fontSize: '1rem', 
               fontWeight: 500, 
-              color: '#123014', 
+              color: '#001d04', 
               margin: 0,
               letterSpacing: '-0.01em',
               lineHeight: 1.3
