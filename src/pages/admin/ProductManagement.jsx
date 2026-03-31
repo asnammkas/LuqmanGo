@@ -1,19 +1,81 @@
 import { useState, useRef } from 'react';
 import { useShop } from '../../context/ShopContext';
-import { Plus, Edit2, Trash2, ArrowLeft, Image as ImageIcon, LayoutGrid, DollarSign, Package, AlertCircle, Upload, X } from 'lucide-react';
+import {
+  Plus, Edit2, Trash2, ArrowLeft, Image as ImageIcon,
+  LayoutGrid, DollarSign, Package, AlertCircle, Upload, X, Star
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { storage } from '../../config/firebase';
-import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from 'firebase/storage';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+
+/* ── Helpers ── */
+const getStockConfig = (stock) => {
+  if (stock === 0)    return { label: 'Out of Stock', bg: '#FEE2E2', color: '#B91C1C', dot: '#EF4444' };
+  if (stock <= 5)     return { label: `Low — ${stock}`,  bg: '#FEF9C3', color: '#A16207', dot: '#EAB308' };
+  return               { label: `${stock} in stock`,     bg: '#DCFCE7', color: '#15803D', dot: '#22C55E' };
+};
+
+const FormSection = ({ icon, title, children }) => (
+  <div style={{ 
+    backgroundColor: 'white', 
+    borderRadius: '24px', 
+    padding: '2.2rem', 
+    border: '1px solid rgba(0,0,0,0.04)',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+    marginBottom: '0.5rem'
+  }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '0.9rem', marginBottom: '1.8rem' }}>
+      <div style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: '#F3F2EE', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        {icon}
+      </div>
+      <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#1E2A3A', margin: 0, letterSpacing: '-0.01em' }}>{title}</h3>
+    </div>
+    {children}
+  </div>
+);
+
+const FieldLabel = ({ children }) => (
+  <label style={{ fontSize: '0.65rem', fontWeight: 700, color: '#706F65', letterSpacing: '0.12em', textTransform: 'uppercase', display: 'block', marginBottom: '0.5rem' }}>
+    {children}
+  </label>
+);
+
+const StyledInput = ({ style, ...props }) => (
+  <input
+    {...props}
+    style={{ 
+      backgroundColor: '#F9F9F9', 
+      border: '1px solid rgba(0,0,0,0.06)', 
+      borderRadius: '12px', 
+      padding: '1.1rem 1.25rem', 
+      width: '100%', 
+      fontFamily: 'inherit', 
+      fontSize: '0.92rem', 
+      color: '#1E2A3A', 
+      outline: 'none', 
+      boxSizing: 'border-box', 
+      transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)', 
+      ...style 
+    }}
+    onFocus={e => { 
+      e.target.style.borderColor = '#436132'; 
+      e.target.style.backgroundColor = 'white';
+      e.target.style.boxShadow = '0 0 0 4px rgba(67,97,50,0.08)'; 
+    }}
+    onBlur={e => { 
+      e.target.style.borderColor = 'rgba(0,0,0,0.06)'; 
+      e.target.style.backgroundColor = '#F9F9F9';
+      e.target.style.boxShadow = 'none'; 
+    }}
+  />
+);
 
 const ProductManagement = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useShop();
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState(null);
-  const [formData, setFormData] = useState({
-    title: '', price: '', category: '', description: '', image: '', stock: '', featured: false
-  });
-  
-  // Image upload state
+  const [formData, setFormData] = useState({ title: '', price: '', category: '', description: '', image: '', stock: '', featured: false });
+  const [filterCategory, setFilterCategory] = useState('All');
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState('');
@@ -23,425 +85,362 @@ const ProductManagement = () => {
   const handleEdit = (product) => {
     setCurrentProduct(product);
     setFormData({ ...product, price: product.price.toString(), stock: product.stock.toString() });
-    setIsEditing(true);
-    setUploadError('');
-    setUploadProgress(0);
+    setIsEditing(true); setUploadError(''); setUploadProgress(0);
   };
 
   const handleAddNew = () => {
     setCurrentProduct(null);
     setFormData({ title: '', price: '', category: '', description: '', image: '', stock: '', featured: false });
-    setIsEditing(true);
-    setUploadError('');
-    setUploadProgress(0);
+    setIsEditing(true); setUploadError(''); setUploadProgress(0);
   };
 
-  // Image Upload Handler
   const handleImageUpload = (file) => {
     if (!file) return;
-    
-    // Validate file type
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
-    if (!allowedTypes.includes(file.type)) {
-      setUploadError('Please upload a JPG, PNG, or WebP image.');
-      return;
-    }
-
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setUploadError('Image must be under 5MB.');
-      return;
-    }
-
-    setUploading(true);
-    setUploadError('');
-    setUploadProgress(0);
-
+    if (!allowedTypes.includes(file.type)) { setUploadError('Please upload a JPG, PNG, or WebP image.'); return; }
+    if (file.size > 5 * 1024 * 1024) { setUploadError('Image must be under 5MB.'); return; }
+    setUploading(true); setUploadError(''); setUploadProgress(0);
     const fileName = `products/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
     const storageRef = ref(storage, fileName);
     const uploadTask = uploadBytesResumable(storageRef, file);
-
     uploadTask.on('state_changed',
-      (snapshot) => {
-        const progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
-        setUploadProgress(progress);
-      },
-      (error) => {
-        console.error('Upload error:', error);
-        setUploadError('Upload failed. Please try again.');
-        setUploading(false);
-      },
+      (snapshot) => setUploadProgress(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)),
+      (error) => { console.error(error); setUploadError('Upload failed. Please try again.'); setUploading(false); },
       async () => {
         try {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          setFormData(prev => ({ ...prev, image: downloadURL }));
-          setUploading(false);
-        } catch (err) {
-          console.error('Error getting download URL:', err);
-          setUploadError('Failed to get image URL.');
-          setUploading(false);
-        }
+          const url = await getDownloadURL(uploadTask.snapshot.ref);
+          setFormData(p => ({ ...p, image: url })); setUploading(false);
+        } catch { setUploadError('Failed to get image URL.'); setUploading(false); }
       }
     );
   };
 
-  // Drag and Drop handlers
-  const handleDragOver = (e) => {
-    e.preventDefault();
-    setIsDragOver(true);
-  };
-
-  const handleDragLeave = (e) => {
-    e.preventDefault();
-    setIsDragOver(false);
-  };
-
-  const handleDrop = (e) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    const file = e.dataTransfer.files[0];
-    if (file) handleImageUpload(file);
-  };
-
-  const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (file) handleImageUpload(file);
-  };
-
-  const handleRemoveImage = () => {
-    setFormData(prev => ({ ...prev, image: '' }));
-    setUploadProgress(0);
-    setUploadError('');
-  };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    const productData = {
-      ...formData,
-      price: parseFloat(formData.price),
-      stock: parseInt(formData.stock, 10),
-    };
-
-    if (currentProduct) {
-      updateProduct(currentProduct.id, productData);
-    } else {
-      addProduct(productData);
-    }
+    const productData = { ...formData, price: parseFloat(formData.price), stock: parseInt(formData.stock, 10) };
+    if (currentProduct) { updateProduct(currentProduct.id, productData); } else { addProduct(productData); }
     setIsEditing(false);
   };
 
+  const categories = ['All', ...new Set(products.map(p => p.category))];
+  const filteredProducts = products.filter(p => filterCategory === 'All' || p.category === filterCategory);
+
+  /* ── Edit / Add Form ── */
   if (isEditing) {
     return (
-      <div className="animate-fade-in" style={{ padding: '3rem 1.5rem', maxWidth: '850px', margin: '0 auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '3rem' }}>
-          <button 
-            className="btn btn-outline" 
-            style={{ borderRadius: '12px', padding: '0.6rem 1.2rem', gap: '0.5rem', display: 'flex', alignItems: 'center' }} 
-            onClick={() => setIsEditing(false)}
-          >
-            <ArrowLeft size={18} /> Back to Catalog
-          </button>
-          <div style={{ textAlign: 'right' }}>
-            <h2 style={{ fontSize: '1.8rem', fontWeight: 700, color: '#001d04', margin: 0 }}>
-              {currentProduct ? 'Edit Product' : 'Add New Item'}
-            </h2>
-            <p style={{ color: '#706F65', fontSize: '0.9rem', margin: '0.2rem 0 0' }}>Catalog Entry #{currentProduct?.id?.substring(0,8) || 'New'}</p>
+      <div style={{ minHeight: '100vh', backgroundColor: '#F7F3ED', paddingBottom: '6rem' }}>
+        {/* Form Header */}
+        <div style={{
+          background: 'linear-gradient(160deg, #1E2A3A 0%, #162030 100%)',
+          padding: 'clamp(1.5rem, 4vw, 3rem) clamp(1.2rem, 3vw, 2rem)',
+          paddingTop: 'clamp(1.5rem, 4vw, 2.5rem)',
+          color: 'white', position: 'relative', overflow: 'hidden',
+        }}>
+          <div style={{ position: 'absolute', top: '-60px', right: '-60px', width: '220px', height: '220px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(67,97,50,0.2) 0%, transparent 70%)', filter: 'blur(40px)', pointerEvents: 'none' }} />
+          <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <button onClick={() => setIsEditing(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgba(255,255,255,0.5)', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', marginBottom: '0.6rem', padding: 0, fontFamily: 'inherit' }}>
+                <ArrowLeft size={14} /> Back to Catalog
+              </button>
+              <h1 style={{ fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', fontWeight: 800, margin: 0, letterSpacing: '-0.03em', color: 'white' }}>
+                {currentProduct ? 'Edit Product' : 'Add New Item'}
+              </h1>
+              <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem', margin: '0.3rem 0 0' }}>
+                Catalog Entry #{currentProduct?.id?.substring(0, 8) || 'New'}
+              </p>
+            </div>
+            {formData.image && (
+              <div style={{ width: '64px', height: '64px', borderRadius: '16px', overflow: 'hidden', border: '2px solid rgba(255,255,255,0.2)', flexShrink: 0 }}>
+                <img src={formData.image} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              </div>
+            )}
           </div>
         </div>
-        
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          
-          {/* Section 1: General Information */}
-          <div style={{ backgroundColor: '#EAE1D3', borderRadius: '32px', padding: '2.5rem', boxShadow: '0 10px 40px rgba(0,0,0,0.02)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <LayoutGrid size={20} color="#001d04" />
-              </div>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#001d04', margin: 0 }}>General Details</h3>
-            </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-              <div>
-                <label className="label" style={{ fontSize: '0.8rem', color: '#706F65', marginBottom: '0.5rem', display: 'block', fontWeight: 600 }}>PRODUCT TITLE</label>
-                <input required type="text" className="input" value={formData.title} onChange={e => setFormData({...formData, title: e.target.value})} style={{ backgroundColor: 'white', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '12px', padding: '1.2rem', width: '100%' }} />
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
+        {/* Form Body */}
+        <div style={{ borderRadius: '28px 28px 0 0', padding: 'clamp(1.5rem,4vw,2.5rem) clamp(1.2rem,3vw,2rem)', marginTop: '-1.5rem', position: 'relative', zIndex: 2, maxWidth: '820px', margin: '-1.5rem auto 0' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+
+            <FormSection icon={<LayoutGrid size={18} color="#001d04" />} title="General Details">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
                 <div>
-                  <label className="label" style={{ fontSize: '0.8rem', color: '#706F65', marginBottom: '0.5rem', display: 'block', fontWeight: 600 }}>CATEGORY</label>
-                  <input required type="text" className="input" value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} style={{ backgroundColor: 'white', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '12px', padding: '1.2rem', width: '100%' }} placeholder="e.g. Living Room, Decor" />
+                  <FieldLabel>Product Title</FieldLabel>
+                  <StyledInput required type="text" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} placeholder="e.g. Handcrafted Ceramic Vase" />
                 </div>
-                <div>
-                  <label className="label" style={{ fontSize: '0.8rem', color: '#706F65', marginBottom: '0.5rem', display: 'block', fontWeight: 600 }}>STATUS</label>
-                  <div style={{ height: '3.8rem', display: 'flex', alignItems: 'center', padding: '0 1.2rem', backgroundColor: 'white', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '12px' }}>
-                     <label style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', cursor: 'pointer', fontSize: '0.9rem', width: '100%' }}>
-                        <input type="checkbox" checked={formData.featured} onChange={e => setFormData({...formData, featured: e.target.checked})} style={{ width: '1.2rem', height: '1.2rem', accentColor: '#001d04' }} />
-                        <span>Feature on Homepage</span>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <div>
+                    <FieldLabel>Category</FieldLabel>
+                    <StyledInput required type="text" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} placeholder="e.g., Home & Living" />
+                  </div>
+                  <div>
+                    <FieldLabel>Status</FieldLabel>
+                    <div style={{ height: '3.2rem', display: 'flex', alignItems: 'center', padding: '0 1.1rem', backgroundColor: 'white', border: '1px solid rgba(0,0,0,0.06)', borderRadius: '12px' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', fontSize: '0.88rem', width: '100%', color: '#001d04' }}>
+                        <input type="checkbox" checked={formData.featured} onChange={e => setFormData({ ...formData, featured: e.target.checked })} style={{ width: '1.1rem', height: '1.1rem', accentColor: '#001d04', cursor: 'pointer' }} />
+                        Feature on Homepage
                       </label>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div>
-                <label className="label" style={{ fontSize: '0.8rem', color: '#706F65', marginBottom: '0.5rem', display: 'block', fontWeight: 600 }}>PRODUCT DESCRIPTION</label>
-                <textarea required className="input" rows="4" value={formData.description} onChange={e => setFormData({...formData, description: e.target.value})} style={{ backgroundColor: 'white', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '12px', padding: '1.2rem', resize: 'none', width: '100%' }}></textarea>
-              </div>
-            </div>
-          </div>
-
-          {/* Section 2: Pricing & Inventory */}
-          <div style={{ backgroundColor: '#EAE1D3', borderRadius: '32px', padding: '2.5rem', boxShadow: '0 10px 40px rgba(0,0,0,0.02)' }}>
-             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <DollarSign size={20} color="#001d04" />
-              </div>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#001d04', margin: 0 }}>Pricing & Inventory</h3>
-            </div>
-
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-              <div>
-                <label className="label" style={{ fontSize: '0.8rem', color: '#706F65', marginBottom: '0.5rem', display: 'block', fontWeight: 600 }}>RETAIL PRICE ($)</label>
-                <input required type="number" step="0.01" min="0" className="input" value={formData.price} onChange={e => setFormData({...formData, price: e.target.value})} style={{ backgroundColor: 'white', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '12px', padding: '1.2rem', width: '100%' }} />
-              </div>
-              <div>
-                <label className="label" style={{ fontSize: '0.8rem', color: '#706F65', marginBottom: '0.5rem', display: 'block', fontWeight: 600 }}>STOCK AVAILABLE</label>
-                <input required type="number" min="0" className="input" value={formData.stock} onChange={e => setFormData({...formData, stock: e.target.value})} style={{ backgroundColor: 'white', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '12px', padding: '1.2rem', width: '100%' }} />
-              </div>
-            </div>
-          </div>
-
-          {/* Section 3: Media Management — Image Upload */}
-          <div style={{ backgroundColor: '#EAE1D3', borderRadius: '32px', padding: '2.5rem', boxShadow: '0 10px 40px rgba(0,0,0,0.02)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '2rem' }}>
-              <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ImageIcon size={20} color="#001d04" />
-              </div>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#001d04', margin: 0 }}>Product Media</h3>
-            </div>
-
-            {/* Upload Error */}
-            {uploadError && (
-              <div style={{ 
-                display: 'flex', alignItems: 'center', gap: '0.6rem',
-                backgroundColor: '#FEF2F2', border: '1px solid #FECACA', 
-                borderRadius: '12px', padding: '0.8rem 1rem', marginBottom: '1rem',
-                color: '#991B1B', fontSize: '0.85rem', fontWeight: 500
-              }}>
-                <AlertCircle size={16} />
-                {uploadError}
-              </div>
-            )}
-
-            {/* Drag & Drop Dropzone or Image Preview */}
-            {formData.image ? (
-              // Image Preview
-              <div style={{ position: 'relative', marginBottom: '1rem' }}>
-                <div style={{ 
-                  border: '2px solid rgba(0,29,4,0.08)', 
-                  borderRadius: '16px', 
-                  overflow: 'hidden',
-                  backgroundColor: 'white'
-                }}>
-                  <img 
-                    src={formData.image} 
-                    alt="Product Preview" 
-                    style={{ width: '100%', height: '220px', objectFit: 'cover', display: 'block' }}
-                    onError={(e) => { e.target.style.display = 'none'; }}
+                <div>
+                  <FieldLabel>Product Description</FieldLabel>
+                  <textarea
+                    required rows={4} value={formData.description}
+                    onChange={e => setFormData({ ...formData, description: e.target.value })}
+                    style={{ 
+                      backgroundColor: '#F9F9F9', 
+                      border: '1px solid rgba(0,0,0,0.06)', 
+                      borderRadius: '12px', 
+                      padding: '1.1rem 1.25rem', 
+                      width: '100%', 
+                      fontFamily: 'inherit', 
+                      fontSize: '0.92rem', 
+                      color: '#1E2A3A', 
+                      outline: 'none', 
+                      resize: 'none', 
+                      boxSizing: 'border-box',
+                      transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)'
+                    }}
+                    onFocus={e => { 
+                      e.target.style.borderColor = '#436132'; 
+                      e.target.style.backgroundColor = 'white';
+                      e.target.style.boxShadow = '0 0 0 4px rgba(67,97,50,0.08)'; 
+                    }}
+                    onBlur={e => { 
+                      e.target.style.borderColor = 'rgba(0,0,0,0.06)'; 
+                      e.target.style.backgroundColor = '#F9F9F9';
+                      e.target.style.boxShadow = 'none'; 
+                    }}
                   />
                 </div>
-                <button 
-                  type="button"
-                  onClick={handleRemoveImage}
-                  style={{ 
-                    position: 'absolute', top: '0.8rem', right: '0.8rem',
-                    width: '32px', height: '32px', borderRadius: '50%',
-                    backgroundColor: 'rgba(0,0,0,0.6)', border: 'none',
-                    color: 'white', cursor: 'pointer',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    transition: 'background-color 0.2s'
-                  }}
-                  onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(220,38,38,0.9)'}
-                  onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'rgba(0,0,0,0.6)'}
+              </div>
+            </FormSection>
+
+            <FormSection icon={<DollarSign size={18} color="#001d04" />} title="Pricing & Inventory">
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div>
+                  <FieldLabel>Retail Price ($)</FieldLabel>
+                  <StyledInput required type="number" step="0.01" min="0" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} placeholder="0.00" />
+                </div>
+                <div>
+                  <FieldLabel>Stock Available</FieldLabel>
+                  <StyledInput required type="number" min="0" value={formData.stock} onChange={e => setFormData({ ...formData, stock: e.target.value })} placeholder="0" />
+                </div>
+              </div>
+            </FormSection>
+
+            <FormSection icon={<ImageIcon size={18} color="#001d04" />} title="Product Media">
+              {uploadError && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', backgroundColor: '#FEF2F2', border: '1px solid #FECACA', borderRadius: '12px', padding: '0.8rem 1rem', marginBottom: '0.9rem', color: '#991B1B', fontSize: '0.82rem', fontWeight: 500 }}>
+                  <AlertCircle size={15} /> {uploadError}
+                </div>
+              )}
+              {formData.image ? (
+                <div style={{ position: 'relative', marginBottom: '0.9rem' }}>
+                  <div style={{ border: '2px solid rgba(0,29,4,0.07)', borderRadius: '16px', overflow: 'hidden', backgroundColor: 'white' }}>
+                    <img src={formData.image} alt="Preview" style={{ width: '100%', height: '200px', objectFit: 'cover', display: 'block' }} onError={e => { e.target.style.display = 'none'; }} />
+                  </div>
+                  <button type="button" onClick={() => { setFormData(p => ({ ...p, image: '' })); setUploadProgress(0); setUploadError(''); }} style={{ position: 'absolute', top: '0.7rem', right: '0.7rem', width: '30px', height: '30px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.55)', border: 'none', color: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <X size={14} />
+                  </button>
+                </div>
+              ) : (
+                <div
+                  onClick={() => !uploading && fileInputRef.current?.click()}
+                  onDragOver={e => { e.preventDefault(); setIsDragOver(true); }}
+                  onDragLeave={e => { e.preventDefault(); setIsDragOver(false); }}
+                  onDrop={e => { e.preventDefault(); setIsDragOver(false); const f = e.dataTransfer.files[0]; if (f) handleImageUpload(f); }}
+                  style={{ border: `2px dashed ${isDragOver ? '#001d04' : 'rgba(0,29,4,0.15)'}`, borderRadius: '16px', padding: '2.5rem 1.5rem', backgroundColor: isDragOver ? 'rgba(0,29,4,0.03)' : 'rgba(255,255,255,0.5)', textAlign: 'center', cursor: uploading ? 'default' : 'pointer', transition: 'all 0.2s', marginBottom: '0.9rem' }}
                 >
-                  <X size={16} />
-                </button>
+                  {uploading ? (
+                    <div>
+                      <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: '#E4EDDB', margin: '0 auto 0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Upload size={22} color="#436132" />
+                      </div>
+                      <p style={{ fontSize: '0.88rem', fontWeight: 600, color: '#001d04', marginBottom: '0.8rem' }}>Uploading… {uploadProgress}%</p>
+                      <div style={{ width: '75%', maxWidth: '240px', margin: '0 auto', height: '5px', borderRadius: '99px', backgroundColor: 'rgba(0,29,4,0.08)', overflow: 'hidden' }}>
+                        <div style={{ height: '100%', borderRadius: '99px', backgroundColor: '#436132', width: `${uploadProgress}%`, transition: 'width 0.3s ease' }} />
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <div style={{ width: '52px', height: '52px', borderRadius: '50%', backgroundColor: 'white', margin: '0 auto 0.8rem', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+                        <Upload size={22} color="#706F65" />
+                      </div>
+                      <p style={{ fontSize: '0.92rem', fontWeight: 600, color: '#001d04', marginBottom: '0.25rem' }}>Drop your image here</p>
+                      <p style={{ fontSize: '0.78rem', color: '#706F65', margin: 0 }}>or click to browse · JPG, PNG, WebP · Max 5MB</p>
+                    </div>
+                  )}
+                </div>
+              )}
+              <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={e => { const f = e.target.files[0]; if (f) handleImageUpload(f); }} style={{ display: 'none' }} />
+              <div style={{ textAlign: 'center' }}>
+                <p style={{ fontSize: '0.62rem', fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.12em', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Or Paste Image URL</p>
+                <StyledInput type="url" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="https://…" style={{ fontSize: '0.82rem' }} />
               </div>
-            ) : (
-              // Upload Dropzone
-              <div 
-                onClick={() => !uploading && fileInputRef.current?.click()}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                style={{ 
-                  border: `2px dashed ${isDragOver ? '#001d04' : 'rgba(0,29,4,0.15)'}`, 
-                  borderRadius: '16px', 
-                  padding: '2.5rem 1.5rem', 
-                  backgroundColor: isDragOver ? 'rgba(0,29,4,0.03)' : 'rgba(255,255,255,0.4)',
-                  textAlign: 'center',
-                  marginBottom: '1rem',
-                  cursor: uploading ? 'default' : 'pointer',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {uploading ? (
-                  // Upload Progress
-                  <div>
-                    <div style={{ 
-                      width: '60px', height: '60px', borderRadius: '50%', 
-                      backgroundColor: '#E4EDDB', margin: '0 auto 1rem',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center'
-                    }}>
-                      <Upload size={24} color="#436132" />
-                    </div>
-                    <p style={{ fontSize: '0.9rem', fontWeight: 600, color: '#001d04', marginBottom: '0.8rem' }}>
-                      Uploading... {uploadProgress}%
-                    </p>
-                    {/* Progress Bar */}
-                    <div style={{ 
-                      width: '80%', maxWidth: '250px', margin: '0 auto',
-                      height: '6px', borderRadius: '3px', backgroundColor: 'rgba(0,29,4,0.08)',
-                      overflow: 'hidden'
-                    }}>
-                      <div style={{ 
-                        height: '100%', borderRadius: '3px',
-                        backgroundColor: '#436132',
-                        width: `${uploadProgress}%`,
-                        transition: 'width 0.3s ease'
-                      }} />
-                    </div>
-                  </div>
-                ) : (
-                  // Idle State
-                  <div>
-                    <div style={{ 
-                      width: '60px', height: '60px', borderRadius: '50%', 
-                      backgroundColor: 'white', margin: '0 auto 1rem',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      boxShadow: '0 4px 15px rgba(0,0,0,0.04)'
-                    }}>
-                      <Upload size={24} color="#706F65" />
-                    </div>
-                    <p style={{ fontSize: '0.95rem', fontWeight: 600, color: '#001d04', marginBottom: '0.3rem' }}>
-                      Drop your image here
-                    </p>
-                    <p style={{ fontSize: '0.8rem', color: '#706F65', margin: 0 }}>
-                      or click to browse · JPG, PNG, WebP · Max 5MB
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
+            </FormSection>
 
-            {/* Hidden File Input */}
-            <input 
-              ref={fileInputRef}
-              type="file" 
-              accept="image/jpeg,image/png,image/webp,image/avif"
-              onChange={handleFileSelect}
-              style={{ display: 'none' }}
-            />
-
-            {/* Fallback URL Input */}
-            <div style={{ marginTop: '0.5rem' }}>
-              <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#706F65', letterSpacing: '0.1em', marginBottom: '0.5rem', textAlign: 'center' }}>
-                OR PASTE IMAGE URL
-              </div>
-              <input 
-                type="url" className="input" 
-                value={formData.image} 
-                onChange={e => setFormData({...formData, image: e.target.value})} 
-                placeholder="https://..." 
-                style={{ backgroundColor: 'white', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.85rem' }} 
-              />
+            {/* Form Actions */}
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', paddingBottom: '3rem', marginTop: '1rem' }}>
+              <button type="button" onClick={() => setIsEditing(false)} style={{ padding: '0.95rem 2rem', background: 'white', border: '1px solid rgba(0,0,0,0.08)', borderRadius: '16px', fontWeight: 600, color: '#706F65', cursor: 'pointer', fontSize: '0.9rem', fontFamily: 'inherit', transition: 'all 0.2s', boxShadow: '0 2px 4px rgba(0,0,0,0.02)' }}>
+                Discard
+              </button>
+              <button type="submit" disabled={uploading} style={{ padding: '0.95rem 2.8rem', backgroundColor: '#1E2A3A', color: 'white', borderRadius: '16px', fontWeight: 700, border: 'none', cursor: uploading ? 'not-allowed' : 'pointer', opacity: uploading ? 0.6 : 1, fontSize: '0.9rem', fontFamily: 'inherit', transition: 'all 0.2s' }}>
+                {currentProduct ? 'Save Changes' : 'Publish Item'}
+              </button>
             </div>
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1.2rem', marginTop: '1rem', marginBottom: '4rem' }}>
-             <button type="button" className="btn" style={{ color: '#001d04', fontWeight: 600, padding: '1rem 2rem', background: 'none', border: 'none', cursor: 'pointer' }} onClick={() => setIsEditing(false)}>Discard</button>
-             <button type="submit" className="btn" disabled={uploading} style={{ backgroundColor: '#001d04', color: 'white', padding: '1rem 3rem', borderRadius: '16px', fontWeight: 600, border: 'none', cursor: uploading ? 'not-allowed' : 'pointer', opacity: uploading ? 0.6 : 1 }}>
-               {currentProduct ? 'Apply Updates' : 'Publish Product'}
-             </button>
-          </div>
-        </form>
+          </form>
+        </div>
       </div>
     );
   }
 
+  /* ── Product List ── */
   return (
-    <div className="container animate-fade-in" style={{ padding: '4rem 1.5rem', maxWidth: '1000px' }}>
-      <div className="admin-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '4rem' }}>
-        <div>
-           <Link to="/admin" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', color: '#706F65', marginBottom: '1rem', fontSize: '0.85rem', fontWeight: 500, textDecoration: 'none' }}>
-             <ArrowLeft size={16} /> Dashboard
-           </Link>
-           <h1 style={{ fontSize: '3rem', fontWeight: 700, color: '#001d04', letterSpacing: '-0.02em', lineHeight: 1, margin: 0 }}>Catalog</h1>
-           <p style={{ color: '#706F65', marginTop: '0.75rem', fontSize: '1.05rem', margin: '0.75rem 0 0' }}>{products.length} Items found in collection</p>
+    <div style={{ minHeight: '100vh', backgroundColor: '#F7F3ED', paddingBottom: '6rem' }}>
+
+      {/* Header */}
+      <div style={{
+        background: 'linear-gradient(160deg, #1E2A3A 0%, #162030 100%)',
+        padding: 'clamp(1.5rem, 4vw, 3rem) clamp(1.2rem, 3vw, 2rem)',
+        paddingTop: 'clamp(1.5rem, 4vw, 2.5rem)',
+        color: 'white', position: 'relative', overflow: 'hidden',
+      }}>
+        <div style={{ position: 'absolute', top: '-60px', right: '-60px', width: '220px', height: '220px', borderRadius: '50%', background: 'radial-gradient(circle, rgba(67,97,50,0.25) 0%, transparent 70%)', filter: 'blur(40px)', pointerEvents: 'none' }} />
+        <div style={{ position: 'relative', zIndex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem' }}>
+            <Link to="/admin" style={{ fontSize: '0.7rem', fontWeight: 700, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', textDecoration: 'none' }}>
+              ← Dashboard
+            </Link>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '1rem', flexWrap: 'wrap' }}>
+            <div>
+              <h1 style={{ fontSize: 'clamp(1.9rem, 5vw, 2.6rem)', fontWeight: 800, margin: '0 0 0.25rem', letterSpacing: '-0.03em', color: 'white' }}>Catalog</h1>
+              <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.9rem', margin: 0 }}>{products.length} items in collection</p>
+            </div>
+            <button onClick={handleAddNew} style={{
+              display: 'flex', alignItems: 'center', gap: '0.45rem',
+              padding: '0.6rem 1.2rem',
+              backgroundColor: 'rgba(255,255,255,0.08)',
+              border: '1px solid rgba(255,255,255,0.15)',
+              borderRadius: '100px',
+              color: 'white',
+              fontSize: '0.8rem', fontWeight: 600,
+              textDecoration: 'none',
+              transition: 'all 0.2s ease',
+              backdropFilter: 'blur(10px)',
+              cursor: 'pointer',
+              fontFamily: 'inherit'
+            }}
+              onMouseEnter={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.15)'; }}
+              onMouseLeave={e => { e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.08)'; }}
+            >
+              <Plus size={16} /> New Arrival
+            </button>
+          </div>
+
+          {/* Category Filter Pills */}
+          <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.5rem', overflowX: 'auto', paddingBottom: '0.2rem', msOverflowStyle: 'none', scrollbarWidth: 'none' }}>
+            {categories.map(cat => {
+              const isActive = filterCategory === cat;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setFilterCategory(cat)}
+                  style={{
+                    flexShrink: 0,
+                    padding: '0.45rem 1rem',
+                    borderRadius: '100px',
+                    border: isActive ? '1px solid white' : '1px solid rgba(255,255,255,0.15)',
+                    backgroundColor: isActive ? 'white' : 'rgba(255,255,255,0.06)',
+                    color: isActive ? '#1E2A3A' : 'rgba(255,255,255,0.6)',
+                    fontSize: '0.75rem', fontWeight: 600,
+                    cursor: 'pointer', transition: 'all 0.2s ease',
+                    backdropFilter: 'blur(10px)',
+                    fontFamily: 'inherit'
+                  }}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
         </div>
-        <button className="btn" style={{ backgroundColor: '#001d04', color: 'white', borderRadius: '16px', padding: '1rem 2rem', fontWeight: 600, gap: '0.5rem', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center' }} onClick={handleAddNew}>
-          <Plus size={20} /> New Arrival
-        </button>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {products.map(product => (
-          <div 
-            key={product.id} 
-            className="card admin-product-row"
-            style={{ 
-              display: 'flex', alignItems: 'center', padding: '1rem 1.5rem', gap: '2rem',
-              backgroundColor: 'white', border: '1px solid var(--color-border)', borderRadius: '24px',
-              transition: 'all 0.3s ease'
-            }}
-          >
-            <div style={{ width: '80px', height: '80px', borderRadius: '16px', overflow: 'hidden', flexShrink: 0, backgroundColor: '#F3F2EE' }}>
-               <img src={product.image} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            </div>
-            
-            <div style={{ flexGrow: 1 }}>
-               <div style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#706F65', marginBottom: '0.2rem' }}>
-                 {product.category}
-               </div>
-               <h3 style={{ fontSize: '1.15rem', fontWeight: 600, color: '#001d04', margin: 0 }}>
-                 {product.title}
-                 {product.featured && <span style={{ marginLeft: '1rem', padding: '0.2rem 0.5rem', backgroundColor: '#FBF5EC', color: '#706F65', fontSize: '0.6rem', borderRadius: '8px', fontWeight: 700 }}>FEATURED</span>}
-               </h3>
-               <div style={{ display: 'flex', gap: '2rem', marginTop: '0.5rem', color: '#706F65', fontSize: '0.85rem' }}>
-                  <span style={{ fontWeight: 600, color: '#001d04' }}>${product.price.toFixed(2)}</span>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
-                    <Package size={14} /> {product.stock} in stock
-                  </span>
-               </div>
-            </div>
-
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
-               <button 
-                title="Edit Product"
-                className="btn-icon" 
-                style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: '#F3F2EE', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} 
-                onClick={() => handleEdit(product)}
-               >
-                 <Edit2 size={18} color="#001d04" />
-               </button>
-               <button 
-                title="Delete Product"
-                className="btn-icon" 
-                style={{ width: '40px', height: '40px', borderRadius: '12px', backgroundColor: '#F3F2EE', color: '#ef4444', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }} 
-                onClick={() => {
-                  if (window.confirm('Remove this product permanently?')) deleteProduct(product.id);
+      {/* Product Cards */}
+      <div style={{ backgroundColor: '#F7F3ED', borderRadius: '28px 28px 0 0', padding: 'clamp(1.2rem,3vw,2rem)', marginTop: '-1.5rem', position: 'relative', zIndex: 2 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
+          {filteredProducts.map((product, index) => {
+            const sc = getStockConfig(product.stock);
+            return (
+              <div
+                key={product.id}
+                style={{
+                  backgroundColor: 'white', borderRadius: '20px',
+                  padding: '1rem 1.2rem', display: 'flex', alignItems: 'center', gap: '1rem',
+                  border: '1px solid rgba(0,0,0,0.04)',
+                  animation: `cardEntrance 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) ${index * 0.05}s backwards`,
+                  transition: 'transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease',
                 }}
-               >
-                 <Trash2 size={18} />
-               </button>
-            </div>
-          </div>
-        ))}
+                onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px rgba(0,0,0,0.07)'; e.currentTarget.style.borderColor = 'rgba(67,97,50,0.15)'; }}
+                onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.borderColor = 'rgba(0,0,0,0.04)'; }}
+              >
+                {/* Thumbnail */}
+                <div style={{ width: '70px', height: '70px', borderRadius: '14px', overflow: 'hidden', flexShrink: 0, backgroundColor: '#F3F2EE' }}>
+                  <img src={product.image} alt={product.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
 
-        {products.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '6rem', backgroundColor: 'white', borderRadius: '32px', border: '2px dashed var(--color-border)' }}>
-             <AlertCircle size={48} color="#D4CFC5" style={{ margin: '0 auto 1.5rem' }} />
-             <h2 style={{ fontSize: '1.5rem', color: '#001d04', marginBottom: '0.5rem', margin: '0 0 0.5rem' }}>No products found</h2>
-             <p style={{ color: '#706F65', margin: 0 }}>Start by adding your first product to the catalog.</p>
-          </div>
-        )}
+                {/* Info */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.15rem' }}>
+                    <span style={{ fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: '#706F65' }}>{product.category}</span>
+                    {product.featured && (
+                      <span style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', fontSize: '0.6rem', fontWeight: 700, padding: '0.15rem 0.5rem', backgroundColor: '#FEF9C3', color: '#A16207', borderRadius: '100px' }}>
+                        <Star size={9} fill="#A16207" /> Featured
+                      </span>
+                    )}
+                  </div>
+                  <h3 style={{ fontSize: '0.92rem', fontWeight: 700, color: '#001d04', margin: '0 0 0.35rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{product.title}</h3>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#436132', letterSpacing: '-0.01em' }}>${product.price.toFixed(2)}</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.68rem', fontWeight: 700, padding: '0.2rem 0.6rem', borderRadius: '100px', backgroundColor: sc.bg, color: sc.color }}>
+                      <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: sc.dot, flexShrink: 0 }} />
+                      {sc.label}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div style={{ display: 'flex', gap: '0.5rem', flexShrink: 0 }}>
+                  <button title="Edit Product" onClick={() => handleEdit(product)} style={{ width: '36px', height: '36px', borderRadius: '12px', backgroundColor: '#F3F2EE', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background-color 0.2s' }}
+                    onMouseEnter={e => e.currentTarget.style.backgroundColor = '#E4EDDB'}
+                    onMouseLeave={e => e.currentTarget.style.backgroundColor = '#F3F2EE'}
+                  >
+                    <Edit2 size={15} color="#001d04" />
+                  </button>
+                  <button title="Delete Product" onClick={() => { if (window.confirm('Remove this product permanently?')) deleteProduct(product.id); }} style={{ width: '36px', height: '36px', borderRadius: '12px', backgroundColor: '#FEF2F2', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background-color 0.2s' }}
+                    onMouseEnter={e => e.currentTarget.style.backgroundColor = '#FEE2E2'}
+                    onMouseLeave={e => e.currentTarget.style.backgroundColor = '#FEF2F2'}
+                  >
+                    <Trash2 size={15} color="#EF4444" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+
+          {products.length === 0 && (
+            <div style={{ textAlign: 'center', padding: '5rem 1.5rem', backgroundColor: 'white', borderRadius: '24px', border: '2px dashed rgba(0,0,0,0.08)' }}>
+              <AlertCircle size={40} color="#D4CFC5" style={{ marginBottom: '1rem' }} />
+              <h2 style={{ fontSize: '1.2rem', color: '#001d04', marginBottom: '0.4rem' }}>No products found</h2>
+              <p style={{ color: '#706F65', marginBottom: '1.5rem', fontSize: '0.88rem' }}>Start by adding your first product to the catalog.</p>
+              <button onClick={handleAddNew} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.8rem 1.8rem', backgroundColor: '#001d04', color: 'white', border: 'none', borderRadius: '14px', fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit', fontSize: '0.9rem' }}>
+                <Plus size={16} /> Add First Product
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

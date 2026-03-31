@@ -61,24 +61,7 @@ const MobileBottomNav = ({ onOpenDrawer }) => {
               cursor: 'pointer',
               transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
               width: '100%',
-              transform: isActive ? 'scale(1.05)' : 'scale(1)',
             }}>
-              {/* Floating Active Background Pill */}
-              {isActive && (
-                <div style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  transform: 'translate(-50%, -50%)',
-                  width: '45px',
-                  height: '45px',
-                  backgroundColor: 'rgba(0, 29, 4, 0.04)',
-                  borderRadius: '50%',
-                  zIndex: -1,
-                  animation: 'fadeIn 0.3s ease-out'
-                }} />
-              )}
-
               <Icon 
                 size={22} 
                 strokeWidth={isActive ? 2.5 : 1.8} 

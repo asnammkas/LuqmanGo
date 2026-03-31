@@ -57,6 +57,7 @@ function AppContent() {
             backgroundColor: '#F7F3ED', 
             display: 'flex', flexDirection: 'column',
             alignItems: 'center', justifyContent: 'center',
+            paddingBottom: '12vh',
             background: 'radial-gradient(circle at center, #FFFFFF 0%, #F7F3ED 100%)'
           }}
         >
@@ -120,7 +121,7 @@ function AppContent() {
             {/* Mission Statement */}
             <div 
               style={{ 
-                marginTop: '3.5rem', opacity: 0, 
+                marginTop: '2.5rem', opacity: 0, 
                 animation: 'fadeIn 1s ease-out 1.5s forwards',
                 fontSize: '0.7rem', fontWeight: 800, letterSpacing: '0.4em',
                 color: '#706F65'
