@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { mockProducts } from '../data/mockProducts';
 import { db } from '../config/firebase';
 import { collection, onSnapshot, doc, setDoc, deleteDoc, addDoc } from 'firebase/firestore';
+import { useAuth } from './AuthContext';
 
 const ShopContext = createContext();
 
@@ -10,6 +11,7 @@ export const useShop = () => {
 };
 
 export const ShopProvider = ({ children }) => {
+  const { currentUser } = useAuth();
   const [products, setProducts] = useState([]);
   const [isProductsLoading, setIsProductsLoading] = useState(true);
   const [productsError, setProductsError] = useState(null);
@@ -207,7 +209,8 @@ export const ShopProvider = ({ children }) => {
       customer: customerInfo,
       items: [...cart],
       total: getCartTotal(),
-      status: 'Processing'
+      status: 'Processing',
+      userId: currentUser?.uid || null
     };
     
     try {

@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import Navbar from './components/storefront/Navbar';
@@ -182,11 +181,7 @@ function AppContent() {
 }
 
 function App() {
-  return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
-  );
+  return <AppContent />;
 }
 
 export default App;
