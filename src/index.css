@@ -483,6 +483,70 @@ a:hover {
   .show-on-mobile {
     display: none !important;
   }
+
+  .desktop-nav-links {
+    display: flex !important;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .desktop-nav-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-text-main);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    transition: color 0.2s ease;
+  }
+
+  .desktop-nav-link:hover {
+    color: var(--color-leaf-green);
+  }
+
+  .category-grid-layout {
+    grid-template-columns: repeat(6, 1fr) !important;
+  }
+
+  .hide-on-desktop {
+    display: none !important;
+  }
+
+  /* Desktop Footer */
+  .footer-container {
+    max-width: 1100px !important;
+  }
+  .footer-top-wrapper {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+  }
+  .footer-brand-col {
+    text-align: left !important;
+    margin-bottom: 0 !important;
+    margin-right: 2rem !important;
+  }
+  .footer-brand-col h2, .footer-brand-col p {
+    margin-left: 0 !important;
+  }
+  .footer-socials {
+    justify-content: flex-start !important;
+  }
+  .footer-links-grid {
+    gap: 5rem !important;
+    margin-bottom: 0 !important;
+  }
+  .footer-bottom-bar {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+  }
+  
+  .cart-desktop-grid {
+    display: grid !important;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 4rem !important;
+    align-items: flex-start;
+  }
 }
 
 /* Mobile Utilities & Adjustments */

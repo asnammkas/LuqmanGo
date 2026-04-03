@@ -20,7 +20,7 @@ const Wishlist = () => {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <div className="animate-fade-in" style={{ 
         padding: '0.8rem 1.2rem 5rem', 
-        maxWidth: '800px', 
+        maxWidth: '1280px', 
         width: '100%', 
         boxSizing: 'border-box', 
         margin: '0 auto', 
@@ -105,7 +105,7 @@ const Wishlist = () => {
             </Link>
           </div>
         ) : (
-          <div className="product-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)', gap: '1.5rem 1rem' }}>
+          <div className="product-grid">
             {wishlist.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

@@ -27,15 +27,22 @@ const Navbar = ({ onOpenDrawer }) => {
         width: '100%' 
       }}>
         
-        {/* Left: Mobile Menu */}
+        {/* Left: Mobile/Desktop Navigation */}
         <div style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
           <button 
             onClick={onOpenDrawer} 
-            style={{ background: 'none', border: 'none', color: 'var(--color-text-main)', cursor: 'pointer', padding: '0.5rem' }}
+            className="show-on-mobile"
+            style={{ background: 'none', border: 'none', color: 'var(--color-text-main)', cursor: 'pointer', padding: '0.5rem', display: 'flex' }}
           >
             <Menu size={24} strokeWidth={1.5} />
           </button>
           
+          <nav className="hide-on-mobile desktop-nav-links" style={{ display: 'none' }}>
+            <Link to="/" className="desktop-nav-link">Home</Link>
+            <Link to="/stores" className="desktop-nav-link">Stores</Link>
+            <Link to="/wishlist" className="desktop-nav-link">Wishlist</Link>
+            <Link to="/profile" className="desktop-nav-link">Account</Link>
+          </nav>
         </div>
 
         {/* Center: Brand Name */}

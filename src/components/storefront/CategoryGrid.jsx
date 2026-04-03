@@ -45,7 +45,7 @@ const CategoryGrid = () => {
 
   return (
     <section className="container" style={{ padding: '0 1.5rem 1rem' }}>
-      <div style={{
+      <div className="category-grid-layout" style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(3, 1fr)',
         gap: '12px',

@@ -59,7 +59,7 @@ const CartCheckout = () => {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-      <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', width: '100%', boxSizing: 'border-box', margin: '0 auto', flex: 1 }}>
+      <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', width: '100%', boxSizing: 'border-box', margin: '0 auto', flex: 1 }}>
         
         {/* Editorial Header - Unified Pattern */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
@@ -75,7 +75,7 @@ const CartCheckout = () => {
           A final review of your chosen pieces before they reach your doorstep.
         </p>
 
-        <div className="cart-content-wrapper" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+        <div className="cart-content-wrapper cart-desktop-grid" style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
       
       {/* Cart Items */}
       <div className="cart-items-section">

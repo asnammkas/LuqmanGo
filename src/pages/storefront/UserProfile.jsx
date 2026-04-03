@@ -193,7 +193,7 @@ const UserProfile = () => {
 
   // --- Sub-Views Components ---
   const PersonalInfoView = () => (
-    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
         <button 
           onClick={() => setCurrentView('main')}
@@ -203,10 +203,10 @@ const UserProfile = () => {
         </button>
         <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Profile Details</span>
       </div>
-      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
         Manage your identity and how we connect with you. Keep your personal information secure and up to date.
       </p>
-      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '24px', padding: '2rem', border: '1px solid rgba(0,0,0,0.02)' }}>
+      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '24px', padding: '2rem', border: '1px solid rgba(0,0,0,0.02)', maxWidth: '600px', margin: '0 auto' }}>
         <form onSubmit={handleUpdateProfile} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
           {message.text && (
             <div style={{ 
@@ -272,7 +272,7 @@ const UserProfile = () => {
   );
 
   const AddressesView = () => (
-    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
         <button 
           onClick={() => setCurrentView('main')}
@@ -282,10 +282,10 @@ const UserProfile = () => {
         </button>
       <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Saved Locations</span>
       </div>
-      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem', maxWidth: '700px' }}>
         Your curated network of delivery destinations. Add, edit, or remove your frequent stops for faster checkouts.
       </p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
         {addresses.length === 0 && (
           <div style={{ textAlign: 'center', padding: '2rem', backgroundColor: '#EAE1D3', borderRadius: '24px', opacity: 0.6 }}>
             <p style={{ fontSize: '0.85rem' }}>No addresses saved yet.</p>
@@ -323,7 +323,7 @@ const UserProfile = () => {
   );
   
   const AddAddressView = () => (
-    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
         <button 
           onClick={() => setCurrentView('addresses')}
@@ -333,11 +333,11 @@ const UserProfile = () => {
         </button>
         <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Add New Address</span>
       </div>
-      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
         Provide your shipping details below. We deliver to your doorstep with zero-carbon logistics.
       </p>
       
-      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '32px', padding: '2.2rem', border: '1px solid rgba(0,0,0,0.02)' }}>
+      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '32px', padding: '2.2rem', border: '1px solid rgba(0,0,0,0.02)', maxWidth: '600px', margin: '0 auto' }}>
         <form onSubmit={handleSaveAddress} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
           <div>
             <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>ADDRESS TITLE (E.G. OFFICE)</label>
@@ -392,7 +392,7 @@ const UserProfile = () => {
   );
 
   const EditAddressView = () => (
-    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
         <button 
           onClick={() => setCurrentView('addresses')}
@@ -402,11 +402,11 @@ const UserProfile = () => {
         </button>
         <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Edit Saved Location</span>
       </div>
-      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
         Refine your delivery details below. Ensure your sustainable journey reaches the right destination.
       </p>
       
-      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '32px', padding: '2.2rem', border: '1px solid rgba(0,0,0,0.02)' }}>
+      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '32px', padding: '2.2rem', border: '1px solid rgba(0,0,0,0.02)', maxWidth: '600px', margin: '0 auto' }}>
         <form onSubmit={handleSaveAddress} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
           <div>
             <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>ADDRESS TITLE</label>
@@ -459,7 +459,7 @@ const UserProfile = () => {
       </div>
       <button 
         onClick={() => handleDeleteAddress(editingAddress.id)}
-        style={{ width: '100%', padding: '1rem', marginTop: '1.5rem', color: '#E53E3E', background: 'none', border: 'none', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer' }}
+        style={{ width: '100%', maxWidth: '600px', margin: '0 auto', display: 'block', padding: '1rem', marginTop: '1.5rem', color: '#E53E3E', background: 'none', border: 'none', fontWeight: 600, fontSize: '0.9rem', cursor: 'pointer' }}
       >
         Delete Location
       </button>
@@ -467,7 +467,7 @@ const UserProfile = () => {
   );
 
   const PaymentsView = () => (
-    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
         <button 
           onClick={() => setCurrentView('main')}
@@ -477,10 +477,10 @@ const UserProfile = () => {
         </button>
         <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Payments</span>
       </div>
-      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem', maxWidth: '700px' }}>
         Securely manage your preferred payment methods. Your financial integrity is our primary commitment.
       </p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
         <div style={{ 
           backgroundColor: '#EAE1D3', 
           color: '#001d04', borderRadius: '24px', padding: '1.5rem 1.8rem', 
@@ -517,7 +517,7 @@ const UserProfile = () => {
   );
 
   const AddPaymentView = () => (
-    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
         <button 
           onClick={() => setCurrentView('payments')}
@@ -527,11 +527,11 @@ const UserProfile = () => {
         </button>
         <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Register New Card</span>
       </div>
-      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
         Add a secure payment method for your next curated purchase. Built with industry-standard integrity.
       </p>
       
-      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '32px', padding: '2.2rem', border: '1px solid rgba(0,0,0,0.02)' }}>
+      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '32px', padding: '2.2rem', border: '1px solid rgba(0,0,0,0.02)', maxWidth: '600px', margin: '0 auto' }}>
         <form style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
           <div>
             <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>CARDHOLDER NAME</label>
@@ -560,7 +560,7 @@ const UserProfile = () => {
   );
 
   const NotificationsView = () => (
-    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
         <button 
           onClick={() => setCurrentView('main')}
@@ -570,10 +570,10 @@ const UserProfile = () => {
         </button>
         <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Connectivity</span>
       </div>
-      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem' }}>
+      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
         Tailor your LuqmanGo experience. Choose how and when you receive updates on orders, curated drops, and exclusive offers.
       </p>
-      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '24px', padding: '1.5rem', border: '1px solid rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '24px', padding: '1.5rem', border: '1px solid rgba(0,0,0,0.02)', display: 'flex', flexDirection: 'column', gap: '0.8rem', maxWidth: '600px', margin: '0 auto' }}>
         {[
           { key: 'orderStatus', icon: <Bell size={16} />, title: 'Order Status', desc: 'Real-time updates on delivery' },
           { key: 'exclusiveOffers', icon: <Star size={16} />, title: 'Exclusive Offers', desc: 'Discounts and curated drops' },
@@ -633,7 +633,7 @@ const UserProfile = () => {
       const order = allPastOrders.find(o => o.id === activeInvoice);
       if (!order) { setActiveInvoice(null); return null; }
       return (
-        <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+        <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
             <button 
               onClick={() => setActiveInvoice(null)}
@@ -647,7 +647,7 @@ const UserProfile = () => {
           <div style={{ 
             backgroundColor: '#EAE1D3', 
             borderRadius: '32px', 
-            padding: '2.5rem 2rem', 
+            padding: '2.5rem 2rem', maxWidth: '600px', margin: '0 auto',
             boxShadow: '0 20px 40px rgba(0,0,0,0.04)',
             border: '1px solid rgba(0,0,0,0.02)',
             position: 'relative'
@@ -783,7 +783,7 @@ const UserProfile = () => {
     }
 
     return (
-      <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+      <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
         <div style={{ padding: '0' }}>
           
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
@@ -806,7 +806,7 @@ const UserProfile = () => {
               <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#001d04' }}>In Transit</h3>
             </div>
             
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem' }}>
               {inTransitOrders.map((order, idx) => (
                 <div key={idx} style={{ 
                   backgroundColor: '#EAE1D3', 
@@ -886,7 +886,7 @@ const UserProfile = () => {
                 No orders found for {selectedYear}.
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '2.5rem' }}>
                 {pastOrders.map((order, idx) => (
                   <div key={idx} style={{ display: 'flex', gap: '1.2rem' }}>
                     <div style={{ width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', backgroundColor: '#EAE1D3' }}>
@@ -941,7 +941,7 @@ const UserProfile = () => {
   };
 
   const HelpCenterView = () => (
-    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
         <button 
           onClick={() => setCurrentView('main')}
@@ -998,7 +998,7 @@ const UserProfile = () => {
   );
 
   const PrivacyPolicyView = () => (
-    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
+    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
         <button 
           onClick={() => setCurrentView('main')}
@@ -1047,7 +1047,7 @@ const UserProfile = () => {
   // --- Main Dashboard View ---
   return (
     <div className="animate-fade-in" style={{ backgroundColor: 'var(--color-bg-main)', minHeight: '100vh', paddingBottom: '4rem' }}>
-      <div style={{ maxWidth: '500px', margin: '0 auto', padding: '1rem' }}>
+      <div style={{ maxWidth: '600px', margin: '0 auto', padding: '1rem' }}>
         
         {/* Header Section */}
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '1.5rem' }}>

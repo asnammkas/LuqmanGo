@@ -5,7 +5,7 @@ import Footer from '../../components/storefront/Footer';
 const StoresComingSoon = () => {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden', backgroundColor: 'var(--color-bg-main)' }}>
-      <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '500px', width: '100%', boxSizing: 'border-box', margin: '0 auto', flex: 1 }}>
+      <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', width: '100%', boxSizing: 'border-box', margin: '0 auto', flex: 1 }}>
         
         {/* Editorial Header - Unified Pattern */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
@@ -29,7 +29,9 @@ const StoresComingSoon = () => {
           border: '1px solid rgba(0,0,0,0.02)',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center'
+          alignItems: 'center',
+          maxWidth: '600px',
+          margin: '3rem auto 0'
         }}>
           <div style={{ 
             width: '70px', height: '70px', borderRadius: '50%', 
