@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useShop } from '../../context/ShopContext';
+import useDocumentMeta from '../../hooks/useDocumentMeta';
 import { Trash2, ArrowRight, CheckCircle, Heart, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Footer from '../../components/storefront/Footer';
 
 const CartCheckout = () => {
   const { cart, removeFromCart, updateCartQuantity, getCartTotal, checkout, toggleWishlist, isInWishlist } = useShop();
+  useDocumentMeta('Cart', `Review your ${cart.length} selected items before checkout.`);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', address: '', paymentMethod: 'Cash on Delivery' });
@@ -65,6 +67,7 @@ const CartCheckout = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
           <Link 
             to="/"
+            aria-label="Back to shopping"
             style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
           >
             <ArrowLeft size={18} strokeWidth={2} />
@@ -107,6 +110,7 @@ const CartCheckout = () => {
                           borderRight: '1px solid var(--color-border)'
                         }} 
                         onClick={() => updateCartQuantity(item.id, item.quantity - 1)}
+                        aria-label={`Decrease quantity of ${item.title}`}
                       >
                         −
                       </button>
@@ -141,6 +145,7 @@ const CartCheckout = () => {
                           borderLeft: '1px solid var(--color-border)'
                         }} 
                         onClick={() => updateCartQuantity(item.id, item.quantity + 1)}
+                        aria-label={`Increase quantity of ${item.title}`}
                       >
                         +
                       </button>
@@ -148,6 +153,7 @@ const CartCheckout = () => {
                     {/* Delete Button */}
                     <button 
                       onClick={() => removeFromCart(item.id)}
+                      aria-label={`Remove ${item.title} from cart`}
                       style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600, padding: '0.4rem' }}
                     >
                       <Trash2 size={16} /> <span className="hide-on-mobile">Remove</span>

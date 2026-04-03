@@ -1,14 +1,17 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import useDocumentMeta from '../../hooks/useDocumentMeta';
 import Footer from '../../components/storefront/Footer';
 
 const DeliveryPolicyPage = () => {
+  useDocumentMeta('Delivery Policy', 'Learn about LuqmanGo shipping timelines, tracking, returns, and our commitment to sustainable logistics.');
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
       <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 4rem', maxWidth: '500px', width: '100%', boxSizing: 'border-box', margin: '0 auto', flex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1rem' }}>
           <Link 
             to="/"
+            aria-label="Back to home"
             style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
           >
             <ArrowLeft size={18} strokeWidth={2} />
