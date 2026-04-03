@@ -53,7 +53,12 @@ const SideDrawer = ({ isOpen, onClose }) => {
       />
 
       {/* Drawer */}
-      <div style={{
+      <div 
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation menu"
+        onKeyDown={(e) => { if (e.key === 'Escape') onClose(); }}
+        style={{
         position: 'fixed',
         top: 0,
         left: 0,
@@ -83,7 +88,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
             }}>
               LuqmanGo
             </h1>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#001d04', cursor: 'pointer', padding: '0.5rem' }}>
+            <button onClick={onClose} aria-label="Close navigation menu" style={{ background: 'none', border: 'none', color: '#001d04', cursor: 'pointer', padding: '0.5rem' }}>
               <X size={20} strokeWidth={1.5} />
             </button>
           </div>
@@ -96,10 +101,11 @@ const SideDrawer = ({ isOpen, onClose }) => {
             paddingBottom: '0.5rem',
             marginBottom: '2rem'
           }}>
-            <Search size={16} color="#001d04" style={{ marginRight: '0.75rem', opacity: 0.8 }} />
+            <Search size={16} color="#001d04" style={{ marginRight: '0.75rem', opacity: 0.8 }} aria-hidden="true" />
             <input 
               type="text" 
               placeholder="Explore the archive..." 
+              aria-label="Search products"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyDown={handleSearch}
@@ -127,6 +133,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
             Shop by Category
           </div>
           
+          <nav aria-label="Product categories">
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
             {categoryMenu.map((cat) => {
               const Icon = cat.icon;
@@ -193,6 +200,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
               <ChevronRight size={14} strokeWidth={1.5} color={location.pathname === '/stores' ? 'white' : '#706F65'} />
             </Link>
           </div>
+          </nav>
 
           <div style={{ height: '2.5rem' }} />
 

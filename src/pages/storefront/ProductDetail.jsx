@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
+import useDocumentMeta from '../../hooks/useDocumentMeta';
 import { ArrowLeft, Truck, ShieldCheck, Clock, Image as ImageIcon, Heart, Minus, Plus } from 'lucide-react';
 import Footer from '../../components/storefront/Footer';
 
@@ -11,6 +12,12 @@ const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
   
   const product = products.find(p => p.id === id);
+
+  // Dynamic page metadata
+  useDocumentMeta(
+    product ? product.title : 'Product Not Found',
+    product ? `${product.description?.substring(0, 155) || `Buy ${product.title} at LuqmanGo`}` : 'This product could not be found in our collection.'
+  );
 
   if (!product) {
     return (
@@ -34,6 +41,7 @@ const ProductDetail = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
           <Link 
             to="/"
+            aria-label="Back to collection"
             style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
           >
             <ArrowLeft size={18} strokeWidth={2} />
@@ -65,6 +73,7 @@ const ProductDetail = () => {
              {/* Wishlist Heart Button - Moved from details */}
              <button 
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(product); }}
+                aria-label={isHearted ? 'Remove from wishlist' : 'Add to wishlist'}
                 style={{ 
                   position: 'absolute', top: '1.25rem', right: '1.25rem',
                   width: '36px', height: '36px', borderRadius: '50%',
@@ -170,13 +179,15 @@ const ProductDetail = () => {
               }}>
                 <button 
                   onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                  aria-label="Decrease quantity"
                   style={{ background: 'none', border: 'none', width: '36px', height: '36px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
                   <Minus size={16} />
                 </button>
-                <span style={{ width: '40px', textAlign: 'center', fontWeight: 600, fontSize: '1rem' }}>{quantity}</span>
+                <span style={{ width: '40px', textAlign: 'center', fontWeight: 600, fontSize: '1rem' }} aria-live="polite" aria-label={`Quantity: ${quantity}`}>{quantity}</span>
                 <button 
                   onClick={() => setQuantity(quantity + 1)}
+                  aria-label="Increase quantity"
                   style={{ background: 'none', border: 'none', width: '36px', height: '36px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
                   <Plus size={16} />

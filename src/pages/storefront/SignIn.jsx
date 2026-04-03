@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, LogIn, ArrowRight, ArrowLeft, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import useDocumentMeta from '../../hooks/useDocumentMeta';
 import Footer from '../../components/storefront/Footer';
 
 const SignIn = () => {
+  useDocumentMeta('Sign In', 'Sign in to your LuqmanGo account to access your orders, wishlist, and personalized recommendations.');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -68,6 +70,7 @@ const SignIn = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
           <button 
             onClick={() => navigate(-1)}
+            aria-label="Go back"
             style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
           >
             <ArrowLeft size={18} strokeWidth={2} />

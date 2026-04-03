@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { useShop } from '../../context/ShopContext';
+import useDocumentMeta from '../../hooks/useDocumentMeta';
 import {
   Plus, Edit2, Trash2, ArrowLeft, Image as ImageIcon,
   LayoutGrid, DollarSign, Package, AlertCircle, Upload, X, Star
@@ -72,6 +73,8 @@ const StyledInput = ({ style, ...props }) => (
 
 const ProductManagement = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useShop();
+  useDocumentMeta('Product Management', 'Add, edit, and manage products in the LuqmanGo catalog.');
+
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState(null);
   const [formData, setFormData] = useState({ title: '', price: '', category: '', description: '', image: '', stock: '', featured: false });

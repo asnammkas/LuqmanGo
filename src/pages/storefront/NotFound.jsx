@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { Home, ArrowLeft, Search, ShoppingBag } from 'lucide-react';
+import useDocumentMeta from '../../hooks/useDocumentMeta';
 
 const NotFound = () => {
+  useDocumentMeta('Page Not Found', 'The page you are looking for could not be found. Explore our curated collection instead.');
   return (
     <div style={{ 
       minHeight: '100vh', 

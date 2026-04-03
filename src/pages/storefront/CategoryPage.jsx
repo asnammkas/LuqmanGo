@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
+import useDocumentMeta from '../../hooks/useDocumentMeta';
 import ProductCard from '../../components/storefront/ProductCard';
 import Footer from '../../components/storefront/Footer';
 import { SlidersHorizontal, ArrowUpDown, Check, ArrowLeft, Search as SearchIcon, XCircle } from 'lucide-react';
@@ -62,6 +63,15 @@ const CategoryPage = () => {
 
   const description = categoryDescriptions[activeCategory] || 'Explore our thoughtfully curated collection focusing on quality craftsmanship and timeless design.';
 
+  // Dynamic page metadata
+  const pageTitle = searchQuery 
+    ? `Search: ${searchQuery}` 
+    : `${activeCategory === 'All' ? 'All Products' : activeCategory}`;
+  const pageDescription = searchQuery
+    ? `Search results for "${searchQuery}" on LuqmanGo.`
+    : description;
+  useDocumentMeta(pageTitle, pageDescription);
+
   const sortOptions = [
     { value: 'default', label: 'Default' },
     { value: 'price-low', label: 'Price: Low → High' },
@@ -89,6 +99,7 @@ const CategoryPage = () => {
         }}>
           <button 
             onClick={() => navigate(-1)}
+            aria-label="Go back"
             style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
           >
             <ArrowLeft size={18} strokeWidth={2} />
@@ -144,7 +155,7 @@ const CategoryPage = () => {
                 transition: 'all 0.2s ease',
               }}
             >
-              <SlidersHorizontal size={14} /> Filter {filterBy !== 'all' && '•'}
+              <SlidersHorizontal size={14} aria-hidden="true" /> Filter {filterBy !== 'all' && '•'}
             </button>
             {showFilter && (
               <div style={{
@@ -192,7 +203,7 @@ const CategoryPage = () => {
                 transition: 'all 0.2s ease',
               }}
             >
-              <ArrowUpDown size={14} /> Sort {sortBy !== 'default' && '•'}
+              <ArrowUpDown size={14} aria-hidden="true" /> Sort {sortBy !== 'default' && '•'}
             </button>
             {showSort && (
               <div style={{
