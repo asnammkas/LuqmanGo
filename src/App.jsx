@@ -22,6 +22,7 @@ import TermsPage from './pages/storefront/TermsPage';
 import DeliveryPolicyPage from './pages/storefront/DeliveryPolicyPage';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import ProductManagement from './pages/admin/ProductManagement';
+import CategoryManagement from './pages/admin/CategoryManagement';
 import OrderManagement from './pages/admin/OrderManagement';
 import NotFound from './pages/storefront/NotFound';
 
@@ -66,9 +67,9 @@ function AppContent() {
           <div 
             className="animate-ambient-glow"
             style={{ 
-              position: 'absolute', width: '300px', height: '300px', 
-              borderRadius: '50%', background: 'radial-gradient(circle, rgba(0, 200, 83, 0.1) 0%, transparent 70%)',
-              filter: 'blur(50px)', zIndex: 0 
+              position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+              background: 'radial-gradient(circle at center, rgba(0, 200, 83, 0.1) 0%, transparent 60%)',
+              zIndex: 0 
             }}
           />
 
@@ -169,6 +170,7 @@ function AppContent() {
             {/* Admin Routes - Requires Admin Role */}
             <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
             <Route path="/admin/products" element={<AdminRoute><ProductManagement /></AdminRoute>} />
+            <Route path="/admin/categories" element={<AdminRoute><CategoryManagement /></AdminRoute>} />
             <Route path="/admin/orders" element={<AdminRoute><OrderManagement /></AdminRoute>} />
 
             {/* Catch-all 404 Route */}

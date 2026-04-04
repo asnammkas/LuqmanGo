@@ -1,8 +1,10 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect, useMemo } from 'react';
 import { useProducts } from '../../context/ProductContext';
+import { useCategories } from '../../context/CategoryContext';
 import {
   Plus, Edit2, Trash2, ArrowLeft, Image as ImageIcon,
-  LayoutGrid, DollarSign, Package, AlertCircle, Upload, X, Star
+  LayoutGrid, DollarSign, Package, AlertCircle, Upload, X, Star,
+  Camera, ImagePlus, ChevronDown, Search
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { storage } from '../../config/firebase';
@@ -72,6 +74,8 @@ const StyledInput = ({ style, ...props }) => (
 
 const ProductManagement = () => {
   const { products, addProduct, updateProduct, deleteProduct } = useProducts();
+  const { categories: contextCategories, addCategory: addCatToContext } = useCategories();
+
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState(null);
   const [formData, setFormData] = useState({ title: '', price: '', category: '', description: '', image: '', stock: '', featured: false });
@@ -81,6 +85,52 @@ const ProductManagement = () => {
   const [uploadError, setUploadError] = useState('');
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef(null);
+  const cameraInputRef = useRef(null);
+
+  // ── Category Combobox State ──
+  const [catOpen, setCatOpen] = useState(false);
+  const [catSearch, setCatSearch] = useState('');
+  const catRef = useRef(null);
+
+  // Derive unique categories from context
+  const existingCategories = useMemo(() => {
+    const cats = [...new Set(contextCategories.map(c => c.name).filter(Boolean))];
+    return cats.sort((a, b) => a.localeCompare(b));
+  }, [contextCategories]);
+
+  // Filtered categories based on search input
+  const filteredCategories = useMemo(() => {
+    if (!catSearch.trim()) return existingCategories;
+    return existingCategories.filter(c => c.toLowerCase().includes(catSearch.toLowerCase()));
+  }, [existingCategories, catSearch]);
+
+  // Check if the typed value is a brand-new category
+  const isNewCategory = catSearch.trim() && !existingCategories.some(c => c.toLowerCase() === catSearch.trim().toLowerCase());
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (catRef.current && !catRef.current.contains(e.target)) setCatOpen(false);
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const selectCategory = (cat) => {
+    setFormData(prev => ({ ...prev, category: cat }));
+    setCatSearch('');
+    setCatOpen(false);
+  };
+
+  const addNewCategory = () => {
+    const trimmed = catSearch.trim();
+    if (trimmed) {
+      setFormData(prev => ({ ...prev, category: trimmed }));
+      addCatToContext({ name: trimmed, image: '', isDeals: false });
+      setCatSearch('');
+      setCatOpen(false);
+    }
+  };
 
   const handleEdit = (product) => {
     setCurrentProduct(product);
@@ -122,7 +172,7 @@ const ProductManagement = () => {
     setIsEditing(false);
   };
 
-  const categories = ['All', ...new Set(products.map(p => p.category))];
+  const categories = ['All', ...new Set(contextCategories.map(c => c.name).filter(Boolean))];
   const filteredProducts = products.filter(p => filterCategory === 'All' || p.category === filterCategory);
 
   /* ── Edit / Add Form ── */
@@ -167,10 +217,114 @@ const ProductManagement = () => {
                   <FieldLabel>Product Title</FieldLabel>
                   <StyledInput required type="text" value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} placeholder="e.g. Handcrafted Ceramic Vase" />
                 </div>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-                  <div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+                  <div ref={catRef} style={{ position: 'relative' }}>
                     <FieldLabel>Category</FieldLabel>
-                    <StyledInput required type="text" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })} placeholder="e.g., Home & Living" />
+                    {/* Combobox trigger */}
+                    <div
+                      onClick={() => setCatOpen(!catOpen)}
+                      style={{
+                        backgroundColor: catOpen ? 'white' : '#F9F9F9',
+                        border: catOpen ? '1px solid #436132' : '1px solid rgba(0,0,0,0.06)',
+                        borderRadius: catOpen ? '12px 12px 0 0' : '12px',
+                        padding: '0 1.25rem',
+                        height: '3.2rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                        cursor: 'pointer',
+                        boxSizing: 'border-box',
+                        transition: 'all 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+                        boxShadow: catOpen ? '0 0 0 4px rgba(67,97,50,0.08)' : 'none',
+                      }}
+                    >
+                      <span style={{ fontSize: '0.92rem', color: formData.category ? '#1E2A3A' : '#9CA3AF', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                        {formData.category || 'Select or type category…'}
+                      </span>
+                      <ChevronDown size={16} color="#706F65" style={{ transition: 'transform 0.2s', transform: catOpen ? 'rotate(180deg)' : 'rotate(0deg)', flexShrink: 0 }} />
+                    </div>
+                    {/* Hidden required input for form validation */}
+                    <input type="text" required value={formData.category} onChange={() => {}} tabIndex={-1} style={{ position: 'absolute', opacity: 0, height: 0, width: 0, pointerEvents: 'none' }} />
+
+                    {/* Dropdown panel */}
+                    {catOpen && (
+                      <div style={{
+                        position: 'absolute', top: '100%', left: 0, right: 0, zIndex: 50,
+                        backgroundColor: 'white',
+                        border: '1px solid #436132', borderTop: 'none',
+                        borderRadius: '0 0 12px 12px',
+                        boxShadow: '0 12px 32px rgba(0,0,0,0.12)',
+                        maxHeight: '240px',
+                        overflow: 'hidden',
+                        display: 'flex', flexDirection: 'column',
+                        animation: 'catDropIn 0.2s ease-out',
+                      }}>
+                        {/* Search field */}
+                        <div style={{ padding: '0.6rem 0.8rem', borderBottom: '1px solid rgba(0,0,0,0.06)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <Search size={14} color="#9CA3AF" style={{ flexShrink: 0 }} />
+                          <input
+                            autoFocus
+                            type="text"
+                            value={catSearch}
+                            onChange={e => setCatSearch(e.target.value)}
+                            placeholder="Search or type new…"
+                            onClick={e => e.stopPropagation()}
+                            style={{
+                              border: 'none', outline: 'none', fontSize: '0.85rem', color: '#1E2A3A',
+                              width: '100%', background: 'transparent', fontFamily: 'inherit',
+                            }}
+                          />
+                        </div>
+                        {/* Options list */}
+                        <div style={{ overflowY: 'auto', maxHeight: '180px', padding: '0.3rem 0' }}>
+                          {filteredCategories.map(cat => (
+                            <div
+                              key={cat}
+                              onClick={(e) => { e.stopPropagation(); selectCategory(cat); }}
+                              style={{
+                                padding: '0.6rem 1rem',
+                                fontSize: '0.88rem',
+                                cursor: 'pointer',
+                                color: formData.category === cat ? '#436132' : '#1E2A3A',
+                                fontWeight: formData.category === cat ? 700 : 400,
+                                backgroundColor: formData.category === cat ? 'rgba(67,97,50,0.06)' : 'transparent',
+                                transition: 'background-color 0.15s',
+                                display: 'flex', alignItems: 'center', gap: '0.5rem',
+                              }}
+                              onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(67,97,50,0.08)'}
+                              onMouseLeave={e => e.currentTarget.style.backgroundColor = formData.category === cat ? 'rgba(67,97,50,0.06)' : 'transparent'}
+                            >
+                              {cat}
+                            </div>
+                          ))}
+                          {/* "Add new" option */}
+                          {isNewCategory && (
+                            <div
+                              onClick={(e) => { e.stopPropagation(); addNewCategory(); }}
+                              style={{
+                                padding: '0.65rem 1rem',
+                                fontSize: '0.85rem',
+                                cursor: 'pointer',
+                                color: '#436132',
+                                fontWeight: 600,
+                                borderTop: filteredCategories.length ? '1px solid rgba(0,0,0,0.06)' : 'none',
+                                display: 'flex', alignItems: 'center', gap: '0.5rem',
+                                transition: 'background-color 0.15s',
+                              }}
+                              onMouseEnter={e => e.currentTarget.style.backgroundColor = 'rgba(67,97,50,0.08)'}
+                              onMouseLeave={e => e.currentTarget.style.backgroundColor = 'transparent'}
+                            >
+                              <Plus size={14} /> Add "{catSearch.trim()}"
+                            </div>
+                          )}
+                          {filteredCategories.length === 0 && !isNewCategory && (
+                            <div style={{ padding: '1rem', textAlign: 'center', color: '#9CA3AF', fontSize: '0.82rem' }}>
+                              No categories found
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div>
                     <FieldLabel>Status</FieldLabel>
@@ -217,7 +371,7 @@ const ProductManagement = () => {
             </FormSection>
 
             <FormSection icon={<DollarSign size={18} color="#001d04" />} title="Pricing & Inventory">
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
                 <div>
                   <FieldLabel>Retail Price ($)</FieldLabel>
                   <StyledInput required type="number" step="0.01" min="0" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} placeholder="0.00" />
@@ -246,11 +400,10 @@ const ProductManagement = () => {
                 </div>
               ) : (
                 <div
-                  onClick={() => !uploading && fileInputRef.current?.click()}
                   onDragOver={e => { e.preventDefault(); setIsDragOver(true); }}
                   onDragLeave={e => { e.preventDefault(); setIsDragOver(false); }}
                   onDrop={e => { e.preventDefault(); setIsDragOver(false); const f = e.dataTransfer.files[0]; if (f) handleImageUpload(f); }}
-                  style={{ border: `2px dashed ${isDragOver ? '#001d04' : 'rgba(0,29,4,0.15)'}`, borderRadius: '16px', padding: '2.5rem 1.5rem', backgroundColor: isDragOver ? 'rgba(0,29,4,0.03)' : 'rgba(255,255,255,0.5)', textAlign: 'center', cursor: uploading ? 'default' : 'pointer', transition: 'all 0.2s', marginBottom: '0.9rem' }}
+                  style={{ border: `2px dashed ${isDragOver ? '#001d04' : 'rgba(0,29,4,0.15)'}`, borderRadius: '16px', padding: '2rem 1.5rem', backgroundColor: isDragOver ? 'rgba(0,29,4,0.03)' : 'rgba(255,255,255,0.5)', textAlign: 'center', cursor: 'default', transition: 'all 0.2s', marginBottom: '0.9rem' }}
                 >
                   {uploading ? (
                     <div>
@@ -268,12 +421,49 @@ const ProductManagement = () => {
                         <Upload size={22} color="#706F65" />
                       </div>
                       <p style={{ fontSize: '0.92rem', fontWeight: 600, color: '#001d04', marginBottom: '0.25rem' }}>Drop your image here</p>
-                      <p style={{ fontSize: '0.78rem', color: '#706F65', margin: 0 }}>or click to browse · JPG, PNG, WebP · Max 5MB</p>
+                      <p style={{ fontSize: '0.78rem', color: '#706F65', margin: '0 0 1.2rem' }}>JPG, PNG, WebP · Max 5MB</p>
+                      {/* Dual upload buttons: Camera + Gallery */}
+                      <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                        <button
+                          type="button"
+                          onClick={() => cameraInputRef.current?.click()}
+                          style={{
+                            display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
+                            padding: '0.65rem 1.3rem',
+                            backgroundColor: '#1E2A3A', color: 'white',
+                            border: 'none', borderRadius: '12px',
+                            fontSize: '0.82rem', fontWeight: 600, fontFamily: 'inherit',
+                            cursor: 'pointer', transition: 'all 0.2s',
+                          }}
+                          onMouseEnter={e => { e.currentTarget.style.backgroundColor = '#2a3d52'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.backgroundColor = '#1E2A3A'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                        >
+                          <Camera size={16} /> Take Photo
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          style={{
+                            display: 'inline-flex', alignItems: 'center', gap: '0.45rem',
+                            padding: '0.65rem 1.3rem',
+                            backgroundColor: 'white', color: '#1E2A3A',
+                            border: '1px solid rgba(0,0,0,0.12)', borderRadius: '12px',
+                            fontSize: '0.82rem', fontWeight: 600, fontFamily: 'inherit',
+                            cursor: 'pointer', transition: 'all 0.2s',
+                          }}
+                          onMouseEnter={e => { e.currentTarget.style.borderColor = '#436132'; e.currentTarget.style.transform = 'translateY(-1px)'; }}
+                          onMouseLeave={e => { e.currentTarget.style.borderColor = 'rgba(0,0,0,0.12)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                        >
+                          <ImagePlus size={16} /> Gallery
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
               )}
-              <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={e => { const f = e.target.files[0]; if (f) handleImageUpload(f); }} style={{ display: 'none' }} />
+              {/* Hidden file inputs: one for camera capture, one for gallery */}
+              <input ref={cameraInputRef} type="file" accept="image/*" capture="environment" onChange={e => { const f = e.target.files[0]; if (f) handleImageUpload(f); e.target.value = ''; }} style={{ display: 'none' }} />
+              <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp,image/avif" onChange={e => { const f = e.target.files[0]; if (f) handleImageUpload(f); e.target.value = ''; }} style={{ display: 'none' }} />
               <div style={{ textAlign: 'center' }}>
                 <p style={{ fontSize: '0.62rem', fontWeight: 700, color: '#9CA3AF', letterSpacing: '0.12em', marginBottom: '0.5rem', textTransform: 'uppercase' }}>Or Paste Image URL</p>
                 <StyledInput type="url" value={formData.image} onChange={e => setFormData({ ...formData, image: e.target.value })} placeholder="https://…" style={{ fontSize: '0.82rem' }} />

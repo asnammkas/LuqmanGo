@@ -313,8 +313,8 @@ a:hover {
 
 /* --- Startup Loader Animations --- */
 @keyframes logoEntrance {
-  0% { opacity: 0; transform: scale(0.9) translateY(20px); filter: blur(10px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
+  0% { opacity: 0; transform: translate3d(0, 20px, 0) scale(0.9); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
 }
 
 @keyframes arrowDraw {
@@ -323,17 +323,17 @@ a:hover {
 }
 
 @keyframes taglineFade {
-  0% { opacity: 0; transform: translateY(10px); }
-  100% { opacity: 1; transform: translateY(0); }
+  0% { opacity: 0; transform: translate3d(0, 10px, 0); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0); }
 }
 
 @keyframes arrowDrawSVG {
   to { stroke-dashoffset: 0; }
 }
 
-.animate-loader-logo { animation: logoEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-.animate-loader-arrow { animation: arrowDraw 1.2s cubic-bezier(0.65, 0, 0.35, 1) 0.6s forwards; }
-.animate-tagline { opacity: 0; animation: taglineFade 0.8s ease-out 1.2s forwards; }
+.animate-loader-logo { animation: logoEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; will-change: transform, opacity; }
+.animate-loader-arrow { animation: arrowDraw 1.2s cubic-bezier(0.65, 0, 0.35, 1) 0.6s forwards; will-change: stroke-dashoffset; transform: translateZ(0); }
+.animate-tagline { opacity: 0; animation: taglineFade 0.8s ease-out 1.2s forwards; will-change: transform, opacity; }
 
 @keyframes ambientPulse {
   0% { transform: scale(1); opacity: 0.3; }
@@ -343,6 +343,7 @@ a:hover {
 
 .animate-ambient-glow {
   animation: ambientPulse 4s ease-in-out infinite;
+  will-change: transform, opacity;
 }
 
 /* Badges */

@@ -1,14 +1,16 @@
 import { Link } from 'react-router-dom';
 import { useProducts } from '../../context/ProductContext';
 import { useOrders } from '../../context/OrderContext';
+import { useCategories } from '../../context/CategoryContext';
 import {
   Package, ShoppingBag, TrendingUp, Clock, Plus, Eye,
-  Store, ChevronRight, Calendar, User, BarChart2, Zap
+  Store, ChevronRight, Calendar, User, BarChart2, Zap, LayoutGrid
 } from 'lucide-react';
 
 const AdminDashboard = () => {
   const { products } = useProducts();
   const { orders } = useOrders();
+  const { categories } = useCategories();
 
   const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
   const pendingOrders = orders.filter(o => o.status === 'Processing').length;
@@ -73,6 +75,7 @@ const AdminDashboard = () => {
           <div style={{ display: 'flex', gap: '0.6rem', marginTop: '1.8rem', flexWrap: 'wrap' }}>
             {[
               { to: '/admin/products', icon: <Package size={14} />, label: 'Products' },
+              { to: '/admin/categories', icon: <LayoutGrid size={14} />, label: 'Categories' },
               { to: '/admin/orders',   icon: <ShoppingBag size={14} />, label: 'Orders' },
               { to: '/',              icon: <Store size={14} />, label: 'Storefront' },
             ].map(({ to, icon, label }) => (
@@ -105,8 +108,8 @@ const AdminDashboard = () => {
         zIndex: 2,
       }}>
 
-        {/* ── Stat Grid 2×2 ── */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.85rem', marginBottom: '2rem' }}>
+        {/* ── Stat Grid ── */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '0.85rem', marginBottom: '2rem' }}>
           <StatCard
             icon={<TrendingUp size={20} />}
             label="Revenue"
@@ -124,12 +127,20 @@ const AdminDashboard = () => {
             index={1}
           />
           <StatCard
+            icon={<LayoutGrid size={20} />}
+            label="Categories"
+            value={categories.length}
+            sub="in storefront"
+            accentColor="#436132"
+            index={2}
+          />
+          <StatCard
             icon={<ShoppingBag size={20} />}
             label="Orders"
             value={orders.length}
             sub="all time"
             accentColor="#3B82F6"
-            index={2}
+            index={3}
           />
           <StatCard
             icon={<Clock size={20} />}
@@ -137,7 +148,7 @@ const AdminDashboard = () => {
             value={pendingOrders}
             sub="processing"
             accentColor="#EAB308"
-            index={3}
+            index={4}
           />
         </div>
 

@@ -4,6 +4,7 @@ import { FilterProvider } from './FilterContext';
 import { WishlistProvider } from './WishlistContext';
 import { CartProvider } from './CartContext';
 import { ProductProvider } from './ProductContext';
+import { CategoryProvider } from './CategoryContext';
 import { OrderProvider } from './OrderContext';
 
 export const AppProviders = ({ children }) => {
@@ -13,9 +14,11 @@ export const AppProviders = ({ children }) => {
         <WishlistProvider>
           <CartProvider>
             <ProductProvider>
-              <OrderProvider>
-                {children}
-              </OrderProvider>
+              <CategoryProvider>
+                <OrderProvider>
+                  {children}
+                </OrderProvider>
+              </CategoryProvider>
             </ProductProvider>
           </CartProvider>
         </WishlistProvider>

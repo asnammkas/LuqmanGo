@@ -1,64 +1,88 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // ─── Helper Functions ───────────────────────────────────────────
+    // ─── Helper Functions ───────────────────────────────────────
     function isAuthenticated() {
       return request.auth != null;
+    }
+
+    function isAdmin(uid) {
+      return exists(/databases/$(database)/documents/admins/$(uid));
     }
 
     function isOwner(userId) {
       return isAuthenticated() && request.auth.uid == userId;
     }
 
-    function isAdmin() {
-      return isAuthenticated() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    // ─── Products ───────────────────────────────────────────────
+    // Anyone can read products (public catalog).
+    // Only admins can create, update, or delete.
+    // Validates required fields and data types on write.
+    match /products/{productId} {
+      allow read: if true;
+
+      allow create, update: if isAuthenticated()
+        && isAdmin(request.auth.uid)
+        && request.resource.data.title is string
+        && request.resource.data.price is number
+        && request.resource.data.price >= 0
+        && request.resource.data.stock is int
+        && request.resource.data.stock >= 0
+        && request.resource.data.category is string
+        && request.resource.data.image is string;
+
+      allow delete: if isAuthenticated() && isAdmin(request.auth.uid);
     }
 
-    // ─── ADMINS Collection ──────────────────────────────────────────
-    // Only admins can read their own doc (for status check).
-    // No client-side writes — managed via Firebase Console only.
-    match /admins/{uid} {
-      allow read:  if isOwner(uid);
+    // ─── Categories ─────────────────────────────────────────────
+    // Anyone can read categories (public catalog).
+    // Only admins can create, update, or delete.
+    match /categories/{categoryId} {
+      allow read: if true;
+
+      allow create, update: if isAuthenticated() && isAdmin(request.auth.uid);
+      allow delete: if isAuthenticated() && isAdmin(request.auth.uid);
+    }
+
+    // ─── Orders ─────────────────────────────────────────────────
+    // Authenticated users can create orders (must include their own userId).
+    // Users can only read their own orders; admins can read all.
+    // Only admins can update status or delete orders.
+    match /orders/{orderId} {
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid;
+
+      allow read: if isAuthenticated()
+        && (resource.data.userId == request.auth.uid || isAdmin(request.auth.uid));
+
+      allow update: if isAuthenticated() && isAdmin(request.auth.uid);
+      allow delete: if isAuthenticated() && isAdmin(request.auth.uid);
+    }
+
+    // ─── Admins Collection ──────────────────────────────────────
+    // Any authenticated user can check if they are an admin.
+    // Write access is fully locked — manage via Firebase Console only.
+    match /admins/{userId} {
+      allow read: if isAuthenticated();
       allow write: if false;
     }
 
-    // ─── PRODUCTS Collection ────────────────────────────────────────
-    // Anyone can read products (public storefront).
-    // Only admins can create, update, or delete products.
-    match /products/{productId} {
-      allow read:  if true;
-      allow create, update, delete: if isAdmin();
-    }
-
-    // ─── ORDERS Collection ──────────────────────────────────────────
-    // Authenticated users can create orders.
-    // Users can only read their own orders (matched by customer.email or customer.userId).
-    // Admins can read and update all orders (for status management).
-    // No client-side deletes.
-    match /orders/{orderId} {
-      allow create: if isAuthenticated();
-      allow read:   if isAdmin()
-                    || (isAuthenticated() && resource.data.customer.userId == request.auth.uid);
-      allow update: if isAdmin();
-      allow delete: if false;
-    }
-
-    // ─── USERS Collection (profiles) ────────────────────────────────
-    // Users can only read and write their own profile document.
-    // Admins cannot access user profiles (privacy).
+    // ─── User Profiles & Sub-collections ────────────────────────
+    // Users can only read/write their own profile and nested data
+    // (addresses, preferences, etc.).
     match /users/{userId} {
       allow read, write: if isOwner(userId);
 
-      // ─── ADDRESSES Sub-collection ─────────────────────────────────
-      // Users can fully manage their own addresses.
-      match /addresses/{addressId} {
-        allow read, create, update, delete: if isOwner(userId);
+      match /{allSubcollections=**} {
+        allow read, write: if isOwner(userId);
       }
     }
 
-    // ─── Deny everything else ───────────────────────────────────────
-    // Any collection not explicitly matched above is denied by default.
+    // ─── Default Deny ───────────────────────────────────────────
+    // Any collection not explicitly matched above is denied.
+    match /{document=**} {
+      allow read, write: if false;
+    }
   }
 }
