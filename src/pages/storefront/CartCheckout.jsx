@@ -1,12 +1,16 @@
 import { useState } from 'react';
-import { useShop } from '../../context/ShopContext';
+import { useCart } from '../../context/CartContext';
+import { useWishlist } from '../../context/WishlistContext';
+import { useOrders } from '../../context/OrderContext';
 import { useToast } from '../../context/ToastContext';
 import { Trash2, ArrowRight, CheckCircle, Heart, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Footer from '../../components/storefront/Footer';
 
 const CartCheckout = () => {
-  const { cart, removeFromCart, updateCartQuantity, getCartTotal, checkout, toggleWishlist, isInWishlist } = useShop();
+  const { cart, removeFromCart, updateCartQuantity, getCartTotal, clearCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
+  const { checkout } = useOrders();
   const toast = useToast();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
@@ -26,7 +30,8 @@ const CartCheckout = () => {
     window.open(`https://wa.me/${vendorPhone}?text=${textMessage}`, '_blank');
     
     // 4. Clear cart and show success screen
-    checkout(formData);
+    checkout(formData, cart, getCartTotal());
+    clearCart();
     toast.success('Order placed successfully!', 'Thank you for your purchase');
     setIsSuccess(true);
   };

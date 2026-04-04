@@ -1,13 +1,15 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useShop } from '../../context/ShopContext';
+import { useCart } from '../../context/CartContext';
+import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { ShoppingBag, LayoutDashboard, Moon, Sun, Phone, Menu, X } from 'lucide-react';
 
 const categories = ['All', 'Electronics', 'Dresses', 'Groceries', 'Furniture', 'Home & Living'];
 
 const Navbar = ({ onOpenDrawer }) => {
-  const { getCartCount, toggleTheme, theme } = useShop();
+  const { getCartCount } = useCart();
+  const { toggleTheme, theme } = useTheme();
   const { isAdmin, loading } = useAuth();
   const navigate = useNavigate();
 

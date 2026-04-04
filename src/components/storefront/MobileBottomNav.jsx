@@ -1,9 +1,9 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Heart, Store, User, Home } from 'lucide-react';
-import { useShop } from '../../context/ShopContext';
+import { useWishlist } from '../../context/WishlistContext';
 
 const MobileBottomNav = ({ onOpenDrawer }) => {
-  const { wishlist } = useShop();
+  const { wishlist } = useWishlist();
   const location = useLocation();
 
   const navItems = [

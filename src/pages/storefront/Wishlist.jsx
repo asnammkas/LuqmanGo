@@ -1,11 +1,13 @@
-import { useShop } from '../../context/ShopContext';
+import { useWishlist } from '../../context/WishlistContext';
+import { useCart } from '../../context/CartContext';
 import ProductCard from '../../components/storefront/ProductCard';
 import Footer from '../../components/storefront/Footer';
 import { Link, useNavigate } from 'react-router-dom';
 import { Heart, ArrowLeft, Trash2, ShoppingBag } from 'lucide-react';
 
 const Wishlist = () => {
-  const { wishlist, toggleWishlist, toggleCart, isInCart } = useShop();
+  const { wishlist, toggleWishlist } = useWishlist();
+  const { toggleCart, isInCart } = useCart();
   const navigate = useNavigate();
 
   const handleMoveAllToBag = () => {

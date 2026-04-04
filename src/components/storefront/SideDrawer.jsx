@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useShop } from '../../context/ShopContext';
+
 import { useAuth } from '../../context/AuthContext';
 import { 
   X, Search, LayoutGrid, Smartphone, Shirt, Leaf, Sofa, Flower2, 
@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 
 const SideDrawer = ({ isOpen, onClose }) => {
-  const { } = useShop();
+
   const { currentUser, isAdmin, logout, loading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();

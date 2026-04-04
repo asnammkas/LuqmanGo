@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom';
-import { useShop } from '../../context/ShopContext';
+import { useProducts } from '../../context/ProductContext';
+import { useOrders } from '../../context/OrderContext';
 import {
   Package, ShoppingBag, TrendingUp, Clock, Plus, Eye,
   Store, ChevronRight, Calendar, User, BarChart2, Zap
 } from 'lucide-react';
 
 const AdminDashboard = () => {
-  const { products, orders } = useShop();
+  const { products } = useProducts();
+  const { orders } = useOrders();
 
   const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
   const pendingOrders = orders.filter(o => o.status === 'Processing').length;

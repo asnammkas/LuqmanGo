@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { useShop } from '../../context/ShopContext';
+import { useProducts } from '../../context/ProductContext';
 import ProductCard from '../../components/storefront/ProductCard';
 import CategoryGrid from '../../components/storefront/CategoryGrid';
 import Footer from '../../components/storefront/Footer';
@@ -8,7 +8,7 @@ import { HeroSkeleton, ProductGridSkeleton } from '../../components/Skeletons';
 import { Loader, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
 
 const Home = () => {
-  const { products, isProductsLoading, productsError } = useShop();
+  const { products, isProductsLoading, productsError } = useProducts();
 
   // Get featured/hero products for the carousel (up to 5)
   const heroProducts = products.filter(p => p.featured).length > 0 

@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { useShop } from '../../context/ShopContext';
+import { useCart } from '../../context/CartContext';
+import { useWishlist } from '../../context/WishlistContext';
 import { useToast } from '../../context/ToastContext';
 import { ShoppingBag, Image as ImageIcon, Heart } from 'lucide-react';
 
 const ProductCard = ({ product }) => {
-  const { addToCart, toggleCart, isInCart, toggleWishlist, isInWishlist } = useShop();
+  const { addToCart, toggleCart, isInCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const toast = useToast();
   const [imgError, setImgError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);

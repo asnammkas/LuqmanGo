@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useShop } from '../../context/ShopContext';
+import { useOrders } from '../../context/OrderContext';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { doc, getDoc, setDoc, updateDoc, collection, addDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
@@ -12,7 +12,7 @@ import {
 import { Link, useNavigate } from 'react-router-dom';
 
 const UserProfile = () => {
-  const { orders } = useShop();
+  const { orders } = useOrders();
   const { currentUser, logout } = useAuth();
   const toast = useToast();
   const myOrders = orders.slice(0, 2);

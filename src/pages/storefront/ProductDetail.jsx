@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useShop } from '../../context/ShopContext';
+import { useProducts } from '../../context/ProductContext';
+import { useCart } from '../../context/CartContext';
+import { useWishlist } from '../../context/WishlistContext';
 import { ArrowLeft, Truck, ShieldCheck, Clock, Image as ImageIcon, Heart, Minus, Plus } from 'lucide-react';
 import Footer from '../../components/storefront/Footer';
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const { products, addToCart, toggleWishlist, isInWishlist } = useShop();
+  const { products } = useProducts();
+  const { addToCart } = useCart();
+  const { toggleWishlist, isInWishlist } = useWishlist();
   const isHearted = isInWishlist(id);
   const [quantity, setQuantity] = useState(1);
   

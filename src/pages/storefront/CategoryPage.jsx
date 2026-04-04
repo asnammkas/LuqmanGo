@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { useShop } from '../../context/ShopContext';
+import { useProducts } from '../../context/ProductContext';
 import ProductCard from '../../components/storefront/ProductCard';
 import Footer from '../../components/storefront/Footer';
 import { SlidersHorizontal, ArrowUpDown, Check, ArrowLeft, Search as SearchIcon, XCircle } from 'lucide-react';
@@ -20,7 +20,7 @@ const CategoryPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('search');
-  const { products, isProductsLoading, productsError } = useShop();
+  const { products, isProductsLoading, productsError } = useProducts();
   const [sortBy, setSortBy] = useState('default');
   const [filterBy, setFilterBy] = useState('all');
   const [showSort, setShowSort] = useState(false);

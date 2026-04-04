@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useShop } from '../../context/ShopContext';
+import { useOrders } from '../../context/OrderContext';
 import { ShoppingBag, Search, Trash2, ChevronRight, X, BarChart2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -16,7 +16,7 @@ const getStatusConfig = (status) => {
 };
 
 const OrderManagement = () => {
-  const { orders, updateOrderStatus } = useShop();
+  const { orders, updateOrderStatus } = useOrders();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
   const [expandedOrder, setExpandedOrder] = useState(null);

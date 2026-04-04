@@ -1,7 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
-import { ShopProvider } from './context/ShopContext'
+import { AppProviders } from './context/AppProviders'
 import { ToastProvider } from './context/ToastContext'
 import ErrorBoundary from './components/ErrorBoundary'
 import './index.css'
@@ -12,9 +12,9 @@ createRoot(document.getElementById('root')).render(
     <ErrorBoundary>
       <BrowserRouter>
         <ToastProvider>
-          <ShopProvider>
+          <AppProviders>
             <App />
-          </ShopProvider>
+          </AppProviders>
         </ToastProvider>
       </BrowserRouter>
     </ErrorBoundary>
