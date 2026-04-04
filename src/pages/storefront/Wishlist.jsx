@@ -1,5 +1,6 @@
 import { useWishlist } from '../../context/WishlistContext';
 import { useCart } from '../../context/CartContext';
+import { useToast } from '../../context/ToastContext';
 import ProductCard from '../../components/storefront/ProductCard';
 import Footer from '../../components/storefront/Footer';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,14 +9,22 @@ import { Heart, ArrowLeft, Trash2, ShoppingBag } from 'lucide-react';
 const Wishlist = () => {
   const { wishlist, toggleWishlist } = useWishlist();
   const { toggleCart, isInCart } = useCart();
+  const toast = useToast();
   const navigate = useNavigate();
 
   const handleMoveAllToBag = () => {
+    let movedCount = 0;
     wishlist.forEach(product => {
       if (!isInCart(product.id)) {
         toggleCart(product);
+        movedCount++;
       }
     });
+    if (movedCount > 0) {
+      toast.success(`Success! Added ${movedCount} ${movedCount === 1 ? 'item' : 'items'} to bag`);
+    } else {
+      toast.info('Items are already in your bag');
+    }
   };
 
   return (

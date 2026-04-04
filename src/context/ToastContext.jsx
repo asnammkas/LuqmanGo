@@ -129,7 +129,7 @@ export const ToastProvider = ({ children }) => {
     }, 300);
   }, []);
 
-  const toast = useCallback(({ type = 'info', title, message, duration = 4000 }) => {
+  const toast = useCallback(({ type = 'info', title, message, duration = 2000 }) => {
     const id = ++idRef.current;
     setToasts(prev => [...prev, { id, type, title, message, duration, exiting: false }]);
 
@@ -142,9 +142,9 @@ export const ToastProvider = ({ children }) => {
 
   // Convenience methods
   const success = useCallback((message, title) => toast({ type: 'success', title, message }), [toast]);
-  const error   = useCallback((message, title) => toast({ type: 'error', title, message, duration: 6000 }), [toast]);
+  const error   = useCallback((message, title) => toast({ type: 'error', title, message, duration: 3000 }), [toast]);
   const info    = useCallback((message, title) => toast({ type: 'info', title, message }), [toast]);
-  const warning = useCallback((message, title) => toast({ type: 'warning', title, message, duration: 5000 }), [toast]);
+  const warning = useCallback((message, title) => toast({ type: 'warning', title, message, duration: 3000 }), [toast]);
 
   return (
     <ToastContext.Provider value={{ toast, success, error, info, warning, dismiss }}>

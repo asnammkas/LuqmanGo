@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useProducts } from '../../context/ProductContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
+import { useToast } from '../../context/ToastContext';
 import { ArrowLeft, Truck, ShieldCheck, Clock, Image as ImageIcon, Heart, Minus, Plus } from 'lucide-react';
 import Footer from '../../components/storefront/Footer';
 
@@ -11,6 +12,7 @@ const ProductDetail = () => {
   const { products } = useProducts();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const toast = useToast();
   const isHearted = isInWishlist(id);
   const [quantity, setQuantity] = useState(1);
   
@@ -188,7 +190,10 @@ const ProductDetail = () => {
               </div>
 
               <button 
-                onClick={() => addToCart(product, quantity)}
+                onClick={() => {
+                  addToCart(product, quantity);
+                  toast.success(`${product.title} added to bag`);
+                }}
                 className="btn"
                 style={{ 
                   flexGrow: 1, 
