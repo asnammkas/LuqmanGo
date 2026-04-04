@@ -3,11 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
-import { ShoppingBag, LayoutDashboard, Moon, Sun, Phone, Menu, X } from 'lucide-react';
+import { ShoppingBag, LayoutDashboard, Moon, Sun, Phone, Menu, X, Search } from 'lucide-react';
+import SearchOverlay from './SearchOverlay';
 
 const categories = ['All', 'Electronics', 'Dresses', 'Groceries', 'Furniture', 'Home & Living'];
 
-const Navbar = ({ onOpenDrawer }) => {
+const Navbar = ({ onOpenDrawer, onOpenSearch }) => {
   const { getCartCount } = useCart();
   const { toggleTheme, theme } = useTheme();
   const { isAdmin, loading } = useAuth();
@@ -65,8 +66,8 @@ const Navbar = ({ onOpenDrawer }) => {
           </Link>
         </div>
 
-        {/* Right: Cart & Admin */}
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1.2rem' }}>
+        {/* Right: Cart, Search & Admin */}
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem' }}>
 
           {!loading && isAdmin && (
             <Link to="/admin" className="hide-on-mobile" style={{ 
@@ -75,21 +76,23 @@ const Navbar = ({ onOpenDrawer }) => {
               letterSpacing: '0.1em', 
               textTransform: 'uppercase', 
               color: 'var(--color-text-muted)',
-              textDecoration: 'none'
+              textDecoration: 'none',
+              marginRight: '0.5rem'
             }}>
               Admin
             </Link>
           )}
-          
-          <Link to="/cart" style={{ position: 'relative', color: 'var(--color-text-main)', display: 'flex', alignItems: 'center' }}>
+
+          <Link to="/cart" style={{ position: 'relative', color: 'var(--color-text-main)', display: 'flex', alignItems: 'center', padding: '0.4rem' }}>
             <ShoppingBag size={22} strokeWidth={1.5} />
             {getCartCount() > 0 && (
               <span style={{ 
-                position: 'absolute', top: '-8px', right: '-8px', 
-                backgroundColor: 'var(--color-text-main)', color: 'white', 
+                position: 'absolute', top: '-4px', right: '-4px', 
+                backgroundColor: '#00C853', color: 'white', 
                 borderRadius: '50%', width: '16px', height: '16px', 
                 display: 'flex', alignItems: 'center', justifyContent: 'center', 
-                fontSize: '10px', fontWeight: 'bold' 
+                fontSize: '9px', fontWeight: 'bold',
+                boxShadow: '0 2px 5px rgba(0,200,83,0.3)'
               }}>
                 {getCartCount()}
               </span>
@@ -102,3 +105,4 @@ const Navbar = ({ onOpenDrawer }) => {
 };
 
 export default Navbar;
+

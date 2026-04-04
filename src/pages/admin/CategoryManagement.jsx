@@ -67,7 +67,7 @@ const CategoryManagement = () => {
   const { categories, addCategory, updateCategory, deleteCategory } = useCategories();
   const [isEditing, setIsEditing] = useState(false);
   const [currentCategory, setCurrentCategory] = useState(null);
-  const [formData, setFormData] = useState({ name: '', image: '', isDeals: false });
+  const [formData, setFormData] = useState({ name: '', image: '', description: '' });
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState('');
@@ -78,13 +78,13 @@ const CategoryManagement = () => {
 
   const handleEdit = (category) => {
     setCurrentCategory(category);
-    setFormData({ name: category.name, image: category.image || '', isDeals: !!category.isDeals });
+    setFormData({ name: category.name, image: category.image || '', description: category.description || '' });
     setIsEditing(true); setUploadError(''); setUploadProgress(0);
   };
 
   const handleAddNew = () => {
     setCurrentCategory(null);
-    setFormData({ name: '', image: '', isDeals: false });
+    setFormData({ name: '', image: '', description: '' });
     setIsEditing(true); setUploadError(''); setUploadProgress(0);
   };
 
@@ -154,14 +154,21 @@ const CategoryManagement = () => {
                     <FieldLabel>Category Name</FieldLabel>
                     <StyledInput required type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} placeholder="e.g. Home & Living" />
                   </div>
-                  <div>
-                    <FieldLabel>Status</FieldLabel>
-                    <div style={{ height: '3.2rem', display: 'flex', alignItems: 'center', padding: '0 1.1rem', backgroundColor: 'white', border: '1px solid rgba(0,0,0,0.06)', borderRadius: '12px' }}>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', fontSize: '0.88rem', width: '100%', color: '#001d04' }}>
-                        <input type="checkbox" checked={formData.isDeals} onChange={e => setFormData({ ...formData, isDeals: e.target.checked })} style={{ width: '1.1rem', height: '1.1rem', accentColor: '#001d04', cursor: 'pointer' }} />
-                        Mark as Exclusive Deals Type
-                      </label>
-                    </div>
+                  <div style={{ gridColumn: '1 / -1' }}>
+                    <FieldLabel>Category Description</FieldLabel>
+                    <textarea 
+                      value={formData.description} 
+                      onChange={e => setFormData({ ...formData, description: e.target.value })} 
+                      placeholder="e.g. Our curation prioritizes the soil..."
+                      style={{ 
+                        backgroundColor: '#F9F9F9', border: '1px solid rgba(0,0,0,0.06)', borderRadius: '12px', 
+                        padding: '1.1rem 1.25rem', width: '100%', fontFamily: 'inherit', fontSize: '0.92rem', 
+                        color: '#1E2A3A', outline: 'none', boxSizing: 'border-box', transition: 'all 0.25s',
+                        minHeight: '100px', resize: 'vertical'
+                      }}
+                      onFocus={e => { e.target.style.borderColor = '#436132'; e.target.style.backgroundColor = 'white'; e.target.style.boxShadow = '0 0 0 4px rgba(67,97,50,0.08)'; }}
+                      onBlur={e => { e.target.style.borderColor = 'rgba(0,0,0,0.06)'; e.target.style.backgroundColor = '#F9F9F9'; e.target.style.boxShadow = 'none'; }}
+                    />
                   </div>
                 </div>
               </div>
@@ -345,11 +352,6 @@ const CategoryManagement = () => {
                 <h3 style={{ fontSize: '1.05rem', fontWeight: 700, color: '#001d04', margin: '0 0 0.35rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {category.name}
                 </h3>
-                {category.isDeals && (
-                  <span style={{ display: 'inline-flex', fontSize: '0.65rem', fontWeight: 700, padding: '0.2rem 0.6rem', backgroundColor: '#FEF9C3', color: '#A16207', borderRadius: '100px' }}>
-                    Deals Section
-                  </span>
-                )}
               </div>
 
               {/* Actions */}

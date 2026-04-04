@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useProducts } from '../../context/ProductContext';
 import ProductCard from '../../components/storefront/ProductCard';
@@ -8,12 +8,43 @@ import { HeroSkeleton, ProductGridSkeleton } from '../../components/Skeletons';
 import { Loader, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
 
 const Home = () => {
-  const { products, isProductsLoading, productsError } = useProducts();
+  const { products, featuredProducts, isProductsLoading, productsError } = useProducts();
+  const [visibleCount, setVisibleCount] = useState(6);
+  const [isFetchingNext, setIsFetchingNext] = useState(false);
+  const observerRef = useRef();
 
-  // Get featured/hero products for the carousel (up to 5)
-  const heroProducts = products.filter(p => p.featured).length > 0 
-    ? products.filter(p => p.featured).slice(0, 5)
-    : products.slice(0, 5);
+
+
+  // Use the dedicated featuredProducts stream for the Hero Carousel
+  const heroProducts = featuredProducts.length > 0 ? featuredProducts : products.slice(0, 5);
+
+  const allGridProducts = products.filter(p => !heroProducts.some(h => h.id === p.id));
+  const hasMore = visibleCount < allGridProducts.length;
+  const gridProducts = allGridProducts.slice(0, visibleCount);
+
+  // Infinite Scroll Observer Implementation
+  useEffect(() => {
+    if (!hasMore || isProductsLoading || isFetchingNext) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore && !isFetchingNext) {
+        setIsFetchingNext(true);
+        // Add a premium 400ms visual delay for the "Curating more..." loader
+        setTimeout(() => {
+          setVisibleCount(prev => prev + 6);
+          setIsFetchingNext(false);
+        }, 400);
+      }
+    }, { rootMargin: '200px' });
+
+    if (observerRef.current) {
+        observer.observe(observerRef.current);
+    }
+
+    return () => {
+        if (observerRef.current) observer.unobserve(observerRef.current);
+    };
+  }, [hasMore, isProductsLoading, isFetchingNext]);
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -36,8 +67,6 @@ const Home = () => {
 
   const currentHero = heroProducts[currentSlide];
 
-  const allGridProducts = products.filter(p => !heroProducts.some(h => h.id === p.id));
-  const gridProducts = allGridProducts.slice(0, 8);
 
   return (
     <div>
@@ -168,11 +197,23 @@ const Home = () => {
         ) : isProductsLoading ? (
           <ProductGridSkeleton count={4} />
         ) : (
-          <div className="product-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '3rem 2rem' }}>
-            {gridProducts.map(product => (
-               <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
+          <>
+            <div className="product-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '3rem 2rem' }}>
+              {gridProducts.map(product => (
+                 <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+
+            {/* Infinite Scroll Sentinel & Subtle Loader */}
+            <div ref={observerRef} style={{ height: '40px', margin: '4rem 0 2rem', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              {isFetchingNext && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', color: '#706F65', opacity: 0.8 }}>
+                      <div style={{ width: '14px', height: '14px', border: '2px solid rgba(17,48,19,0.1)', borderTopColor: '#113013', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                      <span style={{ fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase' }}>Curating more...</span>
+                  </div>
+              )}
+            </div>
+          </>
         )}
       </section>
 

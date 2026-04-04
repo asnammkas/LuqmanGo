@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db } from '../config/firebase';
-import { collection, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { 
+  collection, onSnapshot, doc, setDoc, deleteDoc, 
+  query, limit, orderBy, startAfter, getDocs, where
+} from 'firebase/firestore';
 import { mockProducts } from '../data/mockProducts';
 
 const ProductContext = createContext();
@@ -9,33 +12,61 @@ export const useProducts = () => useContext(ProductContext);
 
 export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
+  const [featuredProducts, setFeaturedProducts] = useState([]);
   const [isProductsLoading, setIsProductsLoading] = useState(true);
   const [productsError, setProductsError] = useState(null);
 
+  // Dual Fetch Strategy:
+  // 1. Featured Products (Full list for Hero Sliders)
+  // 2. Paginated Products (For clean discovery scrolls)
   useEffect(() => {
-    console.log("Initializing Firebase Product Listener...");
+    console.log("Initializing Dual-Stream Firebase Listeners...");
+    
+    // Stream 1: All Featured Products (Unpaginated for Sliders)
+    const featuredQuery = query(
+      collection(db, 'products'),
+      where('featured', '==', true)
+    );
+
+    // Stream 2: Full General Catalog
+    const generalQuery = query(
+      collection(db, 'products'), 
+      orderBy('title')
+    );
+
     const fallbackTimer = setTimeout(() => {
       if (isProductsLoading) {
         console.warn("Firebase connection timed out (15s). Falling back to mock data.");
         setProducts(mockProducts);
+        setFeaturedProducts(mockProducts.filter(p => p.featured));
         setIsProductsLoading(false);
       }
     }, 15000);
 
+    // Unsubscribe functions
+    let unsubFeatured = () => {};
+    let unsubGeneral = () => {};
+
     try {
-      const unsubscribe = onSnapshot(collection(db, 'products'), (snapshot) => {
-        console.log("Firebase Snapshot received!", snapshot.empty ? "Empty" : "Data found");
+      // Listen to Featured Products
+      unsubFeatured = onSnapshot(featuredQuery, (snapshot) => {
+        const loaded = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setFeaturedProducts(loaded);
+      });
+
+      // Listen to General Paginated Products
+      unsubGeneral = onSnapshot(generalQuery, (snapshot) => {
+        console.log("General Product Snapshot received!", snapshot.empty ? "Empty" : "Data found");
         clearTimeout(fallbackTimer);
+        
         if (snapshot.empty) {
-          console.log("Seeding database with mock data...");
+          // SEEDING LOGIC: If DB is empty, seed it
           const seedDatabase = async () => {
             try {
               for (const p of mockProducts) {
                  await setDoc(doc(db, 'products', p.id.toString()), p);
               }
-              console.log("Database seeded successfully.");
             } catch (err) {
-              console.error("Seeding failed:", err.message);
               setProducts(mockProducts);
               setIsProductsLoading(false);
             }
@@ -48,22 +79,26 @@ export const ProductProvider = ({ children }) => {
         }
       }, (error) => {
         clearTimeout(fallbackTimer);
-        console.error("Firebase Snapshot Error:", error.message, error.code);
+        console.error("Firebase Snapshot Error:", error.message);
         setProductsError(error.message);
         setProducts(mockProducts);
+        setFeaturedProducts(mockProducts.filter(p => p.featured));
         setIsProductsLoading(false);
       });
       
       return () => {
-        unsubscribe();
+        unsubFeatured();
+        unsubGeneral();
         clearTimeout(fallbackTimer);
       };
     } catch (err) {
-      console.error("Error setting up onSnapshot:", err.message);
+      console.error("Error setting up listeners:", err.message);
       setProducts(mockProducts);
       setIsProductsLoading(false);
     }
   }, []);
+
+  const fetchNextPage = async () => {}; // Deprecated in favor of UI pagination
 
   const addProduct = async (product) => {
     try {
@@ -91,8 +126,8 @@ export const ProductProvider = ({ children }) => {
   };
 
   const value = {
-    products, isProductsLoading, productsError,
-    addProduct, updateProduct, deleteProduct
+    products, featuredProducts, isProductsLoading, productsError,
+    fetchNextPage, addProduct, updateProduct, deleteProduct
   };
 
   return (

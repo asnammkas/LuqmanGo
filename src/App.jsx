@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { lazy, Suspense, useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -7,29 +7,65 @@ import AdminRoute from './components/AdminRoute';
 import Navbar from './components/storefront/Navbar';
 import SideDrawer from './components/storefront/SideDrawer';
 import MobileBottomNav from './components/storefront/MobileBottomNav';
-import Home from './pages/storefront/Home';
-import CategoryPage from './pages/storefront/CategoryPage';
-import ProductDetail from './pages/storefront/ProductDetail';
-import StoresComingSoon from './pages/storefront/StoresComingSoon';
-import Wishlist from './pages/storefront/Wishlist';
-import SignIn from './pages/storefront/SignIn';
-import Register from './pages/storefront/Register';
-import CartCheckout from './pages/storefront/CartCheckout';
-import UserProfile from './pages/storefront/UserProfile';
-import AboutPage from './pages/storefront/AboutPage';
-import PrivacyPolicyPage from './pages/storefront/PrivacyPolicyPage';
-import TermsPage from './pages/storefront/TermsPage';
-import DeliveryPolicyPage from './pages/storefront/DeliveryPolicyPage';
-import AdminDashboard from './pages/admin/AdminDashboard';
-import ProductManagement from './pages/admin/ProductManagement';
-import CategoryManagement from './pages/admin/CategoryManagement';
-import OrderManagement from './pages/admin/OrderManagement';
-import NotFound from './pages/storefront/NotFound';
+import SearchOverlay from './components/storefront/SearchOverlay';
+
+// ─── Storefront Pages (Lazy Loaded) ───────────────────────────
+const Home = lazy(() => import('./pages/storefront/Home'));
+const CategoryPage = lazy(() => import('./pages/storefront/CategoryPage'));
+const ProductDetail = lazy(() => import('./pages/storefront/ProductDetail'));
+const StoresComingSoon = lazy(() => import('./pages/storefront/StoresComingSoon'));
+const Wishlist = lazy(() => import('./pages/storefront/Wishlist'));
+const SignIn = lazy(() => import('./pages/storefront/SignIn'));
+const Register = lazy(() => import('./pages/storefront/Register'));
+const CartCheckout = lazy(() => import('./pages/storefront/CartCheckout'));
+const UserProfile = lazy(() => import('./pages/storefront/UserProfile'));
+const AboutPage = lazy(() => import('./pages/storefront/AboutPage'));
+const PrivacyPolicyPage = lazy(() => import('./pages/storefront/PrivacyPolicyPage'));
+const TermsPage = lazy(() => import('./pages/storefront/TermsPage'));
+const DeliveryPolicyPage = lazy(() => import('./pages/storefront/DeliveryPolicyPage'));
+const NotFound = lazy(() => import('./pages/storefront/NotFound'));
+
+// ─── Admin Pages (Lazy Loaded) ───────────────────────────────
+const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
+const ProductManagement = lazy(() => import('./pages/admin/ProductManagement'));
+const CategoryManagement = lazy(() => import('./pages/admin/CategoryManagement'));
+const OrderManagement = lazy(() => import('./pages/admin/OrderManagement'));
+
+// ─── Premium Loading Fallback ────────────────────────────────
+const PageFallback = () => (
+  <div style={{ 
+    height: '60vh', width: '100%', 
+    display: 'flex', flexDirection: 'column', 
+    alignItems: 'center', justifyContent: 'center',
+    gap: '1.5rem', opacity: 0, animation: 'fadeIn 0.3s ease forwards'
+  }}>
+    <div style={{ 
+      width: '40px', height: '40px', 
+      border: '3px solid rgba(0, 200, 83, 0.1)', 
+      borderTopColor: '#00C853', 
+      borderRadius: '50%',
+      animation: 'spin 1s linear infinite'
+    }} />
+    <span style={{ 
+      fontSize: '0.75rem', fontWeight: 700, 
+      letterSpacing: '0.2em', color: '#706F65', 
+      textTransform: 'uppercase' 
+    }}>
+      Loading Experience
+    </span>
+    <style>{`
+      @keyframes spin { to { transform: rotate(360deg); } }
+      @keyframes fadeIn { to { opacity: 1; } }
+    `}</style>
+  </div>
+);
+
 
 function AppContent() {
   const [isLoading, setIsLoading] = useState(true);
   const [fadeOut, setFadeOut] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
@@ -143,12 +179,13 @@ function AppContent() {
         </div>
       )}
 
-      <Navbar onOpenDrawer={() => setIsDrawerOpen(true)} />
+      <Navbar onOpenDrawer={() => setIsDrawerOpen(true)} onOpenSearch={() => setIsSearchOpen(true)} />
       
       <main className="main-content">
         {/* Animated Page Transition Wrapper */}
         <div key={location.pathname} className="animate-fade-in" style={{ animationDuration: '0.4s' }}>
           <ErrorBoundary>
+          <Suspense fallback={<PageFallback />}>
           <Routes>
             {/* Storefront Routes - Public */}
             <Route path="/" element={<Home />} />
@@ -176,12 +213,18 @@ function AppContent() {
             {/* Catch-all 404 Route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </Suspense>
           </ErrorBoundary>
         </div>
       </main>
 
       {/* Persistent Bottom Nav for Mobile */}
-      <MobileBottomNav onOpenDrawer={() => setIsDrawerOpen(true)} />
+      <MobileBottomNav 
+        onOpenDrawer={() => setIsDrawerOpen(true)} 
+        onOpenSearch={() => setIsSearchOpen(true)}
+      />
+
+      <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </div>
   );
 }

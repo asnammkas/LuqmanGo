@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { useProducts } from '../../context/ProductContext';
+import { useCategories } from '../../context/CategoryContext';
 import ProductCard from '../../components/storefront/ProductCard';
 import Footer from '../../components/storefront/Footer';
 import { SlidersHorizontal, ArrowUpDown, Check, ArrowLeft, Search as SearchIcon, XCircle } from 'lucide-react';
@@ -21,10 +22,16 @@ const CategoryPage = () => {
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('search');
   const { products, isProductsLoading, productsError } = useProducts();
+  const { categories } = useCategories();
+  const [visibleCount, setVisibleCount] = useState(6);
+  const [isFetchingNext, setIsFetchingNext] = useState(false);
   const [sortBy, setSortBy] = useState('default');
   const [filterBy, setFilterBy] = useState('all');
   const [showSort, setShowSort] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
+  const observerRef = useRef();
+
+
 
   // If navigating to "All" or a specific category
   const activeCategory = categoryName || 'All';
@@ -60,19 +67,46 @@ const CategoryPage = () => {
     categoryProducts = [...categoryProducts].reverse();
   }
 
-  const description = categoryDescriptions[activeCategory] || 'Explore our thoughtfully curated collection focusing on quality craftsmanship and timeless design.';
+  const hasMore = visibleCount < categoryProducts.length;
+  const paginatedProducts = categoryProducts.slice(0, visibleCount);
+
+  // Infinite Scroll Observer Implementation
+  useEffect(() => {
+    if (!hasMore || isFetchingNext || isProductsLoading) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting && hasMore && !isFetchingNext) {
+        setIsFetchingNext(true);
+        setTimeout(() => {
+           setVisibleCount(v => v + 6);
+           setIsFetchingNext(false);
+        }, 400);
+      }
+    }, { rootMargin: '200px' });
+
+    if (observerRef.current) {
+        observer.observe(observerRef.current);
+    }
+
+    return () => {
+        if (observerRef.current) observer.unobserve(observerRef.current);
+    };
+  }, [hasMore, isFetchingNext, isProductsLoading]);
+
+  const currentCatObj = categories?.find(c => c.name === activeCategory);
+  const description = currentCatObj?.description || categoryDescriptions[activeCategory] || 'Explore our thoughtfully curated collection focusing on quality craftsmanship and timeless design.';
 
   const sortOptions = [
-    { value: 'default', label: 'Default' },
-    { value: 'price-low', label: 'Price: Low → High' },
-    { value: 'price-high', label: 'Price: High → Low' },
-    { value: 'newest', label: 'Newest First' },
+    { value: 'default', label: 'Recommended' },
+    { value: 'price-low', label: 'Price: Low to High' },
+    { value: 'price-high', label: 'Price: High to Low' },
+    { value: 'newest', label: 'Newest Arrivals' },
   ];
 
   const filterOptions = [
     { value: 'all', label: 'All Items' },
-    { value: 'in-stock', label: 'In Stock' },
-    { value: 'featured', label: 'Featured Only' },
+    { value: 'in-stock', label: 'Available Now' },
+    { value: 'featured', label: 'Featured Pieces' },
   ];
 
   return (
@@ -253,11 +287,23 @@ const CategoryPage = () => {
                </button>
             </div>
         ) : (
-            <div className="product-grid">
-                {categoryProducts.map((product) => (
-                   <ProductCard key={product.id} product={product} />
-                ))}
-            </div>
+            <>
+              <div className="product-grid">
+                  {paginatedProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+              </div>
+              
+              {/* Infinite Scroll Sentinel & Subtle Loader */}
+              <div ref={observerRef} style={{ height: '40px', margin: '2rem 0', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                {isFetchingNext && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', color: '#706F65', opacity: 0.8 }}>
+                        <div style={{ width: '14px', height: '14px', border: '2px solid rgba(17,48,19,0.1)', borderTopColor: '#113013', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                        <span style={{ fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Discovering more...</span>
+                    </div>
+                )}
+              </div>
+            </>
         )}
       </div>
       
