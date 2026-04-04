@@ -32,13 +32,12 @@ const Navbar = ({ onOpenDrawer }) => {
           <button 
             onClick={onOpenDrawer} 
             className="show-on-mobile"
-            aria-label="Open navigation menu"
             style={{ background: 'none', border: 'none', color: 'var(--color-text-main)', cursor: 'pointer', padding: '0.5rem', display: 'flex' }}
           >
             <Menu size={24} strokeWidth={1.5} />
           </button>
           
-          <nav className="hide-on-mobile desktop-nav-links" aria-label="Main navigation" style={{ display: 'none' }}>
+          <nav className="hide-on-mobile desktop-nav-links" style={{ display: 'none' }}>
             <Link to="/" className="desktop-nav-link">Home</Link>
             <Link to="/stores" className="desktop-nav-link">Stores</Link>
             <Link to="/wishlist" className="desktop-nav-link">Wishlist</Link>
@@ -80,7 +79,7 @@ const Navbar = ({ onOpenDrawer }) => {
             </Link>
           )}
           
-          <Link to="/cart" aria-label={`Shopping cart${getCartCount() > 0 ? `, ${getCartCount()} items` : ''}`} style={{ position: 'relative', color: 'var(--color-text-main)', display: 'flex', alignItems: 'center' }}>
+          <Link to="/cart" style={{ position: 'relative', color: 'var(--color-text-main)', display: 'flex', alignItems: 'center' }}>
             <ShoppingBag size={22} strokeWidth={1.5} />
             {getCartCount() > 0 && (
               <span style={{ 

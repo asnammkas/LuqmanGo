@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useShop } from '../../context/ShopContext';
 import { useAuth } from '../../context/AuthContext';
-import useDocumentMeta from '../../hooks/useDocumentMeta';
 import { doc, getDoc, setDoc, updateDoc, collection, addDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { updateProfile } from 'firebase/auth';
 import { db } from '../../config/firebase';
@@ -14,7 +13,6 @@ import { Link, useNavigate } from 'react-router-dom';
 const UserProfile = () => {
   const { orders } = useShop();
   const { currentUser, logout } = useAuth();
-  useDocumentMeta('My Account', 'Manage your LuqmanGo profile, addresses, orders, and notification preferences.');
   const myOrders = orders.slice(0, 2); 
   const [currentView, setCurrentView] = useState('main');
   const [loading, setLoading] = useState(false);
@@ -185,7 +183,6 @@ const UserProfile = () => {
     <div style={{ display: 'flex', alignItems: 'center', marginBottom: title ? '1.5rem' : '0.5rem', padding: '0' }}>
       <button 
         onClick={() => setCurrentView('main')}
-        aria-label="Go back"
         style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '0.4rem', marginRight: '0.5rem', color: '#001d04', marginLeft: '-0.4rem', transition: 'transform 0.2s' }}
       >
         <ArrowLeft size={20} strokeWidth={2} />

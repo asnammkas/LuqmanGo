@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
-import useDocumentMeta from '../../hooks/useDocumentMeta';
 import ProductCard from '../../components/storefront/ProductCard';
 import CategoryGrid from '../../components/storefront/CategoryGrid';
 import Footer from '../../components/storefront/Footer';
@@ -9,7 +8,6 @@ import { Loader, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
 
 const Home = () => {
   const { products, isProductsLoading, productsError } = useShop();
-  useDocumentMeta('Home', 'Explore curated premium essentials at LuqmanGo. Shop electronics, fashion, groceries, furniture and more.');
 
   // Get featured/hero products for the carousel (up to 5)
   const heroProducts = products.filter(p => p.featured).length > 0 
@@ -41,16 +39,16 @@ const Home = () => {
   const gridProducts = allGridProducts.slice(0, 8);
 
   return (
-    <div role="main">
+    <div>
       {/* Hero Carousel with Floating Effect */}
-      <section className="container" aria-label="Featured products carousel" style={{ padding: '0.5rem 1.5rem 2rem' }}>
+      <section className="container" style={{ padding: '0.5rem 1.5rem 2rem' }}>
         {isProductsLoading ? (
             <div style={{ 
               width: '100%', height: '55vh', maxHeight: '500px',
               backgroundColor: '#F3F2EE', borderRadius: '20px', 
               display: 'flex', alignItems: 'center', justifyContent: 'center' 
             }}>
-                <Loader className="spinner" size={32} color="var(--color-text-muted)" aria-label="Loading products" />
+                <Loader className="spinner" size={32} color="var(--color-text-muted)" />
             </div>
         ) : (
             <div style={{ 
@@ -127,11 +125,9 @@ const Home = () => {
                     zIndex: 2,
                   }}>
                     {heroProducts.map((_, i) => (
-                      <button
+                      <div
                         key={i}
                         onClick={() => goToSlide(i)}
-                        aria-label={`Go to slide ${i + 1} of ${heroProducts.length}`}
-                        aria-current={i === currentSlide ? 'true' : undefined}
                         style={{
                           width: i === currentSlide ? '20px' : '6px',
                           height: '6px',
@@ -139,11 +135,9 @@ const Home = () => {
                           backgroundColor: i === currentSlide ? 'white' : 'rgba(255,255,255,0.5)',
                           cursor: 'pointer',
                           transition: 'all 0.3s ease',
-                          border: 'none',
-                          padding: 0,
                         }}
                       />
-                    ))}
+                    ))}
                   </div>
                 )}
             </div>
@@ -154,7 +148,7 @@ const Home = () => {
       <CategoryGrid />
 
       {/* Product Grid */}
-      <section className="container" aria-label="Recent arrivals" style={{ padding: '0.8rem 1.5rem 6rem' }}>
+      <section className="container" style={{ padding: '0.8rem 1.5rem 6rem' }}>
         <div style={{ 
           display: 'flex', 
           alignItems: 'center', 

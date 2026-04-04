@@ -49,7 +49,7 @@ const Footer = () => {
             marginBottom: '2rem',
           }}>
             {/* Shop Links */}
-            <nav aria-label="Shop categories">
+            <div>
               <h4 style={{ 
                 fontSize: '0.7rem', fontWeight: 600, textTransform: 'uppercase', 
                 letterSpacing: '0.12em', marginBottom: '1rem', color: '#0C2311' 
@@ -62,7 +62,7 @@ const Footer = () => {
                 <Link to="/category/Home & Living" style={{ color: '#706F65', textDecoration: 'none' }}>Home & Living</Link>
                 <Link to="/category/Dresses" style={{ color: '#706F65', textDecoration: 'none' }}>Dresses</Link>
               </div>
-            </nav>
+            </div>
 
             {/* Contact */}
             <div>
@@ -104,8 +104,8 @@ const Footer = () => {
         }}>
           <div>© 2026 LuqmanGo. All Rights Reserved.</div>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
-             <Link to="/privacy-policy" style={{ color: 'inherit', textDecoration: 'none' }}>Privacy</Link>
-             <Link to="/terms" style={{ color: 'inherit', textDecoration: 'none' }}>Terms</Link>
+             <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Privacy</a>
+             <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Terms</a>
           </div>
         </div>
 

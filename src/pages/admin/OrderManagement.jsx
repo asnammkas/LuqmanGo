@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useShop } from '../../context/ShopContext';
-import useDocumentMeta from '../../hooks/useDocumentMeta';
 import { ShoppingBag, Search, Trash2, ChevronRight, X, BarChart2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -18,8 +17,6 @@ const getStatusConfig = (status) => {
 
 const OrderManagement = () => {
   const { orders, updateOrderStatus } = useShop();
-  useDocumentMeta('Order Management', 'Review, track, and manage customer orders in the LuqmanGo admin panel.');
-
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
   const [expandedOrder, setExpandedOrder] = useState(null);

@@ -62,7 +62,6 @@ const ProductCard = ({ product }) => {
           {/* Wishlist Heart Button */}
           <button 
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(product); }}
-            aria-label={isHearted ? `Remove ${product.title} from wishlist` : `Add ${product.title} to wishlist`}
             style={{ 
               position: 'absolute', top: '0.75rem', right: '0.75rem',
               width: '32px', height: '32px', borderRadius: '50%',
@@ -87,7 +86,6 @@ const ProductCard = ({ product }) => {
           {/* Quick Add to Bag button */}
           <button 
             onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleCart(product); }}
-            aria-label={isBagged ? `Remove ${product.title} from cart` : `Add ${product.title} to cart`}
             style={{ 
               position: 'absolute', bottom: '0.75rem', right: '0.75rem',
               width: '32px', height: '32px', borderRadius: '50%',

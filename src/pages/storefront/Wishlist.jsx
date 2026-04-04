@@ -1,5 +1,4 @@
 import { useShop } from '../../context/ShopContext';
-import useDocumentMeta from '../../hooks/useDocumentMeta';
 import ProductCard from '../../components/storefront/ProductCard';
 import Footer from '../../components/storefront/Footer';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,7 +7,6 @@ import { Heart, ArrowLeft, Trash2, ShoppingBag } from 'lucide-react';
 const Wishlist = () => {
   const { wishlist, toggleWishlist, toggleCart, isInCart } = useShop();
   const navigate = useNavigate();
-  useDocumentMeta('Wishlist', `You have ${wishlist.length} saved items in your wishlist.`);
 
   const handleMoveAllToBag = () => {
     wishlist.forEach(product => {
@@ -34,7 +32,6 @@ const Wishlist = () => {
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
             <button 
               onClick={() => navigate(-1)}
-              aria-label="Go back"
               style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem', textDecoration: 'none' }}
             >
               <ArrowLeft size={18} strokeWidth={2.5} />

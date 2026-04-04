@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
-import useDocumentMeta from '../../hooks/useDocumentMeta';
 import {
   Package, ShoppingBag, TrendingUp, Clock, Plus, Eye,
   Store, ChevronRight, Calendar, User, BarChart2, Zap
@@ -8,8 +7,6 @@ import {
 
 const AdminDashboard = () => {
   const { products, orders } = useShop();
-  useDocumentMeta('Admin Dashboard', 'LuqmanGo admin panel — manage products, orders, and store health.');
-
 
   const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
   const pendingOrders = orders.filter(o => o.status === 'Processing').length;
