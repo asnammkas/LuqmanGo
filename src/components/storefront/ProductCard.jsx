@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useShop } from '../../context/ShopContext';
+import { useToast } from '../../context/ToastContext';
 import { ShoppingBag, Image as ImageIcon, Heart } from 'lucide-react';
 
 const ProductCard = ({ product }) => {
   const { addToCart, toggleCart, isInCart, toggleWishlist, isInWishlist } = useShop();
+  const toast = useToast();
   const [imgError, setImgError] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const isHearted = isInWishlist(product.id);
@@ -61,7 +63,15 @@ const ProductCard = ({ product }) => {
 
           {/* Wishlist Heart Button */}
           <button 
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(product); }}
+            onClick={(e) => { 
+              e.preventDefault(); e.stopPropagation(); 
+              toggleWishlist(product);
+              if (!isHearted) {
+                toast.success(`${product.title} saved to wishlist`);
+              } else {
+                toast.info(`Removed from wishlist`);
+              }
+            }}
             style={{ 
               position: 'absolute', top: '0.75rem', right: '0.75rem',
               width: '32px', height: '32px', borderRadius: '50%',
@@ -85,7 +95,15 @@ const ProductCard = ({ product }) => {
 
           {/* Quick Add to Bag button */}
           <button 
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleCart(product); }}
+            onClick={(e) => { 
+              e.preventDefault(); e.stopPropagation(); 
+              toggleCart(product);
+              if (!isBagged) {
+                toast.success(`${product.title} added to bag`);
+              } else {
+                toast.info(`Removed from bag`);
+              }
+            }}
             style={{ 
               position: 'absolute', bottom: '0.75rem', right: '0.75rem',
               width: '32px', height: '32px', borderRadius: '50%',

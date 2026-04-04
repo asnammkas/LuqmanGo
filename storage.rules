@@ -1,0 +1,34 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // ─── Helper Functions ───────────────────────────────────────────
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated()
+             && firestore.exists(/databases/(default)/documents/admins/$(request.auth.uid));
+    }
+
+    // ─── PRODUCT IMAGES ─────────────────────────────────────────────
+    // Public read (needed for storefront to display images).
+    // Only admins can upload, overwrite, or delete product images.
+    // Max upload size: 5 MB.  Allowed types: image/*.
+    match /products/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin()
+                   && request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+      allow delete: if isAdmin();
+    }
+
+    // ─── Deny everything else ───────────────────────────────────────
+    // Any path not explicitly matched is denied by default.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

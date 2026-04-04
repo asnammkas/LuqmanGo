@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useShop } from '../../context/ShopContext';
+import { useToast } from '../../context/ToastContext';
 import { Trash2, ArrowRight, CheckCircle, Heart, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Footer from '../../components/storefront/Footer';
 
 const CartCheckout = () => {
   const { cart, removeFromCart, updateCartQuantity, getCartTotal, checkout, toggleWishlist, isInWishlist } = useShop();
+  const toast = useToast();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', phone: '', address: '', paymentMethod: 'Cash on Delivery' });
@@ -25,6 +27,7 @@ const CartCheckout = () => {
     
     // 4. Clear cart and show success screen
     checkout(formData);
+    toast.success('Order placed successfully!', 'Thank you for your purchase');
     setIsSuccess(true);
   };
 

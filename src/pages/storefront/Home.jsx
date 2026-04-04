@@ -4,6 +4,7 @@ import { useShop } from '../../context/ShopContext';
 import ProductCard from '../../components/storefront/ProductCard';
 import CategoryGrid from '../../components/storefront/CategoryGrid';
 import Footer from '../../components/storefront/Footer';
+import { HeroSkeleton, ProductGridSkeleton } from '../../components/Skeletons';
 import { Loader, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
 
 const Home = () => {
@@ -43,13 +44,7 @@ const Home = () => {
       {/* Hero Carousel with Floating Effect */}
       <section className="container" style={{ padding: '0.5rem 1.5rem 2rem' }}>
         {isProductsLoading ? (
-            <div style={{ 
-              width: '100%', height: '55vh', maxHeight: '500px',
-              backgroundColor: '#F3F2EE', borderRadius: '20px', 
-              display: 'flex', alignItems: 'center', justifyContent: 'center' 
-            }}>
-                <Loader className="spinner" size={32} color="var(--color-text-muted)" />
-            </div>
+            <HeroSkeleton />
         ) : (
             <div style={{ 
               position: 'relative', 
@@ -171,11 +166,7 @@ const Home = () => {
             <p color="red">{productsError}</p>
           </div>
         ) : isProductsLoading ? (
-          <div className="product-grid">
-            {[1,2,3,4].map(i => (
-                <div key={i} style={{ aspectRatio: '4/5', backgroundColor: '#F3F2EE', borderRadius: 'var(--radius-lg)' }} />
-            ))}
-          </div>
+          <ProductGridSkeleton count={4} />
         ) : (
           <div className="product-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '3rem 2rem' }}>
             {gridProducts.map(product => (

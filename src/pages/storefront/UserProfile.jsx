@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useShop } from '../../context/ShopContext';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 import { doc, getDoc, setDoc, updateDoc, collection, addDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { updateProfile } from 'firebase/auth';
 import { db } from '../../config/firebase';
@@ -13,7 +14,8 @@ import { Link, useNavigate } from 'react-router-dom';
 const UserProfile = () => {
   const { orders } = useShop();
   const { currentUser, logout } = useAuth();
-  const myOrders = orders.slice(0, 2); 
+  const toast = useToast();
+  const myOrders = orders.slice(0, 2);
   const [currentView, setCurrentView] = useState('main');
   const [loading, setLoading] = useState(false);
   const [addresses, setAddresses] = useState([]);
@@ -89,7 +91,7 @@ const UserProfile = () => {
       setAddressForm({ title: '', addressLine1: '', city: '', pinCode: '', isDefault: false });
     } catch (err) {
       console.error(err);
-      alert("Failed to save address.");
+      toast.error('Failed to save address. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -136,6 +138,7 @@ const UserProfile = () => {
       }, { merge: true });
 
       setMessage({ type: 'success', text: 'Profile updated successfully!' });
+      toast.success('Profile updated successfully!');
       setTimeout(() => setMessage({ type: '', text: '' }), 3000);
     } catch (err) {
       console.error(err);

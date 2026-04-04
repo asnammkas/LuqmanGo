@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, LogIn, ArrowRight, ArrowLeft, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 import Footer from '../../components/storefront/Footer';
 
 const SignIn = () => {
@@ -10,6 +11,7 @@ const SignIn = () => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { login, loginWithGoogle } = useAuth();
+  const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -21,6 +23,7 @@ const SignIn = () => {
     setIsLoading(true);
     try {
       await loginWithGoogle();
+      toast.success('Welcome back!');
       navigate(from, { replace: true });
     } catch (err) {
       console.error('Google SignIn Error:', err);
@@ -42,6 +45,7 @@ const SignIn = () => {
 
     try {
       await login(email, password);
+      toast.success('Signed in successfully!');
       navigate(from, { replace: true });
     } catch (err) {
       console.error('SignIn Error:', err);

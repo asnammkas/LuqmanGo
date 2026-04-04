@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import Navbar from './components/storefront/Navbar';
@@ -146,6 +147,7 @@ function AppContent() {
       <main className="main-content">
         {/* Animated Page Transition Wrapper */}
         <div key={location.pathname} className="animate-fade-in" style={{ animationDuration: '0.4s' }}>
+          <ErrorBoundary>
           <Routes>
             {/* Storefront Routes - Public */}
             <Route path="/" element={<Home />} />
@@ -172,6 +174,7 @@ function AppContent() {
             {/* Catch-all 404 Route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
+          </ErrorBoundary>
         </div>
       </main>
 

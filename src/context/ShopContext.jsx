@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { mockProducts } from '../data/mockProducts';
-import { db } from '../config/firebase';
+import { db, auth } from '../config/firebase';
 import { collection, onSnapshot, doc, setDoc, deleteDoc, addDoc } from 'firebase/firestore';
 
 const ShopContext = createContext();
@@ -204,7 +204,10 @@ export const ShopProvider = ({ children }) => {
     const newOrder = {
       id: orderId,
       date: new Date().toISOString(),
-      customer: customerInfo,
+      customer: {
+        ...customerInfo,
+        userId: auth.currentUser?.uid || null
+      },
       items: [...cart],
       total: getCartTotal(),
       status: 'Processing'
