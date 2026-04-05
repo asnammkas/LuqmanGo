@@ -70,18 +70,18 @@ const Navbar = ({ onOpenDrawer, onOpenSearch }) => {
         <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem' }}>
 
           {!loading && isAdmin && (
-            <Link to="/admin" className="hide-on-mobile" style={{ 
-              fontSize: '0.75rem', 
-              fontWeight: 500, 
-              letterSpacing: '0.1em', 
-              textTransform: 'uppercase', 
-              color: 'var(--color-text-muted)',
-              textDecoration: 'none',
-              marginRight: '0.5rem'
-            }}>
-              Admin
+            <Link to="/admin" className="hide-on-mobile" style={{ background: 'none', border: 'none', color: 'var(--color-text-main)', cursor: 'pointer', padding: '0.4rem', display: 'flex', alignItems: 'center' }}>
+              <LayoutDashboard size={20} strokeWidth={1.5} />
             </Link>
           )}
+
+          <button 
+            onClick={onOpenSearch} 
+            className="hide-on-mobile"
+            style={{ background: 'none', border: 'none', color: 'var(--color-text-main)', cursor: 'pointer', padding: '0.4rem', display: 'flex', alignItems: 'center' }}
+          >
+            <Search size={22} strokeWidth={1.5} />
+          </button>
 
           <Link to="/cart" style={{ position: 'relative', color: 'var(--color-text-main)', display: 'flex', alignItems: 'center', padding: '0.4rem' }}>
             <ShoppingBag size={22} strokeWidth={1.5} />

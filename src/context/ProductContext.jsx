@@ -15,23 +15,19 @@ export const ProductProvider = ({ children }) => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [isProductsLoading, setIsProductsLoading] = useState(true);
   const [productsError, setProductsError] = useState(null);
+  const [lastDoc, setLastDoc] = useState(null);
+  const [hasMore, setHasMore] = useState(true);
 
   // Dual Fetch Strategy:
-  // 1. Featured Products (Full list for Hero Sliders)
-  // 2. Paginated Products (For clean discovery scrolls)
+  // 1. Featured Products (Full list for Hero Sliders - still real-time)
+  // 2. Paginated Products (Fetch-on-demand for general catalog)
   useEffect(() => {
-    console.log("Initializing Dual-Stream Firebase Listeners...");
+    console.log("Initializing Optimized Firebase Listeners...");
     
     // Stream 1: All Featured Products (Unpaginated for Sliders)
     const featuredQuery = query(
       collection(db, 'products'),
       where('featured', '==', true)
-    );
-
-    // Stream 2: Full General Catalog
-    const generalQuery = query(
-      collection(db, 'products'), 
-      orderBy('title')
     );
 
     const fallbackTimer = setTimeout(() => {
@@ -43,52 +39,19 @@ export const ProductProvider = ({ children }) => {
       }
     }, 15000);
 
-    // Unsubscribe functions
     let unsubFeatured = () => {};
-    let unsubGeneral = () => {};
 
     try {
-      // Listen to Featured Products
       unsubFeatured = onSnapshot(featuredQuery, (snapshot) => {
         const loaded = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setFeaturedProducts(loaded);
       });
 
-      // Listen to General Paginated Products
-      unsubGeneral = onSnapshot(generalQuery, (snapshot) => {
-        console.log("General Product Snapshot received!", snapshot.empty ? "Empty" : "Data found");
-        clearTimeout(fallbackTimer);
-        
-        if (snapshot.empty) {
-          // SEEDING LOGIC: If DB is empty, seed it
-          const seedDatabase = async () => {
-            try {
-              for (const p of mockProducts) {
-                 await setDoc(doc(db, 'products', p.id.toString()), p);
-              }
-            } catch (err) {
-              setProducts(mockProducts);
-              setIsProductsLoading(false);
-            }
-          };
-          seedDatabase();
-        } else {
-          const loadedProducts = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          setProducts(loadedProducts);
-          setIsProductsLoading(false);
-        }
-      }, (error) => {
-        clearTimeout(fallbackTimer);
-        console.error("Firebase Snapshot Error:", error.message);
-        setProductsError(error.message);
-        setProducts(mockProducts);
-        setFeaturedProducts(mockProducts.filter(p => p.featured));
-        setIsProductsLoading(false);
-      });
+      // Initial Fetch for General Catalog
+      fetchInitialProducts(fallbackTimer);
       
       return () => {
         unsubFeatured();
-        unsubGeneral();
         clearTimeout(fallbackTimer);
       };
     } catch (err) {
@@ -98,7 +61,79 @@ export const ProductProvider = ({ children }) => {
     }
   }, []);
 
-  const fetchNextPage = async () => {}; // Deprecated in favor of UI pagination
+  const fetchInitialProducts = async (category = 'All') => {
+    setIsProductsLoading(true);
+    setProducts([]); // Clear for fresh category fetch
+    
+    try {
+      let q;
+      if (category === 'All') {
+        q = query(collection(db, 'products'), orderBy('title'), limit(12));
+      } else {
+        q = query(collection(db, 'products'), where('category', '==', category), orderBy('title'), limit(12));
+      }
+      
+      const snapshot = await getDocs(q);
+      if (snapshot.empty && category === 'All') {
+        await seedIfEmpty();
+      } else {
+        const loaded = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setProducts(loaded);
+        setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+        setHasMore(snapshot.docs.length === 12);
+        setIsProductsLoading(false);
+      }
+    } catch (err) {
+      console.error("Initial Fetch Error:", err);
+      // Fallback only for initial 'All' fetch
+      if (category === 'All') setProducts(mockProducts);
+      setIsProductsLoading(false);
+    }
+  };
+
+  const seedIfEmpty = async () => {
+    try {
+      for (const p of mockProducts) {
+         await setDoc(doc(db, 'products', p.id.toString()), p);
+      }
+      // Re-fetch after seeding
+      const q = query(collection(db, 'products'), orderBy('title'), limit(12));
+      const res = await getDocs(q);
+      const loaded = res.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setProducts(loaded);
+      setLastDoc(res.docs[res.docs.length - 1]);
+      setIsProductsLoading(false);
+    } catch (err) {
+      setProducts(mockProducts);
+      setIsProductsLoading(false);
+    }
+  };
+
+  const fetchMoreProducts = async (category = 'All') => {
+    if (!lastDoc || !hasMore) return;
+
+    try {
+      let q;
+      if (category === 'All') {
+        q = query(collection(db, 'products'), orderBy('title'), startAfter(lastDoc), limit(12));
+      } else {
+        q = query(collection(db, 'products'), where('category', '==', category), orderBy('title'), startAfter(lastDoc), limit(12));
+      }
+
+      const snapshot = await getDocs(q);
+      if (snapshot.empty) {
+        setHasMore(false);
+        return;
+      }
+
+      const nextItems = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setProducts(prev => [...prev, ...nextItems]);
+      setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
+      setHasMore(snapshot.docs.length === 12);
+    } catch (err) {
+      console.error("Load More Error:", err);
+    }
+  };
 
   const addProduct = async (product) => {
     try {
@@ -127,7 +162,7 @@ export const ProductProvider = ({ children }) => {
 
   const value = {
     products, featuredProducts, isProductsLoading, productsError,
-    fetchNextPage, addProduct, updateProduct, deleteProduct
+    fetchInitialProducts, fetchMoreProducts, hasMore, addProduct, updateProduct, deleteProduct
   };
 
   return (

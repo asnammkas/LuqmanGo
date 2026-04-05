@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { db, auth } from '../config/firebase';
+import { db, auth, functions } from '../config/firebase';
 import { collection, onSnapshot, doc, setDoc } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions';
 
 const OrderContext = createContext();
 
@@ -19,24 +20,23 @@ export const OrderProvider = ({ children }) => {
   }, []);
 
   const checkout = async (customerInfo, cartItems, cartTotal) => {
-    const orderId = `ord_${Date.now()}`;
-    const newOrder = {
-      id: orderId,
-      date: new Date().toISOString(),
-      customer: {
-        ...customerInfo,
-        userId: auth.currentUser?.uid || null
-      },
-      items: [...cartItems],
-      total: cartTotal,
-      status: 'Processing'
-    };
+    // ─── Phase 1: Backend Security Implementation ───────────────────
+    // Pre-validation is good for UX, but the REAL validation now happens 
+    // on the server to prevent price or stock manipulation.
+    const validateAndCreateOrder = httpsCallable(functions, 'validateAndCreateOrder');
     
     try {
-      await setDoc(doc(db, 'orders', orderId), newOrder);
-      return orderId;
+      const result = await validateAndCreateOrder({
+        cart: cartItems,
+        customerInfo: {
+          ...customerInfo,
+          userId: auth.currentUser?.uid || null
+        }
+      });
+
+      return result.data.orderId;
     } catch (e) {
-      console.error("Error creating order: ", e);
+      console.error("Secure Checkout Failed: ", e);
       throw e;
     }
   };

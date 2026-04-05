@@ -21,9 +21,11 @@ const CategoryPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('search');
-  const { products, isProductsLoading, productsError } = useProducts();
+  const { 
+    products, isProductsLoading, productsError, 
+    fetchInitialProducts, fetchMoreProducts, hasMore 
+  } = useProducts();
   const { categories } = useCategories();
-  const [visibleCount, setVisibleCount] = useState(6);
   const [isFetchingNext, setIsFetchingNext] = useState(false);
   const [sortBy, setSortBy] = useState('default');
   const [filterBy, setFilterBy] = useState('all');
@@ -35,11 +37,14 @@ const CategoryPage = () => {
 
   // If navigating to "All" or a specific category
   const activeCategory = categoryName || 'All';
-  
-  // Filter products based on URL param
-  let categoryProducts = activeCategory === 'All' 
-    ? products 
-    : products.filter(p => p.category === activeCategory);
+
+  // Fresh fetch when category changes
+  useEffect(() => {
+    fetchInitialProducts(activeCategory);
+  }, [activeCategory]);
+
+  // Filter products based on active set from context
+  let categoryProducts = [...products];
 
   // Apply filter
   if (filterBy === 'in-stock') {
@@ -67,8 +72,7 @@ const CategoryPage = () => {
     categoryProducts = [...categoryProducts].reverse();
   }
 
-  const hasMore = visibleCount < categoryProducts.length;
-  const paginatedProducts = categoryProducts.slice(0, visibleCount);
+  // Note: hasMore is now provided by ProductContext
 
   // Infinite Scroll Observer Implementation
   useEffect(() => {
@@ -77,10 +81,9 @@ const CategoryPage = () => {
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting && hasMore && !isFetchingNext) {
         setIsFetchingNext(true);
-        setTimeout(() => {
-           setVisibleCount(v => v + 6);
+        fetchMoreProducts(activeCategory).then(() => {
            setIsFetchingNext(false);
-        }, 400);
+        });
       }
     }, { rootMargin: '200px' });
 
@@ -289,7 +292,7 @@ const CategoryPage = () => {
         ) : (
             <>
               <div className="product-grid">
-                  {paginatedProducts.map((product) => (
+                  {categoryProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}
               </div>

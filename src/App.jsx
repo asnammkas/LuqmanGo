@@ -1,5 +1,6 @@
 import { lazy, Suspense, useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { AuthProvider } from './context/AuthContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -72,11 +73,10 @@ function AppContent() {
     const timer = setTimeout(() => {
       setFadeOut(true);
       setTimeout(() => setIsLoading(false), 600);
-    }, 3200); // Extended to allow animations to complete
+    }, 3200); 
     return () => clearTimeout(timer);
   }, []);
 
-  // Scroll to top on route change
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
@@ -112,7 +112,6 @@ function AppContent() {
           {/* Main Logo Container */}
           <div className="animate-loader-logo" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative', zIndex: 1, width: '90%' }}>
             
-            {/* Logo Text Section - Now the positioning context for the arrow */}
             <h2 style={{ 
               fontSize: 'clamp(5rem, 22vw, 7.5rem)', 
               fontWeight: 800, 
@@ -129,7 +128,6 @@ function AppContent() {
               <span>Luqman</span>
               <span style={{ color: '#C4D300' }}>Go</span>
 
-              {/* Hand-drawn Arrow SVG Underline - Absolutely positioned to match text width */}
               <div style={{ 
                 position: 'absolute',
                 bottom: 0,
@@ -151,12 +149,10 @@ function AppContent() {
               </div>
             </h2>
 
-            {/* Tagline Section */}
             <div className="animate-tagline" style={{ marginTop: '0.8rem', fontFamily: '"Georgia", serif', fontStyle: 'italic', fontSize: '1.5rem', color: '#001d04', letterSpacing: '0.02em' }}>
               Shop. Click. Done.
             </div>
 
-            {/* Mission Statement */}
             <div 
               style={{ 
                 marginTop: '2.5rem', opacity: 0, 
@@ -170,7 +166,6 @@ function AppContent() {
             
           </div>
 
-          {/* Branding Detail at Bottom */}
           <div style={{ position: 'absolute', bottom: '8vh', opacity: 0, animation: 'fadeIn 1s ease-out 2.2s forwards', textAlign: 'center' }}>
              <div style={{ fontSize: '0.65rem', fontWeight: 900, letterSpacing: '0.2rem', color: '#001d04', marginBottom: '0.5rem' }}>GLOBAL CURATED NETWORK</div>
              <div className="animate-pulse-glow" style={{ width: '40px', height: '1.5px', backgroundColor: '#436132', margin: '0 auto', opacity: 0.2 }}></div>
@@ -182,40 +177,47 @@ function AppContent() {
       <Navbar onOpenDrawer={() => setIsDrawerOpen(true)} onOpenSearch={() => setIsSearchOpen(true)} />
       
       <main className="main-content">
-        {/* Animated Page Transition Wrapper */}
-        <div key={location.pathname} className="animate-fade-in" style={{ animationDuration: '0.4s' }}>
-          <ErrorBoundary>
-          <Suspense fallback={<PageFallback />}>
-          <Routes>
+        <ErrorBoundary>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <Suspense fallback={<PageFallback />}>
+            <Routes location={location} key={location.pathname}>
             {/* Storefront Routes - Public */}
-            <Route path="/" element={<Home />} />
-            <Route path="/category/:categoryName" element={<CategoryPage />} />
-            <Route path="/product/:id" element={<ProductDetail />} />
-            <Route path="/stores" element={<StoresComingSoon />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/cart" element={<CartCheckout />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/privacy" element={<PrivacyPolicyPage />} />
-            <Route path="/terms" element={<TermsPage />} />
-            <Route path="/delivery-policy" element={<DeliveryPolicyPage />} />
-            
-            {/* Protected Routes - Requires Authentication */}
-            <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
-            
-            {/* Admin Routes - Requires Admin Role */}
-            <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-            <Route path="/admin/products" element={<AdminRoute><ProductManagement /></AdminRoute>} />
-            <Route path="/admin/categories" element={<AdminRoute><CategoryManagement /></AdminRoute>} />
-            <Route path="/admin/orders" element={<AdminRoute><OrderManagement /></AdminRoute>} />
+              <Route path="/" element={<Home />} />
+              <Route path="/category/:categoryName" element={<CategoryPage />} />
+              <Route path="/product/:id" element={<ProductDetail />} />
+              <Route path="/stores" element={<StoresComingSoon />} />
+              <Route path="/wishlist" element={<Wishlist />} />
+              <Route path="/signin" element={<SignIn />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/cart" element={<CartCheckout />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
+              <Route path="/terms" element={<TermsPage />} />
+              <Route path="/delivery-policy" element={<DeliveryPolicyPage />} />
+              
+              {/* Protected Routes - Requires Authentication */}
+              <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+              
+              {/* Admin Routes - Requires Admin Role */}
+              <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
+              <Route path="/admin/products" element={<AdminRoute><ProductManagement /></AdminRoute>} />
+              <Route path="/admin/categories" element={<AdminRoute><CategoryManagement /></AdminRoute>} />
+              <Route path="/admin/orders" element={<AdminRoute><OrderManagement /></AdminRoute>} />
 
-            {/* Catch-all 404 Route */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          </Suspense>
-          </ErrorBoundary>
-        </div>
+              {/* Catch-all 404 Route */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            </Suspense>
+          </motion.div>
+        </AnimatePresence>
+        </ErrorBoundary>
       </main>
 
       {/* Persistent Bottom Nav for Mobile */}
