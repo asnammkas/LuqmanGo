@@ -21,11 +21,14 @@ const CategoryPage = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const searchQuery = searchParams.get('search');
-  const { 
-    products, isProductsLoading, productsError, 
-    fetchInitialProducts, fetchMoreProducts, hasMore 
-  } = useProducts();
+  const { fetchCategoryProducts, fetchMoreCategoryProducts } = useProducts();
   const { categories } = useCategories();
+
+  // ─── Local State (independent from Home page) ───
+  const [categoryProducts, setCategoryProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [lastCatDoc, setLastCatDoc] = useState(null);
+  const [catHasMore, setCatHasMore] = useState(true);
   const [isFetchingNext, setIsFetchingNext] = useState(false);
   const [sortBy, setSortBy] = useState('default');
   const [filterBy, setFilterBy] = useState('all');
@@ -33,56 +36,80 @@ const CategoryPage = () => {
   const [showFilter, setShowFilter] = useState(false);
   const observerRef = useRef();
 
-
-
-  // If navigating to "All" or a specific category
   const activeCategory = categoryName || 'All';
 
-  // Fresh fetch when category changes
+  // ─── Fresh fetch when category changes ───
   useEffect(() => {
-    fetchInitialProducts(activeCategory);
-  }, [activeCategory]);
+    let cancelled = false;
 
-  // Filter products based on active set from context
-  let categoryProducts = [...products];
+    const loadCategory = async () => {
+      setIsLoading(true);
+      setCategoryProducts([]);
+      setLastCatDoc(null);
+      setCatHasMore(true);
 
-  // Apply filter
+      const result = await fetchCategoryProducts(activeCategory);
+
+      if (!cancelled) {
+        setCategoryProducts(result.products);
+        setLastCatDoc(result.lastDoc);
+        setCatHasMore(result.hasMore);
+        setIsLoading(false);
+      }
+    };
+
+    loadCategory();
+
+    return () => { cancelled = true; };
+  }, [activeCategory, fetchCategoryProducts]);
+
+  // ─── Apply local filters ───
+  let displayProducts = [...categoryProducts];
+
   if (filterBy === 'in-stock') {
-    categoryProducts = categoryProducts.filter(p => p.stock > 0);
+    displayProducts = displayProducts.filter(p => p.stock > 0);
   } else if (filterBy === 'featured') {
-    categoryProducts = categoryProducts.filter(p => p.featured);
+    displayProducts = displayProducts.filter(p => p.featured);
   }
 
-  // Apply search filtering
   if (searchQuery) {
     const q = searchQuery.toLowerCase();
-    categoryProducts = categoryProducts.filter(p => 
+    displayProducts = displayProducts.filter(p => 
       p.title.toLowerCase().includes(q) || 
       p.category.toLowerCase().includes(q) ||
       (p.description && p.description.toLowerCase().includes(q))
     );
   }
 
-  // Apply sorting
   if (sortBy === 'price-low') {
-    categoryProducts = [...categoryProducts].sort((a, b) => a.price - b.price);
+    displayProducts = [...displayProducts].sort((a, b) => a.price - b.price);
   } else if (sortBy === 'price-high') {
-    categoryProducts = [...categoryProducts].sort((a, b) => b.price - a.price);
+    displayProducts = [...displayProducts].sort((a, b) => b.price - a.price);
   } else if (sortBy === 'newest') {
-    categoryProducts = [...categoryProducts].reverse();
+    displayProducts = [...displayProducts].reverse();
   }
 
-  // Note: hasMore is now provided by ProductContext
-
-  // Infinite Scroll Observer Implementation
+  // ─── Infinite Scroll Observer ───
   useEffect(() => {
-    if (!hasMore || isFetchingNext || isProductsLoading) return;
+    if (!catHasMore || isFetchingNext || isLoading) return;
 
     const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && hasMore && !isFetchingNext) {
+      if (entries[0].isIntersecting && catHasMore && !isFetchingNext) {
         setIsFetchingNext(true);
-        fetchMoreProducts(activeCategory).then(() => {
-           setIsFetchingNext(false);
+
+        fetchMoreCategoryProducts(activeCategory, lastCatDoc).then((result) => {
+          if (result.products.length > 0) {
+            setCategoryProducts(prev => {
+              const existingIds = new Set(prev.map(p => p.id));
+              const uniqueNew = result.products.filter(item => !existingIds.has(item.id));
+              return [...prev, ...uniqueNew];
+            });
+            setLastCatDoc(result.lastDoc);
+            setCatHasMore(result.hasMore);
+          } else {
+            setCatHasMore(false);
+          }
+          setIsFetchingNext(false);
         });
       }
     }, { rootMargin: '200px' });
@@ -94,7 +121,7 @@ const CategoryPage = () => {
     return () => {
         if (observerRef.current) observer.unobserve(observerRef.current);
     };
-  }, [hasMore, isFetchingNext, isProductsLoading]);
+  }, [catHasMore, isFetchingNext, isLoading, lastCatDoc, activeCategory, fetchMoreCategoryProducts]);
 
   const currentCatObj = categories?.find(c => c.name === activeCategory);
   const description = currentCatObj?.description || categoryDescriptions[activeCategory] || 'Explore our thoughtfully curated collection focusing on quality craftsmanship and timeless design.';
@@ -116,7 +143,7 @@ const CategoryPage = () => {
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
       <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', width: '100%', boxSizing: 'border-box', margin: '0 auto', flex: 1 }}>
         
-        {/* Editorial Header - Unified Pattern */}
+        {/* Editorial Header */}
         <div style={{ 
           display: 'flex', 
           alignItems: 'center', 
@@ -151,7 +178,6 @@ const CategoryPage = () => {
           {searchQuery ? `Showing matches for "${searchQuery}" across ${activeCategory === 'All' ? 'the whole store' : activeCategory}.` : description}
         </p>
 
-
         {/* Filters Row */}
         <div style={{ 
           display: 'flex', 
@@ -167,17 +193,11 @@ const CategoryPage = () => {
             <button 
               onClick={() => { setShowFilter(!showFilter); setShowSort(false); }}
               style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '8px',
+                display: 'flex', alignItems: 'center', gap: '8px',
                 backgroundColor: filterBy !== 'all' ? '#001d04' : '#F2E7D2', 
-                border: 'none', 
-                padding: '0.75rem 1.25rem',
-                borderRadius: 'var(--radius-md)', 
-                fontSize: '0.8rem', 
-                fontWeight: 600,
-                cursor: 'pointer', 
-                color: filterBy !== 'all' ? 'white' : '#333',
+                border: 'none', padding: '0.75rem 1.25rem',
+                borderRadius: 'var(--radius-md)', fontSize: '0.8rem', fontWeight: 600,
+                cursor: 'pointer', color: filterBy !== 'all' ? 'white' : '#333',
                 transition: 'all 0.2s ease',
               }}
             >
@@ -215,17 +235,11 @@ const CategoryPage = () => {
             <button 
               onClick={() => { setShowSort(!showSort); setShowFilter(false); }}
               style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '8px',
+                display: 'flex', alignItems: 'center', gap: '8px',
                 backgroundColor: sortBy !== 'default' ? '#001d04' : '#F2E7D2', 
-                border: 'none', 
-                padding: '0.75rem 1.25rem',
-                borderRadius: 'var(--radius-md)', 
-                fontSize: '0.8rem', 
-                fontWeight: 600,
-                cursor: 'pointer', 
-                color: sortBy !== 'default' ? 'white' : '#333',
+                border: 'none', padding: '0.75rem 1.25rem',
+                borderRadius: 'var(--radius-md)', fontSize: '0.8rem', fontWeight: 600,
+                cursor: 'pointer', color: sortBy !== 'default' ? 'white' : '#333',
                 transition: 'all 0.2s ease',
               }}
             >
@@ -260,17 +274,14 @@ const CategoryPage = () => {
         </div>
 
         {/* Product Grid */}
-        {productsError ? (
-          <div style={{ textAlign: 'center', padding: '4rem' }}>
-             <p color="red">{productsError}</p>
-          </div>
-        ) : isProductsLoading ? (
+        {isLoading ? (
             <div className="product-grid">
                {[1,2,3,4,5,6,7,8].map(i => (
-                  <div key={i} style={{ aspectRatio: '4/5', backgroundColor: '#F3F2EE', borderRadius: 'var(--radius-lg)' }} className="animate-pulse" />
+                  <div key={i} style={{ aspectRatio: '4/5', backgroundColor: '#F3F2EE', borderRadius: 'var(--radius-lg)', animation: 'pulse 1.5s ease-in-out infinite' }} />
                ))}
+               <style>{`@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }`}</style>
             </div>
-        ) : categoryProducts.length === 0 ? (
+        ) : displayProducts.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '6rem 1rem' }}>
                <XCircle size={40} strokeWidth={1} style={{ color: '#D4CFC5', marginBottom: '1rem' }} />
                <h3 style={{ fontSize: '1.2rem', marginBottom: '0.5rem', color: '#001d04' }}>
@@ -292,9 +303,9 @@ const CategoryPage = () => {
         ) : (
             <>
               <div className="product-grid">
-                  {categoryProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
-                  ))}
+                {displayProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
               </div>
               
               {/* Infinite Scroll Sentinel & Subtle Loader */}

@@ -84,6 +84,8 @@ const ProductManagement = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState('');
   const [isDragOver, setIsDragOver] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   const fileInputRef = useRef(null);
   const cameraInputRef = useRef(null);
 
@@ -609,7 +611,7 @@ const ProductManagement = () => {
                   >
                     <Edit2 size={15} color="#001d04" />
                   </button>
-                  <button title="Delete Product" onClick={() => { if (window.confirm('Remove this product permanently?')) deleteProduct(product.id); }} style={{ width: '36px', height: '36px', borderRadius: '12px', backgroundColor: '#FEF2F2', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background-color 0.2s' }}
+                  <button title="Delete Product" onClick={() => setDeleteTarget(product)} style={{ width: '36px', height: '36px', borderRadius: '12px', backgroundColor: '#FEF2F2', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background-color 0.2s' }}
                     onMouseEnter={e => e.currentTarget.style.backgroundColor = '#FEE2E2'}
                     onMouseLeave={e => e.currentTarget.style.backgroundColor = '#FEF2F2'}
                   >
@@ -632,6 +634,98 @@ const ProductManagement = () => {
           )}
         </div>
       </div>
+
+      {/* ── Delete Confirmation Modal ── */}
+      {deleteTarget && (
+        <div
+          onClick={() => { if (!isDeleting) setDeleteTarget(null); }}
+          style={{
+            position: 'fixed', inset: 0, zIndex: 9999,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(4px)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            padding: '1.5rem',
+            animation: 'fadeIn 0.2s ease'
+          }}
+        >
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{
+              backgroundColor: 'white', borderRadius: '24px',
+              padding: '2rem', maxWidth: '380px', width: '100%',
+              boxShadow: '0 25px 60px rgba(0,0,0,0.2)',
+              animation: 'cardEntrance 0.3s cubic-bezier(0.2, 0.8, 0.2, 1) backwards'
+            }}
+          >
+            {/* Warning Icon */}
+            <div style={{ width: '56px', height: '56px', borderRadius: '16px', backgroundColor: '#FEF2F2', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.2rem' }}>
+              <Trash2 size={24} color="#EF4444" />
+            </div>
+
+            <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#001d04', textAlign: 'center', margin: '0 0 0.5rem' }}>
+              Delete Product?
+            </h3>
+            <p style={{ fontSize: '0.85rem', color: '#706F65', textAlign: 'center', lineHeight: 1.6, margin: '0 0 0.3rem' }}>
+              You are about to permanently remove:
+            </p>
+            <p style={{ fontSize: '0.95rem', fontWeight: 700, color: '#001d04', textAlign: 'center', margin: '0 0 1.5rem' }}>
+              "{deleteTarget.title}"
+            </p>
+            <p style={{ fontSize: '0.75rem', color: '#B91C1C', textAlign: 'center', margin: '0 0 1.5rem', fontWeight: 500 }}>
+              This action cannot be undone. The product image will also be removed from storage.
+            </p>
+
+            {/* Action Buttons */}
+            <div style={{ display: 'flex', gap: '0.75rem' }}>
+              <button
+                onClick={() => setDeleteTarget(null)}
+                disabled={isDeleting}
+                style={{
+                  flex: 1, padding: '0.85rem', borderRadius: '14px',
+                  border: '1px solid rgba(0,0,0,0.08)', backgroundColor: 'white',
+                  color: '#706F65', fontWeight: 600, fontSize: '0.88rem',
+                  cursor: 'pointer', fontFamily: 'inherit', transition: 'all 0.2s'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  setIsDeleting(true);
+                  try {
+                    await deleteProduct(deleteTarget.id);
+                  } catch (err) {
+                    console.error('Delete failed:', err);
+                  }
+                  setIsDeleting(false);
+                  setDeleteTarget(null);
+                }}
+                disabled={isDeleting}
+                style={{
+                  flex: 1, padding: '0.85rem', borderRadius: '14px',
+                  border: 'none', backgroundColor: '#EF4444',
+                  color: 'white', fontWeight: 700, fontSize: '0.88rem',
+                  cursor: isDeleting ? 'not-allowed' : 'pointer',
+                  fontFamily: 'inherit', transition: 'all 0.2s',
+                  opacity: isDeleting ? 0.7 : 1,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem'
+                }}
+              >
+                {isDeleting ? (
+                  <>
+                    <div style={{ width: '14px', height: '14px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 size={15} /> Delete
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
