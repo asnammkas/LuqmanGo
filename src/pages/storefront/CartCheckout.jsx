@@ -22,9 +22,10 @@ const CartCheckout = () => {
   const { toggleWishlist, isInWishlist } = useWishlist();
   const { checkout } = useOrders();
   const toast = useToast();
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [showCheckoutForm, setShowCheckoutForm] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '', address: '', paymentMethod: 'Cash on Delivery' });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '+94', address: '', paymentMethod: 'Cash on Delivery' });
   const [errors, setErrors] = useState({});
 
   const handleCheckoutSubmit = async (e) => {
@@ -46,7 +47,7 @@ const CartCheckout = () => {
       return;
     }
 
-    setIsCheckingOut(true); 
+    setIsSubmitting(true); 
     
     try {
       // 2. Execute the Secure Checkout (Firestore Transaction + Function)
@@ -72,7 +73,7 @@ const CartCheckout = () => {
         'Please check your items or contact support.'
       );
     } finally {
-      setIsCheckingOut(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -225,8 +226,8 @@ const CartCheckout = () => {
           <span style={{ color: 'var(--color-primary)' }}>${getCartTotal().toFixed(2)}</span>
         </div>
 
-        {!isCheckingOut ? (
-          <button className="btn btn-primary" style={{ width: '100%', padding: '1rem' }} onClick={() => setIsCheckingOut(true)}>
+        {!showCheckoutForm ? (
+          <button className="btn btn-primary" style={{ width: '100%', padding: '1rem' }} onClick={() => setShowCheckoutForm(true)}>
             Proceed to Checkout <ArrowRight size={18} />
           </button>
         ) : (
@@ -335,7 +336,7 @@ const CartCheckout = () => {
             <button 
               type="submit" 
               className="btn"
-              disabled={isCheckingOut}
+              disabled={isSubmitting}
               style={{ 
                 width: '100%', 
                 height: '3.5rem',
@@ -346,18 +347,18 @@ const CartCheckout = () => {
                 fontSize: '0.85rem',
                 fontWeight: 600,
                 letterSpacing: '0.05em',
-                cursor: isCheckingOut ? 'not-allowed' : 'pointer',
+                cursor: isSubmitting ? 'not-allowed' : 'pointer',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 gap: '0.8rem',
                 transition: 'all 0.2s ease',
-                opacity: isCheckingOut ? 0.7 : 1
+                opacity: isSubmitting ? 0.7 : 1
               }}
-              onMouseOver={(e) => !isCheckingOut && (e.currentTarget.style.opacity = '0.9')}
-              onMouseOut={(e) => !isCheckingOut && (e.currentTarget.style.opacity = '1')}
+              onMouseOver={(e) => !isSubmitting && (e.currentTarget.style.opacity = '0.9')}
+              onMouseOut={(e) => !isSubmitting && (e.currentTarget.style.opacity = '1')}
             >
-              {isCheckingOut ? (
+              {isSubmitting ? (
                 <>
                   <div style={{ width: '18px', height: '18px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
                   Validating Secure Order...

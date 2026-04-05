@@ -1,10 +1,9 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { db } from '../config/firebase';
 import { 
   collection, onSnapshot, doc, setDoc, deleteDoc, 
   query, limit, orderBy, startAfter, getDocs, where
 } from 'firebase/firestore';
-import { mockProducts } from '../data/mockProducts';
 
 const ProductContext = createContext();
 
@@ -16,114 +15,56 @@ export const ProductProvider = ({ children }) => {
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [isProductsLoading, setIsProductsLoading] = useState(true);
   const [productsError, setProductsError] = useState(null);
-  const [lastDoc, setLastDoc] = useState(null);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
+  const initialLoadDone = useRef(false);
 
-  // ─── Initial Load: Featured Products (real-time) + All Products (paginated) ───
+  // ─── Real-time listener for ALL products ───
   useEffect(() => {
-    console.log("Initializing Optimized Firebase Listeners...");
+    console.log("Initializing Real-time Firebase Listeners...");
     
-    const featuredQuery = query(
+    const allProductsQuery = query(
       collection(db, 'products'),
-      where('featured', '==', true)
+      orderBy('title')
     );
 
     const fallbackTimer = setTimeout(() => {
-      if (isProductsLoading) {
-        console.warn("Firebase connection timed out (15s). Falling back to mock data.");
-        setProducts(mockProducts);
-        setFeaturedProducts(mockProducts.filter(p => p.featured));
+      if (!initialLoadDone.current) {
+        console.warn("Firebase connection timed out (15s). Showing empty state.");
+        setProducts([]);
+        setFeaturedProducts([]);
         setIsProductsLoading(false);
       }
     }, 15000);
 
-    let unsubFeatured = () => {};
-
-    try {
-      unsubFeatured = onSnapshot(featuredQuery, (snapshot) => {
-        const loaded = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setFeaturedProducts(loaded);
-      });
-
-      // Initial fetch for "All" products (Home page)
-      fetchAllProducts();
-      
-      return () => {
-        unsubFeatured();
-        clearTimeout(fallbackTimer);
-      };
-    } catch (err) {
-      console.error("Error setting up listeners:", err.message);
-      setProducts(mockProducts);
+    // Real-time listener — automatically reflects adds, updates, AND deletes
+    const unsubAll = onSnapshot(allProductsQuery, (snapshot) => {
+      const loaded = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      setProducts(loaded);
+      setFeaturedProducts(loaded.filter(p => p.featured));
+      initialLoadDone.current = true;
       setIsProductsLoading(false);
-    }
+      clearTimeout(fallbackTimer);
+    }, (err) => {
+      console.error("Products listener error:", err);
+      setProductsError("Failed to load products. Please refresh.");
+      setIsProductsLoading(false);
+    });
+
+    return () => {
+      unsubAll();
+      clearTimeout(fallbackTimer);
+    };
   }, []);
 
-  // ─── Fetch "All" products for Home page ───
-  const fetchAllProducts = async () => {
-    setIsProductsLoading(true);
-    
-    try {
-      const q = query(collection(db, 'products'), orderBy('title'), limit(12));
-      const snapshot = await getDocs(q);
-      
-      if (snapshot.empty) {
-        await seedIfEmpty();
-      } else {
-        const loaded = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setProducts(loaded);
-        setLastDoc(snapshot.docs[snapshot.docs.length - 1] || null);
-        setHasMore(snapshot.docs.length === 12);
-        setIsProductsLoading(false);
-      }
-    } catch (err) {
-      console.error("Initial Fetch Error:", err);
-      setProducts(mockProducts);
-      setIsProductsLoading(false);
-    }
+  // fetchAllProducts is kept for manual refresh calls (e.g. after add/update)
+  // but now it's a no-op since the real-time listener handles everything
+  const fetchAllProducts = () => {
+    // Real-time listener already keeps products in sync
   };
 
-  const seedIfEmpty = async () => {
-    try {
-      for (const p of mockProducts) {
-         await setDoc(doc(db, 'products', p.id.toString()), p);
-      }
-      const q = query(collection(db, 'products'), orderBy('title'), limit(12));
-      const res = await getDocs(q);
-      const loaded = res.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setProducts(loaded);
-      setLastDoc(res.docs[res.docs.length - 1]);
-      setIsProductsLoading(false);
-    } catch (err) {
-      setProducts(mockProducts);
-      setIsProductsLoading(false);
-    }
-  };
-
-  // ─── Load more "All" products (Home page infinite scroll) ───
-  const fetchMoreAllProducts = async () => {
-    if (!lastDoc || !hasMore) return;
-
-    try {
-      const q = query(collection(db, 'products'), orderBy('title'), startAfter(lastDoc), limit(12));
-      const snapshot = await getDocs(q);
-      
-      if (snapshot.empty) {
-        setHasMore(false);
-        return;
-      }
-
-      const nextItems = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setProducts(prev => {
-        const existingIds = new Set(prev.map(p => p.id));
-        const uniqueNew = nextItems.filter(item => !existingIds.has(item.id));
-        return [...prev, ...uniqueNew];
-      });
-      setLastDoc(snapshot.docs[snapshot.docs.length - 1]);
-      setHasMore(snapshot.docs.length === 12);
-    } catch (err) {
-      console.error("Load More Error:", err);
-    }
+  // ─── Load more is no longer needed since we fetch all via onSnapshot ───
+  const fetchMoreAllProducts = () => {
+    // All products are loaded via real-time listener
   };
 
   // ─── Category-Specific Fetch (used by CategoryPage locally) ───
