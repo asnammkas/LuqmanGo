@@ -80,7 +80,7 @@ const Navbar = ({ onOpenDrawer, onOpenSearch }) => {
             className="hide-on-mobile"
             style={{ background: 'none', border: 'none', color: 'var(--color-text-main)', cursor: 'pointer', padding: '0.4rem', display: 'flex', alignItems: 'center' }}
           >
-            <Search size={22} strokeWidth={1.5} />
+            <Search size={22} strokeWidth={2} />
           </button>
 
           <Link to="/cart" style={{ position: 'relative', color: 'var(--color-text-main)', display: 'flex', alignItems: 'center', padding: '0.4rem' }}>

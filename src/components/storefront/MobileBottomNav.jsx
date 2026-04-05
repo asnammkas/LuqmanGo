@@ -53,15 +53,19 @@ const MobileBottomNav = ({ onOpenDrawer, onOpenSearch }) => {
             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
             width: '100%',
           }}>
-            <Icon 
-              size={22} 
-              strokeWidth={isActive ? 2.5 : 1.8} 
-              style={{ 
-                color: (item.name === 'WISHLIST' && isActive) ? '#EF4444' : (isActive ? '#0C2311' : '#706F65'),
-                transition: 'all 0.3s ease'
-              }} 
-              fill={(item.name === 'WISHLIST' && isActive) ? '#EF4444' : 'transparent'}
-            />
+            {item.name === 'SEARCH' ? (
+              <Icon size={22} strokeWidth={2} style={{ color: '#00C853', transition: 'all 0.3s ease' }} />
+            ) : (
+              <Icon 
+                size={22} 
+                strokeWidth={isActive ? 2.5 : 1.8} 
+                style={{ 
+                  color: (item.name === 'WISHLIST' && isActive) ? '#EF4444' : (isActive ? '#0C2311' : '#706F65'),
+                  transition: 'all 0.3s ease'
+                }} 
+                fill={(item.name === 'WISHLIST' && isActive) ? '#EF4444' : 'transparent'}
+              />
+            )}
             <span style={{ 
               fontSize: '0.58rem', 
               fontWeight: isActive ? 700 : 500, 
@@ -83,10 +87,25 @@ const MobileBottomNav = ({ onOpenDrawer, onOpenSearch }) => {
               style={{ 
                 background: 'none', border: 'none', padding: 0, 
                 color: 'inherit', flex: 1, display: 'flex', 
-                justifyContent: 'center', height: '100%', cursor: 'pointer' 
+                justifyContent: 'center', alignItems: 'center',
+                height: '100%', cursor: 'pointer',
+                position: 'relative',
               }}
             >
-              {content}
+              <div style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '50%',
+                background: '#113013',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                marginTop: '-28px',
+                boxShadow: '0 4px 12px rgba(17,48,19,0.25)',
+                transition: 'transform 0.2s ease',
+              }}>
+                <Icon size={20} strokeWidth={2} style={{ color: 'white' }} />
+              </div>
             </button>
           );
         }

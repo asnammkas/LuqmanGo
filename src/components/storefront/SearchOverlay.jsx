@@ -60,8 +60,8 @@ const SearchOverlay = ({ isOpen, onClose }) => {
       `}</style>
       
       {/* Header with Search Input */}
-      <div style={{ padding: '1.5rem', maxWidth: '800px', width: '100%', margin: '0 auto' }}>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '4vh' }}>
+      <div style={{ padding: '0.75rem 1.5rem', maxWidth: '800px', width: '100%', margin: '0 auto' }}>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0' }}>
           <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', color: '#113013' }}>
             <X size={32} strokeWidth={1.5} />
           </button>

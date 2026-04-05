@@ -33,9 +33,20 @@ exports.validateAndCreateOrder = onCall(async (request) => {
     const orderId = `ord_${Date.now()}`;
     
     await db.runTransaction(async (transaction) => {
+      // ─── Phase 1: ALL READS first (Firestore requirement) ───────────
+      const productRefs = [];
+      const productSnaps = [];
+
       for (const item of cart) {
         const productRef = db.collection("products").doc(item.id.toString());
-        const productSnap = await transaction.get(productRef);
+        productRefs.push(productRef);
+        productSnaps.push(await transaction.get(productRef));
+      }
+
+      // ─── Phase 2: VALIDATE all read data ────────────────────────────
+      for (let i = 0; i < cart.length; i++) {
+        const item = cart[i];
+        const productSnap = productSnaps[i];
 
         if (!productSnap.exists) {
           throw new HttpsError("not-found", `Product ${item.id} not found.`);
@@ -50,7 +61,7 @@ exports.validateAndCreateOrder = onCall(async (request) => {
         }
 
         serverTotal += currentPrice * item.quantity;
-        
+
         orderItems.push({
           id: item.id,
           title: productData.title,
@@ -58,9 +69,14 @@ exports.validateAndCreateOrder = onCall(async (request) => {
           quantity: item.quantity,
           image: productData.image
         });
+      }
 
-        transaction.update(productRef, {
-          stock: currentStock - item.quantity
+      // ─── Phase 3: ALL WRITES after reads are done ───────────────────
+      for (let i = 0; i < cart.length; i++) {
+        const productData = productSnaps[i].data();
+        const currentStock = productData.stock || 0;
+        transaction.update(productRefs[i], {
+          stock: currentStock - cart[i].quantity
         });
       }
 
