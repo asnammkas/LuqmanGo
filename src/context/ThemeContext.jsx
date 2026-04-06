@@ -6,7 +6,11 @@ export const useTheme = () => useContext(ThemeContext);
 
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('luqman_theme') || 'light';
+    try {
+      return localStorage.getItem('luqman_theme') || 'light';
+    } catch {
+      return 'light';
+    }
   });
 
   useEffect(() => {

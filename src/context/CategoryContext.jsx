@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { db } from '../config/firebase';
 import { collection, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { logger } from '../utils/logger';
 
 const CategoryContext = createContext();
 
@@ -21,10 +22,10 @@ export const CategoryProvider = ({ children }) => {
   const [categoriesError, setCategoriesError] = useState(null);
 
   useEffect(() => {
-    console.log("Initializing Firebase Category Listener...");
+    logger.info("Initializing Firebase Category Listener...");
     const fallbackTimer = setTimeout(() => {
       if (isCategoriesLoading) {
-        console.warn("Firebase connection timed out (15s). Falling back to mock categories.");
+        logger.warn("Firebase connection timed out (15s). Falling back to mock categories.");
         setCategories(initialMockCategories);
         setIsCategoriesLoading(false);
       }
@@ -32,19 +33,19 @@ export const CategoryProvider = ({ children }) => {
 
     try {
       const unsubscribe = onSnapshot(collection(db, 'categories'), (snapshot) => {
-        console.log("Firebase Category Snapshot received!", snapshot.empty ? "Empty" : "Data found");
+        logger.info("Firebase Category Snapshot received!", snapshot.empty ? "Empty" : "Data found");
         clearTimeout(fallbackTimer);
         
         if (snapshot.empty) {
-          console.log("Seeding category database with initial data...");
+          logger.info("Seeding category database with initial data...");
           const seedDatabase = async () => {
             try {
               for (const c of initialMockCategories) {
                  await setDoc(doc(db, 'categories', c.id.toString()), c);
               }
-              console.log("Category database seeded successfully.");
+              logger.info("Category database seeded successfully.");
             } catch (err) {
-              console.error("Category seeding failed:", err.message);
+              logger.error("Category seeding failed:", err.message);
               setCategories(initialMockCategories);
               setIsCategoriesLoading(false);
             }
@@ -63,7 +64,7 @@ export const CategoryProvider = ({ children }) => {
         }
       }, (error) => {
         clearTimeout(fallbackTimer);
-        console.error("Firebase Category Snapshot Error:", error.message, error.code);
+        logger.error("Firebase Category Snapshot Error:", error.message, error.code);
         setCategoriesError(error.message);
         setCategories(initialMockCategories);
         setIsCategoriesLoading(false);
@@ -74,7 +75,7 @@ export const CategoryProvider = ({ children }) => {
         clearTimeout(fallbackTimer);
       };
     } catch (err) {
-      console.error("Error setting up onSnapshot for categories:", err.message);
+      logger.error("Error setting up onSnapshot for categories:", err.message);
       setCategories(initialMockCategories);
       setIsCategoriesLoading(false);
     }
@@ -85,7 +86,7 @@ export const CategoryProvider = ({ children }) => {
       const newId = category.id || Date.now().toString();
       await setDoc(doc(db, 'categories', newId), { ...category, id: newId });
     } catch (e) {
-      console.error("Error adding category: ", e);
+      logger.error("Error adding category: ", e);
     }
   };
 
@@ -93,7 +94,7 @@ export const CategoryProvider = ({ children }) => {
     try {
       await setDoc(doc(db, 'categories', id), updatedFields, { merge: true });
     } catch (e) {
-      console.error("Error updating category: ", e);
+      logger.error("Error updating category: ", e);
     }
   };
 
@@ -101,7 +102,7 @@ export const CategoryProvider = ({ children }) => {
     try {
       await deleteDoc(doc(db, 'categories', id));
     } catch (e) {
-      console.error("Error deleting category: ", e);
+      logger.error("Error deleting category: ", e);
     }
   };
 

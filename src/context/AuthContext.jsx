@@ -11,6 +11,7 @@ import {
 } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
+import { logger } from '../utils/logger';
 
 const AuthContext = createContext();
 
@@ -58,7 +59,7 @@ export const AuthProvider = ({ children }) => {
       const adminDoc = await getDoc(doc(db, 'admins', uid));
       return adminDoc.exists();
     } catch (error) {
-      console.error('Error checking admin status:', error);
+      logger.error('Error checking admin status:', error);
       return false;
     }
   };

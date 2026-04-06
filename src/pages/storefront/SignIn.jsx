@@ -10,13 +10,43 @@ const SignIn = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { login, loginWithGoogle } = useAuth();
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [resetStatus, setResetStatus] = useState({ type: '', message: '' });
+  const [isResetting, setIsResetting] = useState(false);
+  const { login, loginWithGoogle, resetPassword } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
 
   // Get the redirect destination from state, defaulting to home
   const from = location.state?.from?.pathname || '/';
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault();
+    if (!resetEmail.trim()) {
+      setResetStatus({ type: 'error', message: 'Please enter your email address.' });
+      return;
+    }
+    setIsResetting(true);
+    setResetStatus({ type: '', message: '' });
+    try {
+      await resetPassword(resetEmail);
+      setResetStatus({ type: 'success', message: 'Password reset email sent! Check your inbox.' });
+      toast.success('Password reset email sent!');
+    } catch (err) {
+      const code = err.code;
+      if (code === 'auth/user-not-found') {
+        setResetStatus({ type: 'error', message: 'No account found with this email address.' });
+      } else if (code === 'auth/invalid-email') {
+        setResetStatus({ type: 'error', message: 'Please enter a valid email address.' });
+      } else {
+        setResetStatus({ type: 'error', message: 'Failed to send reset email. Please try again.' });
+      }
+    } finally {
+      setIsResetting(false);
+    }
+  };
 
   const handleGoogleSignIn = async () => {
     setError('');
@@ -137,7 +167,13 @@ const SignIn = () => {
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: 'var(--color-text-muted)' }}>
                 <input type="checkbox" /> Remember me
               </label>
-              <Link to="#" style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none' }}>Forgot Password?</Link>
+              <button 
+                type="button" 
+                onClick={() => { setShowResetModal(true); setResetEmail(email); setResetStatus({ type: '', message: '' }); }}
+                style={{ color: 'var(--color-primary)', fontWeight: 600, textDecoration: 'none', background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.85rem', padding: 0 }}
+              >
+                Forgot Password?
+              </button>
             </div>
 
             <button 
@@ -215,6 +251,83 @@ const SignIn = () => {
             </Link>
           </div>
         </div>
+
+        {/* Forgot Password Modal */}
+        {showResetModal && (
+          <div 
+            onClick={() => setShowResetModal(false)}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 9999,
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              backdropFilter: 'blur(4px)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              padding: '1.5rem',
+              animation: 'fadeIn 0.2s ease'
+            }}
+          >
+            <div 
+              onClick={e => e.stopPropagation()}
+              style={{
+                backgroundColor: 'white', borderRadius: '24px',
+                padding: '2rem', maxWidth: '400px', width: '100%',
+                boxShadow: '0 25px 60px rgba(0,0,0,0.2)',
+              }}
+            >
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 700, color: '#001d04', marginBottom: '0.5rem' }}>
+                Reset Password
+              </h3>
+              <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: 1.6, marginBottom: '1.5rem' }}>
+                Enter your email address and we'll send you a link to reset your password.
+              </p>
+
+              {resetStatus.message && (
+                <div style={{ 
+                  padding: '0.8rem 1rem', borderRadius: '12px', marginBottom: '1rem',
+                  backgroundColor: resetStatus.type === 'success' ? '#E4EDDB' : '#FEF2F2',
+                  color: resetStatus.type === 'success' ? '#436132' : '#991B1B',
+                  fontSize: '0.85rem', fontWeight: 500,
+                  display: 'flex', alignItems: 'center', gap: '0.5rem'
+                }}>
+                  <AlertCircle size={14} />
+                  {resetStatus.message}
+                </div>
+              )}
+
+              <form onSubmit={handleResetPassword}>
+                <div style={{ position: 'relative', marginBottom: '1.2rem' }}>
+                  <div style={{ position: 'absolute', top: '50%', transform: 'translateY(-50%)', left: '1rem', color: 'var(--color-text-muted)' }}>
+                    <Mail size={18} />
+                  </div>
+                  <input 
+                    type="email" 
+                    placeholder="Email Address" 
+                    value={resetEmail}
+                    onChange={(e) => setResetEmail(e.target.value)}
+                    required
+                    disabled={isResetting}
+                    style={{ width: '100%', padding: '0.9rem 1rem 0.9rem 2.8rem', borderRadius: '12px', border: '2px solid var(--color-border)', backgroundColor: 'transparent', color: 'var(--color-text-main)', fontSize: '0.95rem', outline: 'none', boxSizing: 'border-box' }}
+                  />
+                </div>
+                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                  <button 
+                    type="button" 
+                    onClick={() => setShowResetModal(false)}
+                    style={{ flex: 1, padding: '0.85rem', borderRadius: '14px', border: '1px solid rgba(0,0,0,0.08)', backgroundColor: 'white', color: '#706F65', fontWeight: 600, fontSize: '0.88rem', cursor: 'pointer', fontFamily: 'inherit' }}
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    disabled={isResetting}
+                    style={{ flex: 1, padding: '0.85rem', borderRadius: '14px', border: 'none', backgroundColor: '#001d04', color: 'white', fontWeight: 700, fontSize: '0.88rem', cursor: isResetting ? 'not-allowed' : 'pointer', opacity: isResetting ? 0.7 : 1, fontFamily: 'inherit' }}
+                  >
+                    {isResetting ? 'Sending...' : 'Send Reset Link'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
       <Footer />
     </div>

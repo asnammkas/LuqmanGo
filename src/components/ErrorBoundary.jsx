@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { logger } from '../utils/logger';
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -14,7 +15,7 @@ class ErrorBoundary extends Component {
   componentDidCatch(error, errorInfo) {
     this.setState({ errorInfo });
     // Log to console in development
-    console.error('[ErrorBoundary] Caught error:', error, errorInfo);
+    logger.error('[ErrorBoundary] Caught error:', error, errorInfo);
   }
 
   handleReset = () => {

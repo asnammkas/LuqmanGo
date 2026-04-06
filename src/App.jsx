@@ -1,7 +1,6 @@
 import { lazy, Suspense, useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { AuthProvider } from './context/AuthContext';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
@@ -73,7 +72,7 @@ function AppContent() {
     const timer = setTimeout(() => {
       setFadeOut(true);
       setTimeout(() => setIsLoading(false), 600);
-    }, 3200); 
+    }, 2200); 
     return () => clearTimeout(timer);
   }, []);
 
@@ -233,11 +232,7 @@ function AppContent() {
 }
 
 function App() {
-  return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
-  );
+  return <AppContent />;
 }
 
 export default App;

@@ -58,7 +58,7 @@ const CartCheckout = () => {
       const textMessage = `*📦 NEW ORDER - LuqmanGo*%0A%0A*👤 Customer Details*%0A━━━━━━━━━━━━━━%0A*Name:* ${formData.name}%0A*Email:* ${formData.email}%0A*Phone:* ${formData.phone}%0A*Address:* ${formData.address}%0A%0A*💳 Payment Method:* ${formData.paymentMethod}%0A%0A*🛒 Order Summary*%0A━━━━━━━━━━━━━━%0A${orderDetails}%0A%0A*💰 TOTAL AMOUNT: LKR ${getCartTotal().toFixed(2)}*%0A%0A_Order ID: ${orderId}_%0A%0A_Thank you for shopping with LuqmanGo!_`;
       
       // 3. Open WhatsApp Direct Link to Vendor
-      const vendorPhone = "94725065252"; 
+      const vendorPhone = import.meta.env.VITE_VENDOR_WHATSAPP || "94725065252"; 
       window.open(`https://wa.me/${vendorPhone}?text=${textMessage}`, '_blank');
       
       // 4. Finalize UI state

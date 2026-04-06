@@ -4,6 +4,7 @@ import {
   collection, onSnapshot, doc, setDoc, deleteDoc, 
   query, limit, orderBy, startAfter, getDocs, where
 } from 'firebase/firestore';
+import { logger } from '../utils/logger';
 
 const ProductContext = createContext();
 
@@ -20,8 +21,6 @@ export const ProductProvider = ({ children }) => {
 
   // ─── Real-time listener for ALL products ───
   useEffect(() => {
-    console.log("Initializing Real-time Firebase Listeners...");
-    
     const allProductsQuery = query(
       collection(db, 'products'),
       orderBy('title')
@@ -45,7 +44,7 @@ export const ProductProvider = ({ children }) => {
       setIsProductsLoading(false);
       clearTimeout(fallbackTimer);
     }, (err) => {
-      console.error("Products listener error:", err);
+      logger.error("Products listener error:", err);
       setProductsError("Failed to load products. Please refresh.");
       setIsProductsLoading(false);
     });
@@ -84,7 +83,7 @@ export const ProductProvider = ({ children }) => {
       
       return { products: loaded, lastDoc: lastVisible, hasMore: canLoadMore };
     } catch (err) {
-      console.error("Category Fetch Error:", err);
+      logger.error("Category Fetch Error:", err);
       return { products: [], lastDoc: null, hasMore: false };
     }
   }, []);
@@ -110,7 +109,7 @@ export const ProductProvider = ({ children }) => {
       
       return { products: loaded, lastDoc: lastVisible, hasMore: canLoadMore };
     } catch (err) {
-      console.error("Category Load More Error:", err);
+      logger.error("Category Load More Error:", err);
       return { products: [], lastDoc: afterDoc, hasMore: false };
     }
   }, []);
@@ -123,7 +122,7 @@ export const ProductProvider = ({ children }) => {
       // Refresh home page products
       fetchAllProducts();
     } catch (e) {
-      console.error("Error adding document: ", e);
+      logger.error("Error adding document: ", e);
     }
   };
 
@@ -132,7 +131,7 @@ export const ProductProvider = ({ children }) => {
       await setDoc(doc(db, 'products', id), updatedFields, { merge: true });
       fetchAllProducts();
     } catch (e) {
-      console.error("Error updating document: ", e);
+      logger.error("Error updating document: ", e);
     }
   };
 
@@ -141,7 +140,7 @@ export const ProductProvider = ({ children }) => {
       await deleteDoc(doc(db, 'products', id));
       setProducts(prev => prev.filter(p => p.id !== id));
     } catch (e) {
-      console.error("Error deleting document: ", e);
+      logger.error("Error deleting document: ", e);
     }
   };
 

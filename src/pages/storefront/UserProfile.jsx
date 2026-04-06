@@ -168,9 +168,6 @@ const UserProfile = () => {
     name: currentUser?.displayName || 'LuqmanGo Member',
     email: currentUser?.email || '',
     initials: (currentUser?.displayName || 'U').split(' ').map(n => n[0]).join('').toUpperCase(),
-    points: '2,450',
-    trees: 12,
-    ordersInTransit: 3
   };
 
   const handleLogout = async () => {
@@ -483,81 +480,14 @@ const UserProfile = () => {
       <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem', maxWidth: '700px' }}>
         Securely manage your preferred payment methods. Your financial integrity is our primary commitment.
       </p>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '1rem' }}>
-        <div style={{ 
-          backgroundColor: '#EAE1D3', 
-          color: '#001d04', borderRadius: '24px', padding: '1.5rem 1.8rem', 
-          border: '1px solid rgba(0,0,0,0.05)',
-          position: 'relative', overflow: 'hidden'
-        }}>
-          <div style={{ position: 'absolute', right: '-10px', bottom: '-10px', opacity: 0.05 }}>
-             <CreditCard size={150} />
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2.5rem', alignItems: 'center' }}>
-            <span style={{ fontWeight: 800, letterSpacing: '0.15em', fontStyle: 'italic', fontSize: '1.1rem' }}>VISA</span>
-            <div style={{ padding: '0.2rem 0.6rem', backgroundColor: '#001d04', color: 'white', borderRadius: '6px', fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.05em' }}>DEFAULT</div>
-          </div>
-          <div style={{ fontSize: '1.2rem', letterSpacing: '0.2em', marginBottom: '1.5rem', fontFamily: 'monospace', fontWeight: 700 }}>**** **** **** 4242</div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem' }}>
-               <span style={{ fontSize: '0.55rem', fontWeight: 900 }}>CARD HOLDER</span>
-               <span style={{ fontWeight: 700 }}>{user.name}</span>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', textAlign: 'right' }}>
-               <span style={{ fontSize: '0.55rem', fontWeight: 900 }}>EXPIRES</span>
-               <span style={{ fontWeight: 700 }}>12 / 28</span>
-            </div>
-          </div>
+      <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+        <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: '#EAE1D3', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+          <CreditCard size={32} color="#706F65" />
         </div>
-        <button 
-          onClick={() => setCurrentView('add-payment')}
-          style={{ backgroundColor: '#001d04', border: 'none', color: 'white', padding: '1.5rem', borderRadius: '24px', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.8rem', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}
-        >
-          + Register New Card
-        </button>
-      </div>
-    </div>
-  );
-
-  const AddPaymentView = () => (
-    <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
-        <button 
-          onClick={() => setCurrentView('payments')}
-          style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
-        >
-          <ArrowLeft size={18} strokeWidth={2} />
-        </button>
-        <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>Register New Card</span>
-      </div>
-      <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2.5rem', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
-        Add a secure payment method for your next curated purchase. Built with industry-standard integrity.
-      </p>
-      
-      <div style={{ backgroundColor: '#EAE1D3', borderRadius: '32px', padding: '2.2rem', border: '1px solid rgba(0,0,0,0.02)', maxWidth: '600px', margin: '0 auto' }}>
-        <form style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
-          <div>
-            <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>CARDHOLDER NAME</label>
-            <input type="text" className="input" placeholder="ASNAM SANAF" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
-          </div>
-          <div>
-            <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>CARD NUMBER</label>
-            <input type="text" className="input" placeholder="0000 0000 0000 0000" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
-          </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
-            <div>
-              <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>EXPIRY DATE</label>
-              <input type="text" className="input" placeholder="MM / YY" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
-            </div>
-            <div>
-              <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>CVV</label>
-              <input type="password" size="3" className="input" placeholder="***" style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.1)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} />
-            </div>
-          </div>
-          <button type="button" onClick={() => setCurrentView('payments')} className="btn btn-primary" style={{ backgroundColor: '#001d04', color: 'white', border: 'none', padding: '1.2rem', width: '100%', borderRadius: '16px', marginTop: '1rem', fontWeight: 700, fontSize: '0.95rem', cursor: 'pointer', boxShadow: '0 8px 25px rgba(0,29,4,0.1)' }}>
-            Register Card
-          </button>
-        </form>
+        <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#001d04', marginBottom: '0.6rem' }}>Payment Integration Coming Soon</h3>
+        <p style={{ fontSize: '0.88rem', color: '#706F65', lineHeight: 1.6, maxWidth: '400px', margin: '0 auto 2rem' }}>
+          We're building a secure, seamless payment experience. For now, orders are confirmed via WhatsApp.
+        </p>
       </div>
     </div>
   );
@@ -611,188 +541,58 @@ const UserProfile = () => {
   );
 
   const OrdersView = () => {
-    const [selectedYear, setSelectedYear] = useState('All');
-    const [yearDropdownOpen, setYearDropdownOpen] = useState(false);
-    const [activeInvoice, setActiveInvoice] = useState(null);
-    const years = ['All', '2023', '2022', '2021'];
+    // Use real orders from context
+    const processingOrders = orders.filter(o => o.status === 'Processing' || o.status === 'Shipped');
+    const completedOrders = orders.filter(o => o.status === 'Delivered' || o.status === 'Cancelled');
 
-    const inTransitOrders = [
-      { id: 'LG-99281', name: 'Handcrafted Glass Vessel', status: 'ARRIVING BY', date: '10 Oct 2023', year: '2023', image: '/images/products/glass-vessel.jpg' },
-      { id: 'LG-99245', name: 'Organic Fiber Tote', status: 'ARRIVING BY', date: '12 Oct 2023', year: '2023', image: '/images/products/tote.jpg' }
-    ];
+    const getStatusConfig = (status) => {
+      switch (status) {
+        case 'Delivered':  return { bg: '#DCFCE7', color: '#15803D' };
+        case 'Processing': return { bg: '#FEF9C3', color: '#A16207' };
+        case 'Shipped':    return { bg: '#DBEAFE', color: '#1D4ED8' };
+        case 'Cancelled':  return { bg: '#FEE2E2', color: '#B91C1C' };
+        default:           return { bg: '#F3F4F6', color: '#374151' };
+      }
+    };
 
-    const allPastOrders = [
-      { id: 'LG-88712', name: 'Teak Wood Servers & 2 others', status: 'DELIVERED', date: '15 SEP 2023', year: '2023', price: 142.00, items: [{ name: 'Teak Wood Servers', qty: 1, price: 68.00 }, { name: 'Organic Linen Napkins', qty: 2, price: 24.00 }, { name: 'Olive Oil Dispenser', qty: 1, price: 50.00 }] },
-      { id: 'LG-85600', name: 'Cedarwood Soy Candle', status: 'DELIVERED', date: '02 AUG 2023', year: '2023', price: 32.00, items: [{ name: 'Cedarwood Soy Candle', qty: 1, price: 32.00 }] },
-      { id: 'LG-82199', name: 'Sculptural Bone Vase', status: 'DELIVERED', date: '28 JUL 2023', year: '2023', price: 89.00, items: [{ name: 'Sculptural Bone Vase', qty: 1, price: 89.00 }] },
-      { id: 'LG-72100', name: 'Handwoven Jute Rug', status: 'DELIVERED', date: '12 NOV 2022', year: '2022', price: 215.00, items: [{ name: 'Handwoven Jute Rug', qty: 1, price: 215.00 }] },
-      { id: 'LG-68400', name: 'Artisan Ceramic Set', status: 'DELIVERED', date: '05 MAR 2022', year: '2022', price: 76.00, items: [{ name: 'Artisan Ceramic Bowl', qty: 2, price: 38.00 }] }
-    ];
+    const OrderCard = ({ order }) => {
+      const sc = getStatusConfig(order.status);
+      const itemCount = order.items?.length || 0;
+      const firstItem = order.items?.[0];
+      const orderName = firstItem 
+        ? (itemCount > 1 ? `${firstItem.title || firstItem.name} & ${itemCount - 1} other${itemCount > 2 ? 's' : ''}` : (firstItem.title || firstItem.name))
+        : 'Order';
 
-    const pastOrders = selectedYear === 'All' ? allPastOrders : allPastOrders.filter(o => o.year === selectedYear);
-
-    // Invoice Detail View
-    if (activeInvoice) {
-      const order = allPastOrders.find(o => o.id === activeInvoice);
-      if (!order) { setActiveInvoice(null); return null; }
       return (
-        <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
-            <button 
-              onClick={() => setActiveInvoice(null)}
-              style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', color: '#001d04', padding: '0.3rem', marginLeft: '-0.3rem' }}
-            >
-              <ArrowLeft size={18} strokeWidth={2.5} />
-            </button>
-            <span style={{ fontSize: '1rem', fontWeight: 600, color: '#001d04', letterSpacing: '0.02em' }}>Order Receipt</span>
+        <div style={{ 
+          backgroundColor: '#EAE1D3', borderRadius: '20px', padding: '1.2rem',
+          border: '1px solid rgba(0,0,0,0.02)'
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.6rem' }}>
+            <div>
+              <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#001d04', marginBottom: '0.2rem' }}>{orderName}</h4>
+              <div style={{ fontSize: '0.75rem', color: '#706F65' }}>Order #{order.id?.substring(0, 8)}</div>
+            </div>
+            <span style={{
+              fontSize: '0.6rem', fontWeight: 700, padding: '0.25rem 0.6rem',
+              borderRadius: '100px', backgroundColor: sc.bg, color: sc.color,
+              letterSpacing: '0.05em', textTransform: 'uppercase', flexShrink: 0
+            }}>
+              {order.status}
+            </span>
           </div>
-          
-          <div style={{ 
-            backgroundColor: '#EAE1D3', 
-            borderRadius: '32px', 
-            padding: '2.5rem 2rem', maxWidth: '600px', margin: '0 auto',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.04)',
-            border: '1px solid rgba(0,0,0,0.02)',
-            position: 'relative'
-          }}>
-            {/* Header Section */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem' }}>
-              <div>
-                <div style={{ fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.15em', color: '#706F65', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Invoice</div>
-                <div style={{ fontSize: '1.1rem', fontWeight: 700, color: '#001d04', letterSpacing: '-0.01em' }}>#{order.id}</div>
-              </div>
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: '0.6rem', fontWeight: 800, letterSpacing: '0.15em', color: '#706F65', marginBottom: '0.4rem', textTransform: 'uppercase' }}>Date</div>
-                <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#001d04' }}>{order.date}</div>
-              </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.6rem', borderTop: '1px solid rgba(0,0,0,0.04)' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.15rem' }}>
+              <span style={{ fontSize: '0.6rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
+              <span style={{ fontSize: '1rem', fontWeight: 700, color: '#001d04' }}>{Math.round(order.total).toLocaleString()}</span>
             </div>
-
-            {/* Delivery Status */}
-            <div style={{ 
-              display: 'inline-flex', 
-              alignItems: 'center', 
-              gap: '0.4rem', 
-              backgroundColor: 'white', 
-              color: '#436132', 
-              padding: '0.4rem 0.8rem', 
-              borderRadius: '100px', 
-              fontSize: '0.65rem', 
-              fontWeight: 700, 
-              letterSpacing: '0.05em', 
-              marginBottom: '1.5rem',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.03)',
-              border: '1px solid rgba(67, 97, 50, 0.1)'
-            }}>
-              <PackageCheck size={14} strokeWidth={2.5} /> {order.status}
-            </div>
-
-            {/* Line Items Label */}
-            <div style={{ 
-              fontSize: '0.6rem', 
-              fontWeight: 800, 
-              letterSpacing: '0.15em', 
-              color: '#706F65', 
-              marginBottom: '0.8rem', 
-              textTransform: 'uppercase',
-              borderBottom: '1px solid rgba(0,0,0,0.05)',
-              paddingBottom: '0.6rem'
-            }}>
-              Items
-            </div>
-
-            {/* Items List */}
-            <div style={{ marginBottom: '1.2rem' }}>
-              {order.items.map((item, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', padding: '0.8rem 0' }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontSize: '0.95rem', fontWeight: 600, color: '#001d04', lineHeight: 1.3 }}>{item.name}</div>
-                    <div style={{ fontSize: '0.75rem', color: '#706F65', marginTop: '0.2rem', fontWeight: 400 }}>Qty: {item.qty}</div>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.15rem', marginLeft: '1rem' }}>
-                    <span style={{ fontSize: '0.65rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
-                    <span style={{ fontSize: '1rem', fontWeight: 700, color: '#001d04' }}>
-                      {Math.round(item.price).toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Billing Summary */}
-            <div style={{ 
-              borderTop: '1.5px solid rgba(0,0,0,0.06)', 
-              paddingTop: '1.2rem',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.6rem'
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#706F65', fontWeight: 400 }}>
-                <span>Subtotal</span>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem' }}>
-                  <span style={{ fontSize: '0.65rem', fontWeight: 700 }}>LKR</span>
-                  <span style={{ color: '#001d04', fontWeight: 600 }}>{Math.round(order.price).toLocaleString()}</span>
-                </div>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#706F65', fontWeight: 400 }}>
-                <span>Shipping</span>
-                <span style={{ color: '#436132', fontWeight: 700, letterSpacing: '0.05em' }}>COMPLIMENTARY</span>
-              </div>
-              
-              <div style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                marginTop: '0.8rem', 
-                paddingTop: '1rem', 
-                borderTop: '1.5px solid rgba(0,0,0,0.05)', 
-                fontSize: '1.2rem', 
-                fontWeight: 700, 
-                color: '#001d04',
-                letterSpacing: '-0.02em'
-              }}>
-                <span>Total</span>
-                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem' }}>
-                  <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
-                  <span>{Math.round(order.price).toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Brand Signature */}
-            <div style={{ 
-              marginTop: '2rem', 
-              textAlign: 'center', 
-              borderTop: '1px solid rgba(0,0,0,0.03)', 
-              paddingTop: '1.5rem',
-              opacity: 0.6
-            }}>
-                <div style={{ fontSize: '0.75rem', fontWeight: 500, color: '#001d04', letterSpacing: '0.05em', fontStyle: 'italic' }}>
-                  Thank you for curating with LuqmanGo
-                </div>
-                <div style={{ fontSize: '0.6rem', marginTop: '0.4rem', letterSpacing: '0.1em', fontWeight: 400 }}>
-                  WWW.LUQMANGO.COM
-                </div>
-            </div>
-          </div>
-
-          {/* Shipping Address Section - Improved Design */}
-          <div style={{ 
-            marginTop: '1.5rem', 
-            backgroundColor: '#E4EDDB', 
-            borderRadius: '24px', 
-            padding: '1.75rem', 
-            border: '1px solid rgba(67, 97, 50, 0.1)'
-          }}>
-            <div style={{ fontSize: '0.65rem', fontWeight: 800, letterSpacing: '0.15em', color: '#706F65', marginBottom: '1rem', textTransform: 'uppercase' }}>Shipped To</div>
-            <div style={{ fontSize: '1rem', fontWeight: 700, color: '#001d04', marginBottom: '0.4rem' }}>Asnam Sanaf</div>
-            <div style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: 1.6, fontWeight: 400 }}>
-              Flat 402, Sylvan Heights<br/>
-              Central District, Luqman Street<br/>
-              Kochi, Kerala 682001
+            <div style={{ fontSize: '0.75rem', color: '#706F65' }}>
+              {order.date ? new Date(order.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}
             </div>
           </div>
         </div>
       );
-    }
+    };
 
     return (
       <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
@@ -808,151 +608,62 @@ const UserProfile = () => {
             <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04' }}>My Orders</span>
           </div>
           <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '1.5rem' }}>
-            A curated history of your sustainable journeys. Track your ongoing deliveries or revisit past eco-friendly purchases.
+            Track your ongoing deliveries or revisit past purchases.
           </p>
 
-          {/* In Transit */}
-          <div style={{ marginBottom: '1.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.2rem' }}>
-              <Truck size={18} color="#436132" fill="#436132" fillOpacity={0.2} />
-              <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#001d04' }}>In Transit</h3>
+          {orders.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '4rem 2rem' }}>
+              <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: '#EAE1D3', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+                <Package size={32} color="#706F65" />
+              </div>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#001d04', marginBottom: '0.6rem' }}>No Orders Yet</h3>
+              <p style={{ fontSize: '0.88rem', color: '#706F65', lineHeight: 1.6, maxWidth: '400px', margin: '0 auto 2rem' }}>
+                Your orders will appear here once you start shopping.
+              </p>
+              <button 
+                onClick={() => navigate('/')}
+                style={{ backgroundColor: '#001d04', color: 'white', border: 'none', padding: '0.9rem 2rem', borderRadius: '14px', fontWeight: 700, fontSize: '0.9rem', cursor: 'pointer' }}
+              >
+                Start Shopping
+              </button>
             </div>
-            
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '1.5rem' }}>
-              {inTransitOrders.map((order, idx) => (
-                <div key={idx} style={{ 
-                  backgroundColor: '#EAE1D3', 
-                  borderRadius: '16px', padding: '1.2rem', 
-                  display: 'flex', gap: '1.2rem',
-                  border: '1px solid rgba(0,0,0,0.02)'
-                }}>
-                  <div style={{ width: '70px', height: '70px', borderRadius: '10px', overflow: 'hidden', backgroundColor: 'rgba(255,255,255,0.4)' }}>
-                    <div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0,29,4,0.05)' }}></div>
+          ) : (
+            <>
+              {/* Active Orders */}
+              {processingOrders.length > 0 && (
+                <div style={{ marginBottom: '2rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.2rem' }}>
+                    <Truck size={18} color="#436132" fill="#436132" fillOpacity={0.2} />
+                    <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#001d04' }}>Active ({processingOrders.length})</h3>
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <h4 style={{ fontSize: '1rem', fontWeight: 700, color: '#001d04', marginBottom: '0.2rem' }}>{order.name}</h4>
-                    <div style={{ fontSize: '0.8rem', color: '#706F65', marginBottom: '0.8rem' }}>Order #{order.id}</div>
-                    
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                      <span style={{ fontSize: '0.65rem', fontWeight: 900, color: '#436132', letterSpacing: '0.06em' }}>{order.status}</span>
-                      <span style={{ fontWeight: 700, color: '#001d04', fontSize: '0.9rem' }}>{order.date}</span>
-                    </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
+                    {processingOrders.map(order => (
+                      <OrderCard key={order.id} order={order} />
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
+              )}
 
-          {/* Order History */}
-          <div style={{ marginBottom: '2rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.2rem' }}>
-              <h3 style={{ fontSize: '1.2rem', fontWeight: 700, color: '#001d04' }}>Order History</h3>
-              
-              {/* Year Filter Dropdown */}
-              <div style={{ position: 'relative' }}>
-                <button 
-                  onClick={() => setYearDropdownOpen(!yearDropdownOpen)}
-                  style={{ 
-                    display: 'flex', alignItems: 'center', gap: '0.3rem', 
-                    color: '#706F65', fontSize: '0.8rem', fontWeight: 600,
-                    background: 'none', border: '1px solid rgba(0,0,0,0.08)', 
-                    padding: '0.4rem 0.8rem', borderRadius: '10px', cursor: 'pointer',
-                    backgroundColor: yearDropdownOpen ? '#EAE1D3' : 'transparent',
-                    transition: 'all 0.2s'
-                  }}
-                >
-                  {selectedYear === 'All' ? 'Filter by Year' : selectedYear} <ChevronDown size={14} style={{ transform: yearDropdownOpen ? 'rotate(180deg)' : 'rotate(0)', transition: 'transform 0.2s' }} />
-                </button>
-                {yearDropdownOpen && (
-                  <div style={{ 
-                    position: 'absolute', top: '100%', right: 0, marginTop: '0.4rem',
-                    backgroundColor: 'white', borderRadius: '14px', 
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.1)', border: '1px solid rgba(0,0,0,0.04)',
-                    overflow: 'hidden', zIndex: 20, minWidth: '130px'
-                  }}>
-                    {years.map(year => (
-                      <button 
-                        key={year}
-                        onClick={() => { setSelectedYear(year); setYearDropdownOpen(false); }}
-                        style={{ 
-                          display: 'block', width: '100%', textAlign: 'left',
-                          padding: '0.7rem 1rem', border: 'none', cursor: 'pointer',
-                          fontSize: '0.85rem', fontWeight: selectedYear === year ? 700 : 500,
-                          color: selectedYear === year ? '#001d04' : '#706F65',
-                          backgroundColor: selectedYear === year ? '#FBF5EC' : 'transparent',
-                          transition: 'background-color 0.15s'
-                        }}
-                        onMouseOver={(e) => { if (selectedYear !== year) e.currentTarget.style.backgroundColor = '#FAF8F5'; }}
-                        onMouseOut={(e) => { if (selectedYear !== year) e.currentTarget.style.backgroundColor = 'transparent'; }}
-                      >
-                        {year === 'All' ? 'All Years' : year}
-                      </button>
+              {/* Completed Orders */}
+              <div style={{ marginBottom: '2rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '1.2rem' }}>
+                  <PackageCheck size={18} color="#436132" />
+                  <h3 style={{ fontSize: '1rem', fontWeight: 700, color: '#001d04' }}>Completed ({completedOrders.length})</h3>
+                </div>
+                {completedOrders.length === 0 ? (
+                  <div style={{ textAlign: 'center', padding: '2rem', color: '#706F65', fontSize: '0.85rem', backgroundColor: '#EAE1D3', borderRadius: '16px' }}>
+                    No completed orders yet.
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.7rem' }}>
+                    {completedOrders.map(order => (
+                      <OrderCard key={order.id} order={order} />
                     ))}
                   </div>
                 )}
               </div>
-            </div>
-
-            {pastOrders.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '3rem 1rem', color: '#706F65', fontSize: '0.9rem' }}>
-                No orders found for {selectedYear}.
-              </div>
-            ) : (
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '2.5rem' }}>
-                {pastOrders.map((order, idx) => (
-                  <div key={idx} style={{ display: 'flex', gap: '1.2rem' }}>
-                    <div style={{ width: '60px', height: '60px', borderRadius: '8px', overflow: 'hidden', backgroundColor: '#EAE1D3' }}>
-                      <div style={{ width: '100%', height: '100%', backgroundColor: '#D4CFC5' }}></div>
-                    </div>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: '0.65rem', fontWeight: 700, color: '#706F65', marginBottom: '0.3rem' }}>
-                        {order.status} • {order.date}
-                      </div>
-                      <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#001d04', marginBottom: '0.2rem' }}>{order.name}</h4>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.75rem', color: '#706F65', marginBottom: '0.8rem' }}>
-                        <span>Order #{order.id} •</span>
-                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.15rem' }}>
-                          <span style={{ fontSize: '0.6rem', fontWeight: 700 }}>LKR</span>
-                          <span style={{ fontWeight: 600, color: '#001d04' }}>{Math.round(order.price).toLocaleString()}</span>
-                        </div>
-                      </div>
-                      
-                      <div style={{ display: 'flex', gap: '0.8rem' }}>
-                        <button 
-                          onClick={() => setActiveInvoice(order.id)}
-                          style={{ 
-                            backgroundColor: 'white', border: '1px solid #D4CFC5', 
-                            color: '#001d04', padding: '0.4rem 1rem', 
-                            borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600,
-                            cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem',
-                            transition: 'all 0.2s'
-                          }}
-                          onMouseOver={(e) => e.currentTarget.style.borderColor = '#001d04'}
-                          onMouseOut={(e) => e.currentTarget.style.borderColor = '#D4CFC5'}
-                        >
-                          <FileText size={13} /> Invoice
-                        </button>
-                        <button 
-                          onClick={() => navigate('/')}
-                          style={{ 
-                            backgroundColor: '#001d04', border: 'none', 
-                            color: 'white', padding: '0.4rem 1rem', 
-                            borderRadius: '10px', fontSize: '0.8rem', fontWeight: 600,
-                            cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem',
-                            transition: 'all 0.2s'
-                          }}
-                          onMouseOver={(e) => e.currentTarget.style.opacity = '0.85'}
-                          onMouseOut={(e) => e.currentTarget.style.opacity = '1'}
-                        >
-                          <RefreshCw size={13} /> Buy Again
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+            </>
+          )}
         </div>
       </div>
     );
@@ -1056,7 +767,6 @@ const UserProfile = () => {
   if (currentView === 'add-address') return <AddAddressView />;
   if (currentView === 'edit-address') return <EditAddressView />;
   if (currentView === 'payments') return <PaymentsView />;
-  if (currentView === 'add-payment') return <AddPaymentView />;
   if (currentView === 'notifications') return <NotificationsView />;
   if (currentView === 'orders') return <OrdersView />;
   if (currentView === 'help') return <HelpCenterView />;
@@ -1106,7 +816,7 @@ const UserProfile = () => {
             </div>
             <div style={{ flexGrow: 1, textAlign: 'left' }}>
               <div style={{ fontWeight: 700, color: '#001d04', fontSize: '0.95rem', marginBottom: '0.1rem' }}>Shipping Addresses</div>
-              <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 400 }}>2 saved locations</div>
+              <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 400 }}>{addresses.length} saved location{addresses.length !== 1 ? 's' : ''}</div>
             </div>
             <ChevronRight size={16} color="#C5BBB0" />
           </button>
@@ -1117,7 +827,7 @@ const UserProfile = () => {
             </div>
             <div style={{ flexGrow: 1, textAlign: 'left' }}>
               <div style={{ fontWeight: 700, color: '#001d04', fontSize: '0.95rem', marginBottom: '0.1rem' }}>Payment Methods</div>
-              <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 400 }}>Visa ending in 4242</div>
+              <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 400 }}>Coming soon</div>
             </div>
             <ChevronRight size={16} color="#C5BBB0" />
           </button>
