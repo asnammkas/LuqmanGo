@@ -131,7 +131,7 @@ const OrderManagement = () => {
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.2rem' }}>
                         <span style={{ fontSize: '0.8rem', color: '#706F65', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{order.customer.name}</span>
-                        <span style={{ fontSize: '1rem', fontWeight: 800, color: '#436132', letterSpacing: '-0.02em', flexShrink: 0, marginLeft: '0.5rem' }}>${order.total.toFixed(2)}</span>
+                        <span style={{ fontSize: '1rem', fontWeight: 800, color: '#436132', letterSpacing: '-0.02em', flexShrink: 0, marginLeft: '0.5rem' }}>LKR {order.total.toFixed(2)}</span>
                       </div>
                     </div>
                     <ChevronRight size={15} color="#9CA3AF" style={{ flexShrink: 0, transform: isExpanded ? 'rotate(90deg)' : 'rotate(0)', transition: 'transform 0.25s ease' }} />

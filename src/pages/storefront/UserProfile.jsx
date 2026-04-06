@@ -708,8 +708,11 @@ const UserProfile = () => {
                     <div style={{ fontSize: '0.95rem', fontWeight: 600, color: '#001d04', lineHeight: 1.3 }}>{item.name}</div>
                     <div style={{ fontSize: '0.75rem', color: '#706F65', marginTop: '0.2rem', fontWeight: 400 }}>Qty: {item.qty}</div>
                   </div>
-                  <div style={{ fontSize: '1rem', fontWeight: 700, color: '#001d04', marginLeft: '1rem' }}>
-                    ${item.price.toFixed(2)}
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.15rem', marginLeft: '1rem' }}>
+                    <span style={{ fontSize: '0.65rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
+                    <span style={{ fontSize: '1rem', fontWeight: 700, color: '#001d04' }}>
+                      {Math.round(item.price).toLocaleString()}
+                    </span>
                   </div>
                 </div>
               ))}
@@ -725,7 +728,10 @@ const UserProfile = () => {
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#706F65', fontWeight: 400 }}>
                 <span>Subtotal</span>
-                <span style={{ color: '#001d04', fontWeight: 500 }}>${order.price.toFixed(2)}</span>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem' }}>
+                  <span style={{ fontSize: '0.65rem', fontWeight: 700 }}>LKR</span>
+                  <span style={{ color: '#001d04', fontWeight: 600 }}>{Math.round(order.price).toLocaleString()}</span>
+                </div>
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#706F65', fontWeight: 400 }}>
                 <span>Shipping</span>
@@ -744,7 +750,10 @@ const UserProfile = () => {
                 letterSpacing: '-0.02em'
               }}>
                 <span>Total</span>
-                <span>${order.price.toFixed(2)}</span>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem' }}>
+                  <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
+                  <span>{Math.round(order.price).toLocaleString()}</span>
+                </div>
               </div>
             </div>
 
@@ -900,7 +909,13 @@ const UserProfile = () => {
                         {order.status} • {order.date}
                       </div>
                       <h4 style={{ fontSize: '0.95rem', fontWeight: 700, color: '#001d04', marginBottom: '0.2rem' }}>{order.name}</h4>
-                      <div style={{ fontSize: '0.75rem', color: '#706F65', marginBottom: '0.8rem' }}>Order #{order.id} • ${order.price.toFixed(2)}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.75rem', color: '#706F65', marginBottom: '0.8rem' }}>
+                        <span>Order #{order.id} •</span>
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.15rem' }}>
+                          <span style={{ fontSize: '0.6rem', fontWeight: 700 }}>LKR</span>
+                          <span style={{ fontWeight: 600, color: '#001d04' }}>{Math.round(order.price).toLocaleString()}</span>
+                        </div>
+                      </div>
                       
                       <div style={{ display: 'flex', gap: '0.8rem' }}>
                         <button 

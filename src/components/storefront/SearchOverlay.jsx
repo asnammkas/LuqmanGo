@@ -113,7 +113,12 @@ const SearchOverlay = ({ isOpen, onClose }) => {
                   </div>
                 </div>
                 <div style={{ textAlign: 'right' }}>
-                  <div style={{ fontWeight: 700, color: '#00C853' }}>${product.price?.toFixed(2)}</div>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.15rem', justifyContent: 'flex-end' }}>
+                    <span style={{ fontSize: '0.6rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
+                    <span style={{ fontSize: '1rem', fontWeight: 700, color: '#00C853', letterSpacing: '-0.01em' }}>
+                      {product.price?.toLocaleString()}
+                    </span>
+                  </div>
                   <ArrowRight size={16} color="#706F65" style={{ marginTop: '0.4rem' }} />
                 </div>
               </div>

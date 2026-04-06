@@ -149,14 +149,12 @@ const ProductCard = ({ product }) => {
             }}>
               {product.title}
             </h3>
-            <span style={{ 
-              fontSize: '1rem', 
-              fontWeight: 600, 
-              color: '#2a2418',
-              flexShrink: 0
-            }}>
-              ${Math.round(product.price)}
-            </span>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem', flexShrink: 0 }}>
+              <span style={{ fontSize: '0.65rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
+              <span style={{ fontSize: '1.05rem', fontWeight: 800, color: '#436132', letterSpacing: '-0.02em' }}>
+                {Math.round(product.price).toLocaleString()}
+              </span>
+            </div>
           </div>
           
           <span style={{ 

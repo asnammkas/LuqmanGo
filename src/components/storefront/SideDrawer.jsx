@@ -4,7 +4,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { 
   X, Search, LayoutGrid, Smartphone, Shirt, Leaf, Sofa, Flower2, 
-  LogIn, LogOut, UserPlus, ChevronRight, LayoutDashboard, Store
+  LogIn, LogOut, UserPlus, ChevronRight, LayoutDashboard, Store,
+  Instagram, Facebook
 } from 'lucide-react';
 
 const SideDrawer = ({ isOpen, onClose }) => {
@@ -327,6 +328,32 @@ const SideDrawer = ({ isOpen, onClose }) => {
         >
           ORDER VIA WHATSAPP
         </a>
+
+        {/* Social Icons at bottom of Drawer */}
+        <div style={{ 
+          display: 'flex', 
+          justifyContent: 'center', 
+          gap: '2rem', 
+          marginBottom: '1.5rem',
+          opacity: 0.7 
+        }}>
+          <a 
+            href="https://www.instagram.com/luqmangolk?utm_source=qr&igsh=ZHduOXBueGZid3Nx" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            style={{ color: '#001d04', transition: 'opacity 0.2s' }}
+          >
+            <Instagram size={20} />
+          </a>
+          <a 
+            href="https://www.facebook.com/share/18PpDvHW8U/" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            style={{ color: '#001d04', transition: 'opacity 0.2s' }}
+          >
+            <Facebook size={20} />
+          </a>
+        </div>
 
       </div>
     </>

@@ -375,7 +375,7 @@ const ProductManagement = () => {
             <FormSection icon={<DollarSign size={18} color="#001d04" />} title="Pricing & Inventory">
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
                 <div>
-                  <FieldLabel>Retail Price ($)</FieldLabel>
+                  <FieldLabel>Retail Price (LKR)</FieldLabel>
                   <StyledInput required type="number" step="0.01" min="0" value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} placeholder="0.00" />
                 </div>
                 <div>
@@ -595,7 +595,7 @@ const ProductManagement = () => {
                   </div>
                   <h3 style={{ fontSize: '0.92rem', fontWeight: 700, color: '#001d04', margin: '0 0 0.35rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{product.title}</h3>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#436132', letterSpacing: '-0.01em' }}>${product.price.toFixed(2)}</span>
+                    <span style={{ fontSize: '0.9rem', fontWeight: 800, color: '#436132', letterSpacing: '-0.01em' }}>LKR {product.price.toFixed(2)}</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.68rem', fontWeight: 700, padding: '0.2rem 0.6rem', borderRadius: '100px', backgroundColor: sc.bg, color: sc.color }}>
                       <span style={{ width: '5px', height: '5px', borderRadius: '50%', backgroundColor: sc.dot, flexShrink: 0 }} />
                       {sc.label}

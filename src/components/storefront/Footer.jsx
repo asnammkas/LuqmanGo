@@ -25,10 +25,22 @@ const Footer = () => {
             </p>
             {/* Social Icons */}
             <div className="footer-socials" style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem' }}>
-              <a href="#" style={{ color: '#0C2311', transition: 'opacity 0.2s' }} aria-label="Instagram">
+              <a 
+                href="https://www.instagram.com/luqmangolk?utm_source=qr&igsh=ZHduOXBueGZid3Nx" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                style={{ color: '#0C2311', transition: 'opacity 0.2s' }} 
+                aria-label="Instagram"
+              >
                 <Instagram size={18} />
               </a>
-              <a href="#" style={{ color: '#0C2311', transition: 'opacity 0.2s' }} aria-label="Facebook">
+              <a 
+                href="https://www.facebook.com/share/18PpDvHW8U/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                style={{ color: '#0C2311', transition: 'opacity 0.2s' }} 
+                aria-label="Facebook"
+              >
                 <Facebook size={18} />
               </a>
               <a href="https://wa.me/94725065252" target="_blank" rel="noopener noreferrer" style={{ color: '#0C2311', transition: 'opacity 0.2s' }} aria-label="WhatsApp">
@@ -104,8 +116,8 @@ const Footer = () => {
         }}>
           <div>© 2026 LuqmanGo. All Rights Reserved.</div>
           <div style={{ display: 'flex', gap: '1.5rem' }}>
-             <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Privacy</a>
-             <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Terms</a>
+             <Link to="/privacy" style={{ color: 'inherit', textDecoration: 'none' }}>Privacy</Link>
+             <Link to="/terms" style={{ color: 'inherit', textDecoration: 'none' }}>Terms</Link>
           </div>
         </div>
 

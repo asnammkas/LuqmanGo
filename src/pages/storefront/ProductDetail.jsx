@@ -126,13 +126,11 @@ const ProductDetail = () => {
                {product.title}
             </h1>
 
-            <div style={{ 
-              fontSize: '1.6rem', 
-              fontWeight: 500, 
-              color: '#5C7444', 
-              marginBottom: '1rem' 
-            }}>
-              ${product.price ? product.price.toFixed(2) : '0.00'}
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem', marginBottom: '1rem' }}>
+              <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
+              <span style={{ fontSize: '1.8rem', fontWeight: 700, color: '#436132', letterSpacing: '-0.02em' }}>
+                {product.price ? product.price.toLocaleString() : '0'}
+              </span>
             </div>
 
             <p style={{ 
@@ -158,9 +156,12 @@ const ProductDetail = () => {
               <span style={{ fontSize: '0.65rem', fontWeight: 700, textTransform: 'uppercase', color: '#706F65', letterSpacing: '0.1em' }}>
                 Subtotal
               </span>
-              <span style={{ fontSize: '1.25rem', fontWeight: 600, color: '#001d04' }}>
-                ${(product.price * quantity).toFixed(2)}
-              </span>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem' }}>
+                <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
+                <span style={{ fontSize: '1.25rem', fontWeight: 700, color: '#001d04', letterSpacing: '-0.01em' }}>
+                  {(product.price * quantity).toLocaleString()}
+                </span>
+              </div>
             </div>
 
             {/* Actions Grid - Swapped Positions for Ergonomics */}
@@ -215,7 +216,7 @@ const ProductDetail = () => {
             <div style={{ marginTop: '2rem', display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.8rem', color: '#001d04' }}>
                     <Truck size={16} strokeWidth={1} />
-                    <span style={{ fontWeight: 300 }}>Complimentary shipping on orders over $150</span>
+                    <span style={{ fontWeight: 300 }}>Complimentary shipping on orders over LKR 15000</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', fontSize: '0.8rem', color: '#001d04' }}>
                     <ShieldCheck size={16} strokeWidth={1} />

@@ -54,8 +54,8 @@ const CartCheckout = () => {
       const orderId = await checkout(formData, cart, getCartTotal());
       
       // 2. Format the message for WhatsApp (Now used for notification only)
-      let orderDetails = cart.map(item => `${item.quantity}x ${item.title} ($${item.price.toFixed(2)})`).join('%0A');
-      const textMessage = `*📦 NEW ORDER - LuqmanGo*%0A%0A*👤 Customer Details*%0A━━━━━━━━━━━━━━%0A*Name:* ${formData.name}%0A*Email:* ${formData.email}%0A*Phone:* ${formData.phone}%0A*Address:* ${formData.address}%0A%0A*💳 Payment Method:* ${formData.paymentMethod}%0A%0A*🛒 Order Summary*%0A━━━━━━━━━━━━━━%0A${orderDetails}%0A%0A*💰 TOTAL AMOUNT: $${getCartTotal().toFixed(2)}*%0A%0A_Order ID: ${orderId}_%0A%0A_Thank you for shopping with LuqmanGo!_`;
+      let orderDetails = cart.map(item => `${item.quantity}x ${item.title} (LKR ${item.price.toFixed(2)})`).join('%0A');
+      const textMessage = `*📦 NEW ORDER - LuqmanGo*%0A%0A*👤 Customer Details*%0A━━━━━━━━━━━━━━%0A*Name:* ${formData.name}%0A*Email:* ${formData.email}%0A*Phone:* ${formData.phone}%0A*Address:* ${formData.address}%0A%0A*💳 Payment Method:* ${formData.paymentMethod}%0A%0A*🛒 Order Summary*%0A━━━━━━━━━━━━━━%0A${orderDetails}%0A%0A*💰 TOTAL AMOUNT: LKR ${getCartTotal().toFixed(2)}*%0A%0A_Order ID: ${orderId}_%0A%0A_Thank you for shopping with LuqmanGo!_`;
       
       // 3. Open WhatsApp Direct Link to Vendor
       const vendorPhone = "94725065252"; 
@@ -135,7 +135,12 @@ const CartCheckout = () => {
                 <img src={item.image} alt={item.title} className="cart-item-image" style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: 'var(--radius-md)', flexShrink: 0 }} />
                 <div style={{ flexGrow: 1, minWidth: 0 }} className="cart-item-details">
                   <h3 style={{ fontSize: '1rem', marginBottom: '0.25rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.title}</h3>
-                  <p style={{ color: 'var(--color-primary)', fontWeight: 700, fontSize: '1rem', marginBottom: '0.75rem' }}>${item.price.toFixed(2)}</p>
+                  <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem', marginBottom: '0.75rem' }}>
+                    <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
+                    <span style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--color-primary)' }}>
+                      {Math.round(item.price).toLocaleString()}
+                    </span>
+                  </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }} className="cart-item-controls">
                     {/* Quantity Controls */}
                     <div style={{ 
@@ -214,7 +219,12 @@ const CartCheckout = () => {
         <h3 style={{ fontSize: '1.5rem', marginBottom: '1.5rem' }}>Order Summary</h3>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', fontWeight: 600, color: 'var(--color-text-main)' }}>
           <span>Subtotal</span>
-          <span>${getCartTotal().toFixed(2)}</span>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem' }}>
+            <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
+            <span style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--color-text-main)' }}>
+              {Math.round(getCartTotal()).toLocaleString()}
+            </span>
+          </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', fontWeight: 600, color: 'var(--color-text-main)' }}>
           <span>Shipping</span>
@@ -223,7 +233,12 @@ const CartCheckout = () => {
         <hr style={{ border: 'none', borderTop: '1px solid var(--color-border)', margin: '1.5rem 0' }} />
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2rem', fontSize: '1.25rem', fontWeight: 700 }}>
           <span>Total</span>
-          <span style={{ color: 'var(--color-primary)' }}>${getCartTotal().toFixed(2)}</span>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.3rem' }}>
+            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
+            <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--color-primary)' }}>
+              {Math.round(getCartTotal()).toLocaleString()}
+            </span>
+          </div>
         </div>
 
         {!showCheckoutForm ? (

@@ -113,7 +113,7 @@ const AdminDashboard = () => {
           <StatCard
             icon={<TrendingUp size={20} />}
             label="Revenue"
-            value={`$${totalRevenue.toFixed(0)}`}
+            value={`LKR ${totalRevenue.toFixed(0)}`}
             sub="total earned"
             accentColor="#436132"
             index={0}
@@ -238,7 +238,7 @@ const AdminDashboard = () => {
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.6rem', borderTop: '1px solid rgba(0,0,0,0.04)' }}>
                     <span style={{ fontSize: '1.05rem', fontWeight: 800, color: '#436132', letterSpacing: '-0.02em' }}>
-                      ${order.total.toFixed(2)}
+                      LKR {order.total.toFixed(2)}
                     </span>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', color: '#9CA3AF' }}>
                       <Calendar size={11} />

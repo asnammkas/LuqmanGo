@@ -3,7 +3,7 @@ export const mockProducts = [
   {
     id: 'p1',
     title: 'Premium Wireless Headphones',
-    price: 299.99,
+    price: 95997,
     category: 'Electronics',
     description: 'Experience pure audio clarity with our noise-cancelling premium headphones. Features 40-hour battery life and an ergonomic design.',
     image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&q=80&w=800',
@@ -13,7 +13,7 @@ export const mockProducts = [
   {
     id: 'p2',
     title: 'Minimalist Smartwatch',
-    price: 199.99,
+    price: 63997,
     category: 'Electronics',
     description: 'Track your fitness, stay connected, and look stylish with this minimalist smartwatch featuring an OLED display.',
     image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800',
@@ -24,7 +24,7 @@ export const mockProducts = [
   {
     id: 'p7',
     title: 'Floral Summer Maxi Dress',
-    price: 89.99,
+    price: 28797,
     category: 'Dresses',
     description: 'Lightweight and breathable chiffon maxi dress with a vibrant floral print, perfect for summer evenings and beach getaways.',
     image: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&q=80&w=800',
@@ -34,7 +34,7 @@ export const mockProducts = [
   {
     id: 'p8',
     title: 'Elegant Evening Gown',
-    price: 245.00,
+    price: 78400,
     category: 'Dresses',
     description: 'A sophisticated floor-length evening gown featuring delicate lace detailing and a flattering silhouette for formal events.',
     image: 'https://images.unsplash.com/photo-1566150905458-1bf1fc113f0d?auto=format&fit=crop&q=80&w=800',
@@ -45,7 +45,7 @@ export const mockProducts = [
   {
     id: 'p9',
     title: 'Organic Artisanal Coffee Beans',
-    price: 24.50,
+    price: 7840,
     category: 'Groceries',
     description: 'A 1lb bag of freshly roasted, fair-trade organic coffee beans with notes of dark chocolate and toasted almond.',
     image: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?auto=format&fit=crop&q=80&w=800',
@@ -55,7 +55,7 @@ export const mockProducts = [
   {
     id: 'p10',
     title: 'Premium Olive Oil Set',
-    price: 45.00,
+    price: 14400,
     category: 'Groceries',
     description: 'Cold-pressed extra virgin olive oil sourced directly from Italian estates. Perfect for cooking or finishing dishes.',
     image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&q=80&w=800',
@@ -66,7 +66,7 @@ export const mockProducts = [
   {
     id: 'p3',
     title: 'Ergonomic Desk Chair',
-    price: 349.00,
+    price: 111680,
     category: 'Furniture',
     description: 'Designed for all-day comfort. Features adjustable lumbar support, breathable mesh, and smooth-rolling casters.',
     image: 'https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?auto=format&fit=crop&q=80&w=800',
@@ -76,7 +76,7 @@ export const mockProducts = [
   {
     id: 'p4',
     title: 'Ceramic Coffee Mug Set',
-    price: 39.99,
+    price: 12797,
     category: 'Home & Living',
     description: 'Set of 4 artisan-crafted ceramic mugs. Perfect for your morning coffee or evening tea rituals.',
     image: 'https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&q=80&w=800',
@@ -87,7 +87,7 @@ export const mockProducts = [
   {
     id: 'p11',
     title: 'Smart LED Light Bulb',
-    price: 19.99,
+    price: 6397,
     category: 'Home & Living',
     description: 'Control your lighting from anywhere with this WiFi-enabled smart bulb. Millions of colors and voice control compatible.',
     image: 'https://images.unsplash.com/photo-1550985543-f47f38aee65e?auto=format&fit=crop&q=80&w=800',
@@ -97,7 +97,7 @@ export const mockProducts = [
   {
     id: 'p12',
     title: 'Wireless Gaming Mouse',
-    price: 79.99,
+    price: 25597,
     category: 'Electronics',
     description: 'Ultra-fast wireless connection and high-precision sensor for the ultimate competitive gaming experience.',
     image: 'https://images.unsplash.com/photo-1527690710609-b68f3e580a5f?auto=format&fit=crop&q=80&w=800',
@@ -107,7 +107,7 @@ export const mockProducts = [
   {
     id: 'p13',
     title: 'Boho Summer Sundress',
-    price: 54.99,
+    price: 17597,
     category: 'Dresses',
     description: 'A light, airy sundress with bohemian patterns. Perfect for a day at the park or a casual brunch.',
     image: 'https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&q=80&w=800',
@@ -117,7 +117,7 @@ export const mockProducts = [
   {
     id: 'p14',
     title: 'Scandinavian Fabric Sofa',
-    price: 899.00,
+    price: 287680,
     category: 'Furniture',
     description: 'Minimalist 3-seater sofa with high-quality grey fabric and solid oak legs. Clean lines meet superior comfort.',
     image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?auto=format&fit=crop&q=80&w=800',
@@ -127,7 +127,7 @@ export const mockProducts = [
   {
     id: 'p15',
     title: 'Organic White Quinoa',
-    price: 12.99,
+    price: 4157,
     category: 'Groceries',
     description: 'High-protein, gluten-free organic white quinoa. A perfect base for healthy salads and bowls.',
     image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&q=80&w=800',
@@ -137,7 +137,7 @@ export const mockProducts = [
   {
     id: 'p16',
     title: 'Portable Bluetooth Speaker',
-    price: 129.00,
+    price: 41280,
     category: 'Electronics',
     description: '360-degree immersive sound and up to 12 hours of playtime. Waterproof and ready for any adventure.',
     image: 'https://images.unsplash.com/photo-1608156639585-b3a032ef9689?auto=format&fit=crop&q=80&w=800',
@@ -147,7 +147,7 @@ export const mockProducts = [
   {
     id: 'p17',
     title: 'Luxury Cotton Bed Sheets',
-    price: 85.00,
+    price: 27200,
     category: 'Home & Living',
     description: '800-thread-count Egyptian cotton sheets. Soft, breathable, and designed for the perfect night of sleep.',
     image: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?auto=format&fit=crop&q=80&w=800',
@@ -157,7 +157,7 @@ export const mockProducts = [
   {
     id: 'p18',
     title: 'Velvet Cocktail Dress',
-    price: 149.00,
+    price: 47680,
     category: 'Dresses',
     description: 'Stand out in this stunning emerald green velvet cocktail dress with an elegant V-neckline.',
     image: 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?auto=format&fit=crop&q=80&w=800',
@@ -167,7 +167,7 @@ export const mockProducts = [
   {
     id: 'p19',
     title: 'Modern Marble Coffee Table',
-    price: 299.00,
+    price: 95680,
     category: 'Furniture',
     description: 'Elegant hexagonal coffee table with a white marble top and brushed gold metal base.',
     image: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&q=80&w=800',
@@ -177,7 +177,7 @@ export const mockProducts = [
   {
     id: 'p20',
     title: 'Premium Artisan Dark Chocolate',
-    price: 8.50,
+    price: 2720,
     category: 'Groceries',
     description: '75% dark chocolate handcrafted with Venezuelan cocoa beans and a hint of sea salt.',
     image: 'https://images.unsplash.com/photo-1549007994-cb92caebd54b?auto=format&fit=crop&q=80&w=800',
@@ -187,7 +187,7 @@ export const mockProducts = [
   {
     id: 'p21',
     title: 'Professional Mirrorless Camera',
-    price: 1499.00,
+    price: 479680,
     category: 'Electronics',
     description: 'Capture stunning 4K video and 24MP stills with this versatile and compact professional camera.',
     image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&q=80&w=800',
@@ -197,7 +197,7 @@ export const mockProducts = [
   {
     id: 'p22',
     title: 'Bohemian Style Maxi Skirt',
-    price: 45.99,
+    price: 14717,
     category: 'Dresses',
     description: 'Flowy bohemian maxi skirt with an intricate paisley print and comfortable elastic waistband.',
     image: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=800',
@@ -207,7 +207,7 @@ export const mockProducts = [
   {
     id: 'p23',
     title: 'Height-Adjustable Standing Desk',
-    price: 449.00,
+    price: 143680,
     category: 'Furniture',
     description: 'Electric adjustable desk with memory presets. Switch between sitting and standing with ease.',
     image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=800',
@@ -217,7 +217,7 @@ export const mockProducts = [
   {
     id: 'p24',
     title: 'Wildflower Forest Honey',
-    price: 18.00,
+    price: 5760,
     category: 'Groceries',
     description: 'Unfiltered, raw wildflower honey from high-altitude forests. Pure, natural, and rich in antioxidants.',
     image: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?auto=format&fit=crop&q=80&w=800',
@@ -227,7 +227,7 @@ export const mockProducts = [
   {
     id: 'p25',
     title: 'Aroma Oil Diffuser',
-    price: 34.99,
+    price: 11197,
     category: 'Home & Living',
     description: 'Ultrasonic essential oil diffuser with LED color-changing light and quiet operation.',
     image: 'https://images.unsplash.com/photo-1602928321679-560bb453f190?auto=format&fit=crop&q=80&w=800',
