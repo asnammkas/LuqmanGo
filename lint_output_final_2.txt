@@ -1,9 +1,0 @@
-﻿
-D:\Luqman Express\src\App.jsx
-  3:10  warning  'motion' is defined but never used. Allowed unused vars must match /^[A-Z_]/u  no-unused-vars
-
-D:\Luqman Express\src\components\AdminLayout.jsx
-  21:45  warning  'Icon' is defined but never used. Allowed unused args must match /^_/u  no-unused-vars
-
-Γ£û 2 problems (0 errors, 2 warnings)
-
