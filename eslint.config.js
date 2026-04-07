@@ -52,7 +52,7 @@ export default [
         ...globals.node,
       },
       parserOptions: {
-        sourceType: 'commonjs',
+        sourceType: 'module',
       },
     },
     rules: {

@@ -25,6 +25,14 @@ jobs:
       run: npm ci
       working-directory: functions
 
+    - name: Debug Workspace
+      run: |
+        echo "Root Structure:"
+        ls -F
+        echo "Functions Node Modules:"
+        ls -F functions/node_modules | head -n 20
+      shell: bash
+
     - name: Lint
       run: npm run lint
 
