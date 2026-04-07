@@ -93,7 +93,11 @@ describe('AuthContext', () => {
       await result.current.login('test@test.com', 'password');
     });
 
-    expect(signInWithEmailAndPassword).toHaveBeenCalledWith(undefined, 'test@test.com', 'password');
+    expect(signInWithEmailAndPassword).toHaveBeenCalledWith(
+      expect.anything(),
+      'test@test.com',
+      'password'
+    );
   });
 
   it('should handle logout', async () => {

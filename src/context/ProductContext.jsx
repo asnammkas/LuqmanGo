@@ -6,7 +6,7 @@ import {
 } from 'firebase/firestore';
 import { logger } from '../utils/logger';
 
-const ProductContext = createContext();
+export const ProductContext = createContext();
 
 export const useProducts = () => useContext(ProductContext);
 

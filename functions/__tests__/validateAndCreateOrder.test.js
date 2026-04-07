@@ -1,7 +1,7 @@
+// @vitest-environment node
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-const admin = require('firebase-admin');
 
-// Mock admin before requiring index.js
+// Mocks MUST be before imports of the code under test
 vi.mock('firebase-admin', () => {
   const mockTransaction = {
     get: vi.fn(),
@@ -16,6 +16,14 @@ vi.mock('firebase-admin', () => {
   };
 
   return {
+    default: {
+      initializeApp: vi.fn(),
+      firestore: Object.assign(vi.fn(() => mockDb), {
+        FieldValue: {
+          serverTimestamp: vi.fn(() => 'mock-timestamp'),
+        },
+      }),
+    },
     initializeApp: vi.fn(),
     firestore: Object.assign(vi.fn(() => mockDb), {
       FieldValue: {
@@ -26,7 +34,7 @@ vi.mock('firebase-admin', () => {
 });
 
 vi.mock('firebase-functions/v2/https', () => ({
-  onCall: vi.fn((cb) => cb),
+  onCall: (handler) => handler,
   HttpsError: class HttpsError extends Error {
     constructor(code, message) {
       super(message);
@@ -44,19 +52,16 @@ vi.mock('firebase-functions/v2', () => ({
   setGlobalOptions: vi.fn(),
 }));
 
-const { validateAndCreateOrder } = require('../index');
+// Now import the function after mocks are hoisted
+import { validateAndCreateOrder } from '../index.js';
+import admin from 'firebase-admin';
 
 describe('validateAndCreateOrder Cloud Function', () => {
   let db;
-  let transaction;
 
   beforeEach(() => {
     vi.clearAllMocks();
     db = admin.firestore();
-    transaction = db.runTransaction.mock.calls[0] ? db.runTransaction.mock.calls[0][0] : db._getTransaction(); 
-    // Wait, let's just use the mock from the module
-    const { runTransaction } = db;
-    // Get the transaction mock passed to cb
   });
 
   it('should throw an error if cart is empty', async () => {
@@ -64,7 +69,7 @@ describe('validateAndCreateOrder Cloud Function', () => {
     await expect(validateAndCreateOrder(request)).rejects.toThrow('Cart is empty or invalid.');
   });
 
-  it('should throw an error if customer info is incomplete', async () => {
+  it('should throw an error if customer information is incomplete', async () => {
     const request = { data: { cart: [{ id: 1, quantity: 1 }], customerInfo: { email: '' } } };
     await expect(validateAndCreateOrder(request)).rejects.toThrow('Customer information is incomplete.');
   });
@@ -75,12 +80,14 @@ describe('validateAndCreateOrder Cloud Function', () => {
     const request = { data: { cart, customerInfo }, auth: { uid: 'user_123' } };
 
     const mockProductData = { title: 'Product 1', stock: 10, price: 100 };
-    const mockTransaction = db.runTransaction.mock.results[0] === undefined ? undefined : {}; // need better way
 
     // Mocking the behavior for the transaction
     db.runTransaction.mockImplementationOnce(async (cb) => {
       const tx = {
-        get: vi.fn().mockResolvedValue({ exists: true, data: () => mockProductData }),
+        get: vi.fn().mockResolvedValue({ 
+          exists: true, 
+          data: () => mockProductData 
+        }),
         update: vi.fn(),
         set: vi.fn(),
       };
@@ -103,7 +110,10 @@ describe('validateAndCreateOrder Cloud Function', () => {
 
     db.runTransaction.mockImplementationOnce(async (cb) => {
       const tx = {
-        get: vi.fn().mockResolvedValue({ exists: true, data: () => mockProductData }),
+        get: vi.fn().mockResolvedValue({ 
+          exists: true, 
+          data: () => mockProductData 
+        }),
         update: vi.fn(),
         set: vi.fn(),
       };
@@ -113,3 +123,4 @@ describe('validateAndCreateOrder Cloud Function', () => {
     await expect(validateAndCreateOrder(request)).rejects.toThrow('Insufficient stock for Product 1.');
   });
 });
+
