@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 
 const WishlistContext = createContext();
 
@@ -18,7 +18,7 @@ export const WishlistProvider = ({ children }) => {
     localStorage.setItem('luqman_wishlist', JSON.stringify(wishlist));
   }, [wishlist]);
 
-  const toggleWishlist = (product) => {
+  const toggleWishlist = useCallback((product) => {
     setWishlist((prev) => {
       const exists = prev.find(item => item.id === product.id);
       if (exists) {
@@ -26,13 +26,13 @@ export const WishlistProvider = ({ children }) => {
       }
       return [...prev, product];
     });
-  };
+  }, []);
 
-  const isInWishlist = (id) => {
+  const isInWishlist = useCallback((id) => {
     return !!wishlist.find(item => item.id === id);
-  };
+  }, [wishlist]);
 
-  const value = useMemo(() => ({ wishlist, toggleWishlist, isInWishlist }), [wishlist]);
+  const value = useMemo(() => ({ wishlist, toggleWishlist, isInWishlist }), [wishlist, toggleWishlist, isInWishlist]);
 
   return (
     <WishlistContext.Provider value={value}>

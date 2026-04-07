@@ -1,6 +1,6 @@
 import { lazy, Suspense, useState, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 import ErrorBoundary from './components/ErrorBoundary';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
@@ -18,14 +18,14 @@ const Wishlist = lazy(() => import('./pages/storefront/Wishlist'));
 const SignIn = lazy(() => import('./pages/storefront/SignIn'));
 const Register = lazy(() => import('./pages/storefront/Register'));
 const CartCheckout = lazy(() => import('./pages/storefront/CartCheckout'));
-const ProfileLayout = lazy(() => import('./pages/storefront/profile/ProfileLayout'));
-const ProfileDashboard = lazy(() => import('./pages/storefront/profile/ProfileDashboard'));
-const ProfileOrders = lazy(() => import('./pages/storefront/profile/ProfileOrders'));
-const ProfileAddresses = lazy(() => import('./pages/storefront/profile/ProfileAddresses'));
-const ProfileSettings = lazy(() => import('./pages/storefront/profile/ProfileSettings'));
-const ProfilePayments = lazy(() => import('./pages/storefront/profile/ProfilePayments'));
-const ProfileHelp = lazy(() => import('./pages/storefront/profile/ProfileHelp'));
-const ProfilePrivacy = lazy(() => import('./pages/storefront/profile/ProfilePrivacy'));
+const ProfileLayout = lazy(() => import('./pages/storefront/Profile/ProfileLayout'));
+const ProfileDashboard = lazy(() => import('./pages/storefront/Profile/ProfileDashboard'));
+const ProfileOrders = lazy(() => import('./pages/storefront/Profile/ProfileOrders'));
+const ProfileAddresses = lazy(() => import('./pages/storefront/Profile/ProfileAddresses'));
+const ProfileSettings = lazy(() => import('./pages/storefront/Profile/ProfileSettings'));
+const ProfilePayments = lazy(() => import('./pages/storefront/Profile/ProfilePayments'));
+const ProfileHelp = lazy(() => import('./pages/storefront/Profile/ProfileHelp'));
+const ProfilePrivacy = lazy(() => import('./pages/storefront/Profile/ProfilePrivacy'));
 const AboutPage = lazy(() => import('./pages/storefront/AboutPage'));
 const PrivacyPolicyPage = lazy(() => import('./pages/storefront/PrivacyPolicyPage'));
 const TermsPage = lazy(() => import('./pages/storefront/TermsPage'));
@@ -185,7 +185,7 @@ function AppContent() {
       <main className="main-content">
         <ErrorBoundary>
         <AnimatePresence mode="popLayout">
-          <motion.div
+          <Motion.div
             key={location.pathname}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -230,7 +230,7 @@ function AppContent() {
               <Route path="*" element={<NotFound />} />
             </Routes>
             </Suspense>
-          </motion.div>
+          </Motion.div>
         </AnimatePresence>
         </ErrorBoundary>
       </main>

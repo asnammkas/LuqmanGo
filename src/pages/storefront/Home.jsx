@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useProducts } from '../../context/ProductContext';
 import ProductCard from '../../components/storefront/ProductCard';
 import CategoryGrid from '../../components/storefront/CategoryGrid';
@@ -60,12 +61,13 @@ const Home = () => {
       }
     }, { rootMargin: '200px' });
 
-    if (observerRef.current) {
-        observer.observe(observerRef.current);
+    const node = observerRef.current;
+    if (node) {
+        observer.observe(node);
     }
 
     return () => {
-        if (observerRef.current) observer.unobserve(observerRef.current);
+        if (node) observer.unobserve(node);
     };
   }, [hasMore, isLoadingInitial, isFetchingNext, lastDoc, fetchMoreCategoryProducts]);
 
@@ -93,6 +95,12 @@ const Home = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>Home | LuqmanGo</title>
+        <meta name="description" content="Discover premium curated items at LuqmanGo." />
+        <meta property="og:title" content="Home | LuqmanGo" />
+        <meta property="og:description" content="Discover premium curated items at LuqmanGo." />
+      </Helmet>
       {/* Hero Carousel with Floating Effect */}
       <section className="container" style={{ padding: '0.5rem 1.5rem 2rem' }}>
         {isFeaturedLoading ? (

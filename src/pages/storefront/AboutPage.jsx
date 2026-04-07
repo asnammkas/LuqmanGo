@@ -1,10 +1,17 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { Helmet } from 'react-helmet-async';
 import Footer from '../../components/storefront/Footer';
 
 const AboutPage = () => {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <Helmet>
+        <title>About Us | LuqmanGo</title>
+        <meta name="description" content="Pioneering sustainable luxury since 2024. Learn more about LuqmanGo's story, our promise, and our impact." />
+        <meta property="og:title" content="About Us | LuqmanGo" />
+        <meta property="og:description" content="Pioneering sustainable luxury since 2024. Learn more about LuqmanGo's story, our promise, and our impact." />
+      </Helmet>
       <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 4rem', maxWidth: '500px', width: '100%', boxSizing: 'border-box', margin: '0 auto', flex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1rem' }}>
           <Link 

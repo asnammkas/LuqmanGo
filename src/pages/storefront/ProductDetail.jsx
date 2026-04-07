@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import DOMPurify from 'dompurify';
 import { useParams, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useProducts } from '../../context/ProductContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
@@ -35,6 +36,12 @@ const ProductDetail = () => {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <Helmet>
+        <title>{product.title} | LuqmanGo</title>
+        <meta name="description" content={product.description?.substring(0, 150) + "..." || `Buy ${product.title} at LuqmanGo.`} />
+        <meta property="og:title" content={`${product.title} | LuqmanGo`} />
+        <meta property="og:description" content={product.description?.substring(0, 150) + "..." || `Buy ${product.title} at LuqmanGo.`} />
+      </Helmet>
       <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', width: '100%', boxSizing: 'border-box', margin: '0 auto', flex: 1 }}>
         
         {/* Editorial Header - Unified Pattern */}

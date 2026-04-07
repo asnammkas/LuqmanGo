@@ -1,18 +1,12 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
-import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { ShoppingBag, LayoutDashboard, Moon, Sun, Phone, Menu, X, Search } from 'lucide-react';
 import SearchOverlay from './SearchOverlay';
 
-const categories = ['All', 'Electronics', 'Dresses', 'Groceries', 'Furniture', 'Home & Living'];
-
 const Navbar = ({ onOpenDrawer, onOpenSearch }) => {
   const { getCartCount } = useCart();
-  const { toggleTheme, theme } = useTheme();
   const { isAdmin, loading } = useAuth();
-  const navigate = useNavigate();
 
   return (
     <header style={{ 
@@ -33,6 +27,7 @@ const Navbar = ({ onOpenDrawer, onOpenSearch }) => {
         {/* Left: Mobile/Desktop Navigation */}
         <div style={{ flex: 1, display: 'flex', alignItems: 'center' }}>
           <button 
+            aria-label="Open Navigation Menu"
             onClick={onOpenDrawer} 
             className="show-on-mobile"
             style={{ background: 'none', border: 'none', color: 'var(--color-text-main)', cursor: 'pointer', padding: '0.5rem', display: 'flex' }}
@@ -70,12 +65,13 @@ const Navbar = ({ onOpenDrawer, onOpenSearch }) => {
         <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: '1rem' }}>
 
           {!loading && isAdmin && (
-            <Link to="/admin" className="hide-on-mobile" style={{ background: 'none', border: 'none', color: 'var(--color-text-main)', cursor: 'pointer', padding: '0.4rem', display: 'flex', alignItems: 'center' }}>
+            <Link to="/admin" aria-label="Admin Dashboard" className="hide-on-mobile" style={{ background: 'none', border: 'none', color: 'var(--color-text-main)', cursor: 'pointer', padding: '0.4rem', display: 'flex', alignItems: 'center' }}>
               <LayoutDashboard size={20} strokeWidth={1.5} />
             </Link>
           )}
 
           <button 
+            aria-label="Open Search"
             onClick={onOpenSearch} 
             className="hide-on-mobile"
             style={{ background: 'none', border: 'none', color: 'var(--color-text-main)', cursor: 'pointer', padding: '0.4rem', display: 'flex', alignItems: 'center' }}
@@ -83,7 +79,7 @@ const Navbar = ({ onOpenDrawer, onOpenSearch }) => {
             <Search size={22} strokeWidth={2} />
           </button>
 
-          <Link to="/cart" style={{ position: 'relative', color: 'var(--color-text-main)', display: 'flex', alignItems: 'center', padding: '0.4rem' }}>
+          <Link to="/cart" aria-label="View Cart" style={{ position: 'relative', color: 'var(--color-text-main)', display: 'flex', alignItems: 'center', padding: '0.4rem' }}>
             <ShoppingBag size={22} strokeWidth={1.5} />
             {getCartCount() > 0 && (
               <span style={{ 

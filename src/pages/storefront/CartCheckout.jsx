@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import DOMPurify from 'dompurify';
 import { useCart } from '../../context/CartContext';
-import { useWishlist } from '../../context/WishlistContext';
 import { useOrders } from '../../context/OrderContext';
 import { useToast } from '../../context/ToastContext';
 import { Trash2, ArrowRight, CheckCircle, Heart, ArrowLeft } from 'lucide-react';
@@ -20,7 +19,6 @@ const checkoutSchema = z.object({
 
 const CartCheckout = () => {
   const { cart, removeFromCart, updateCartQuantity, getCartTotal, clearCart } = useCart();
-  const { toggleWishlist, isInWishlist } = useWishlist();
   const { checkout } = useOrders();
   const toast = useToast();
   const [showCheckoutForm, setShowCheckoutForm] = useState(false);

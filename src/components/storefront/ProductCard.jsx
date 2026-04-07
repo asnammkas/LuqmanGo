@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
@@ -6,7 +6,7 @@ import { useToast } from '../../context/ToastContext';
 import { ShoppingBag, Image as ImageIcon, Heart } from 'lucide-react';
 
 const ProductCard = ({ product }) => {
-  const { addToCart, toggleCart, isInCart } = useCart();
+  const { toggleCart, isInCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const toast = useToast();
   const [imgError, setImgError] = useState(false);

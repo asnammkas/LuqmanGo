@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Heart, ArrowLeft, Trash2, ShoppingBag } from 'lucide-react';
 
 const Wishlist = () => {
-  const { wishlist, toggleWishlist } = useWishlist();
+  const { wishlist } = useWishlist();
   const { toggleCart, isInCart } = useCart();
   const toast = useToast();
   const navigate = useNavigate();

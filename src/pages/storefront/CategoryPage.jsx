@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { useProducts } from '../../context/ProductContext';
 import { useCategories } from '../../context/CategoryContext';
 import ProductCard from '../../components/storefront/ProductCard';
@@ -114,12 +115,13 @@ const CategoryPage = () => {
       }
     }, { rootMargin: '200px' });
 
-    if (observerRef.current) {
-        observer.observe(observerRef.current);
+    const node = observerRef.current;
+    if (node) {
+        observer.observe(node);
     }
 
     return () => {
-        if (observerRef.current) observer.unobserve(observerRef.current);
+        if (node) observer.unobserve(node);
     };
   }, [catHasMore, isFetchingNext, isLoading, lastCatDoc, activeCategory, fetchMoreCategoryProducts]);
 
@@ -141,6 +143,12 @@ const CategoryPage = () => {
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <Helmet>
+        <title>{activeCategory} | LuqmanGo</title>
+        <meta name="description" content={description} />
+        <meta property="og:title" content={`${activeCategory} | LuqmanGo`} />
+        <meta property="og:description" content={description} />
+      </Helmet>
       <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', width: '100%', boxSizing: 'border-box', margin: '0 auto', flex: 1 }}>
         
         {/* Editorial Header */}

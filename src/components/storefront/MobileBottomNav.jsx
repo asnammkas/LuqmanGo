@@ -1,9 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Heart, Store, User, Home, Search } from 'lucide-react';
-import { useWishlist } from '../../context/WishlistContext';
 
-const MobileBottomNav = ({ onOpenDrawer, onOpenSearch }) => {
-  const { wishlist } = useWishlist();
+const MobileBottomNav = ({ onOpenSearch }) => {
   const location = useLocation();
 
   const navItems = [

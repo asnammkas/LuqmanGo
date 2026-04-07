@@ -54,7 +54,11 @@ const SideDrawer = ({ isOpen, onClose }) => {
       />
 
       {/* Drawer */}
-      <div style={{
+      <div 
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation Menu"
+        style={{
         position: 'fixed',
         top: 0,
         left: 0,
@@ -84,7 +88,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
             }}>
               LuqmanGo
             </h1>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', color: '#001d04', cursor: 'pointer', padding: '0.5rem' }}>
+            <button aria-label="Close menu" onClick={onClose} style={{ background: 'none', border: 'none', color: '#001d04', cursor: 'pointer', padding: '0.5rem' }}>
               <X size={20} strokeWidth={1.5} />
             </button>
           </div>
@@ -338,6 +342,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
           opacity: 0.7 
         }}>
           <a 
+            aria-label="Follow us on Instagram"
             href="https://www.instagram.com/luqmangolk?utm_source=qr&igsh=ZHduOXBueGZid3Nx" 
             target="_blank" 
             rel="noopener noreferrer" 
@@ -346,6 +351,7 @@ const SideDrawer = ({ isOpen, onClose }) => {
             <Instagram size={20} />
           </a>
           <a 
+            aria-label="Follow us on Facebook"
             href="https://www.facebook.com/share/18PpDvHW8U/" 
             target="_blank" 
             rel="noopener noreferrer" 

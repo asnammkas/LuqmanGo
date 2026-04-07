@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { db } from '../config/firebase';
 import { collection, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { logger } from '../utils/logger';
@@ -20,11 +20,13 @@ export const CategoryProvider = ({ children }) => {
   const [categories, setCategories] = useState([]);
   const [isCategoriesLoading, setIsCategoriesLoading] = useState(true);
   const [categoriesError, setCategoriesError] = useState(null);
+  const loadingRef = useRef(isCategoriesLoading);
+  useEffect(() => { loadingRef.current = isCategoriesLoading; }, [isCategoriesLoading]);
 
   useEffect(() => {
     logger.info("Initializing Firebase Category Listener...");
     const fallbackTimer = setTimeout(() => {
-      if (isCategoriesLoading) {
+      if (loadingRef.current) {
         logger.warn("Firebase connection timed out (15s). Falling back to mock categories.");
         setCategories(initialMockCategories);
         setIsCategoriesLoading(false);
@@ -76,40 +78,43 @@ export const CategoryProvider = ({ children }) => {
       };
     } catch (err) {
       logger.error("Error setting up onSnapshot for categories:", err.message);
-      setCategories(initialMockCategories);
-      setIsCategoriesLoading(false);
+      // Ensure these state updates are outside the render cycle if they occur synchronously here
+      setTimeout(() => {
+        setCategories(initialMockCategories);
+        setIsCategoriesLoading(false);
+      }, 0);
     }
   }, []);
 
-  const addCategory = async (category) => {
+  const addCategory = useCallback(async (category) => {
     try {
       const newId = category.id || Date.now().toString();
       await setDoc(doc(db, 'categories', newId), { ...category, id: newId });
     } catch (e) {
       logger.error("Error adding category: ", e);
     }
-  };
+  }, []);
 
-  const updateCategory = async (id, updatedFields) => {
+  const updateCategory = useCallback(async (id, updatedFields) => {
     try {
       await setDoc(doc(db, 'categories', id), updatedFields, { merge: true });
     } catch (e) {
       logger.error("Error updating category: ", e);
     }
-  };
+  }, []);
 
-  const deleteCategory = async (id) => {
+  const deleteCategory = useCallback(async (id) => {
     try {
       await deleteDoc(doc(db, 'categories', id));
     } catch (e) {
       logger.error("Error deleting category: ", e);
     }
-  };
+  }, []);
 
   const value = useMemo(() => ({
     categories, isCategoriesLoading, categoriesError,
     addCategory, updateCategory, deleteCategory
-  }), [categories, isCategoriesLoading, categoriesError]);
+  }), [categories, isCategoriesLoading, categoriesError, addCategory, updateCategory, deleteCategory]);
 
   return (
     <CategoryContext.Provider value={value}>

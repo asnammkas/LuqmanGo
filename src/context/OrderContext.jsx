@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { db, auth, functions } from '../config/firebase';
 import { collection, onSnapshot, query, where, orderBy, doc, setDoc } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
@@ -16,7 +16,7 @@ export const OrderProvider = ({ children }) => {
   useEffect(() => {
     // Don't subscribe if no user is logged in
     if (!currentUser) {
-      setOrders([]);
+      setTimeout(() => setOrders([]), 0);
       return;
     }
 
@@ -49,7 +49,7 @@ export const OrderProvider = ({ children }) => {
     return () => unsubscribe();
   }, [currentUser, isAdmin]);
 
-  const checkout = async (customerInfo, cartItems) => {
+  const checkout = useCallback(async (customerInfo, cartItems) => {
     const validateAndCreateOrder = httpsCallable(functions, 'validateAndCreateOrder');
     
     try {
@@ -66,19 +66,19 @@ export const OrderProvider = ({ children }) => {
       logger.error("Secure Checkout Failed:", e);
       throw e;
     }
-  };
+  }, []);
 
-  const updateOrderStatus = async (orderId, newStatus) => {
+  const updateOrderStatus = useCallback(async (orderId, newStatus) => {
     try {
       await setDoc(doc(db, 'orders', orderId), { status: newStatus }, { merge: true });
     } catch (e) {
       logger.error("Error updating order status:", e);
     }
-  };
+  }, []);
 
   const value = useMemo(() => ({
     orders, checkout, updateOrderStatus
-  }), [orders]);
+  }), [orders, checkout, updateOrderStatus]);
 
   return (
     <OrderContext.Provider value={value}>

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
@@ -25,36 +25,36 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // Sign up with email, password, and display name
-  const signup = async (name, email, password) => {
+  const signup = useCallback(async (name, email, password) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     // Set display name immediately after creation
     await updateProfile(userCredential.user, { displayName: name });
     return userCredential;
-  };
+  }, []);
 
   // Sign in with email and password
-  const login = (email, password) => {
+  const login = useCallback((email, password) => {
     return signInWithEmailAndPassword(auth, email, password);
-  };
+  }, []);
 
   // Sign out
-  const logout = () => {
+  const logout = useCallback(() => {
     return signOut(auth);
-  };
+  }, []);
 
   // Reset password
-  const resetPassword = (email) => {
+  const resetPassword = useCallback((email) => {
     return sendPasswordResetEmail(auth, email);
-  };
+  }, []);
 
   // Login with Google
-  const loginWithGoogle = () => {
+  const loginWithGoogle = useCallback(() => {
     const provider = new GoogleAuthProvider();
     return signInWithPopup(auth, provider);
-  };
+  }, []);
 
   // Check if user is admin by looking up in 'admins' collection
-  const checkAdminStatus = async (uid) => {
+  const checkAdminStatus = useCallback(async (uid) => {
     try {
       const adminDoc = await getDoc(doc(db, 'admins', uid));
       return adminDoc.exists();
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
       logger.error('Error checking admin status:', error);
       return false;
     }
-  };
+  }, []);
 
   // Listen for auth state changes
   useEffect(() => {
@@ -80,7 +80,7 @@ export const AuthProvider = ({ children }) => {
     });
 
     return unsubscribe;
-  }, []);
+  }, [checkAdminStatus]);
 
   const value = useMemo(() => ({
     currentUser,
@@ -91,7 +91,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     resetPassword,
     loginWithGoogle
-  }), [currentUser, isAdmin, loading]);
+  }), [currentUser, isAdmin, loading, signup, login, logout, resetPassword, loginWithGoogle]);
 
   return (
     <AuthContext.Provider value={value}>

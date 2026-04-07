@@ -1,4 +1,4 @@
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { LayoutDashboard, Package, ShoppingBag, ExternalLink } from 'lucide-react';
 
 const navLinks = [
@@ -18,7 +18,7 @@ const AdminLayout = ({ children }) => {
         </div>
 
         <nav className="admin-sidebar-nav">
-          {navLinks.map(({ to, label, icon: Icon, end }) => (
+          {navLinks.map(({ to, label, icon: _Icon, end }) => (
             <NavLink
               key={to}
               to={to}
@@ -28,7 +28,7 @@ const AdminLayout = ({ children }) => {
               }
             >
               <span className="link-icon">
-                <Icon size={18} />
+                <_Icon size={18} />
               </span>
               {label}
             </NavLink>

@@ -17,12 +17,12 @@ const SearchOverlay = ({ isOpen, onClose }) => {
       setTimeout(() => inputRef.current?.focus(), 100);
       document.body.style.overflow = 'hidden';
       if (!searchCatalog) {
-        setIsLoading(true);
-        fetchSearchCatalog().finally(() => setIsLoading(false));
+        setTimeout(() => setIsLoading(true), 0);
+        fetchSearchCatalog().finally(() => setTimeout(() => setIsLoading(false), 0));
       }
     } else {
       document.body.style.overflow = 'unset';
-      setSearchQuery('');
+      setTimeout(() => setSearchQuery(''), 0);
     }
     return () => { document.body.style.overflow = 'unset'; };
   }, [isOpen, searchCatalog, fetchSearchCatalog]);
@@ -30,7 +30,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
   // Fuzzy search logic
   useEffect(() => {
     if (!searchQuery.trim() || !searchCatalog) {
-      setResults([]);
+      setTimeout(() => setResults([]), 0);
       return;
     }
 
@@ -41,7 +41,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
       (p.description && p.description.toLowerCase().includes(query))
     ).slice(0, 6); // Limit results for UI clarity
 
-    setResults(filtered);
+    setTimeout(() => setResults(filtered), 0);
   }, [searchQuery, searchCatalog]);
 
   if (!isOpen) return null;
@@ -52,13 +52,17 @@ const SearchOverlay = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div style={{
-      position: 'fixed', inset: 0, zIndex: 9999,
-      backgroundColor: 'rgba(247, 243, 237, 0.98)',
-      backdropFilter: 'blur(10px)',
-      display: 'flex', flexDirection: 'column',
-      animation: 'overlayFadeIn 0.3s ease-out'
-    }}>
+    <div 
+      role="dialog" 
+      aria-modal="true"
+      aria-label="Search Catalog"
+      style={{
+        position: 'fixed', inset: 0, zIndex: 9999,
+        backgroundColor: 'rgba(247, 243, 237, 0.98)',
+        backdropFilter: 'blur(10px)',
+        display: 'flex', flexDirection: 'column',
+        animation: 'overlayFadeIn 0.3s ease-out'
+      }}>
       <style>{`
         @keyframes overlayFadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes resultEntrance { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -67,7 +71,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
       {/* Header with Search Input */}
       <div style={{ padding: '0.75rem 1.5rem', maxWidth: '800px', width: '100%', margin: '0 auto' }}>
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0' }}>
-          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', color: '#113013' }}>
+          <button aria-label="Close search" onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '0.5rem', color: '#113013' }}>
             <X size={32} strokeWidth={1.5} />
           </button>
         </div>
@@ -95,7 +99,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '2rem' }}>
           {results.length > 0 ? (
             results.map((product, idx) => (
-              <div
+              <button
                 key={product.id}
                 onClick={() => handleResultClick(product.id)}
                 style={{
@@ -103,6 +107,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
                   padding: '1rem', borderRadius: '16px', backgroundColor: 'white',
                   cursor: 'pointer', transition: 'all 0.2s ease',
                   border: '1px solid rgba(0,0,0,0.03)',
+                  textAlign: 'left',
                   animation: `resultEntrance 0.4s ease-out ${idx * 0.05}s backwards`
                 }}
                 onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.05)'; }}
@@ -126,7 +131,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
                   </div>
                   <ArrowRight size={16} color="#706F65" style={{ marginTop: '0.4rem' }} />
                 </div>
-              </div>
+              </button>
             ))
           ) : isLoading ? (
             <div style={{ textAlign: 'center', padding: '4rem 0', color: '#706F65' }}>

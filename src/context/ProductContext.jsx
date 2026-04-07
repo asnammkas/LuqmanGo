@@ -141,30 +141,30 @@ export const ProductProvider = ({ children }) => {
   }, []);
 
   // ─── CRUD Operations ───
-  const addProduct = async (product) => {
+  const addProduct = useCallback(async (product) => {
     try {
       const newId = Date.now().toString();
       await setDoc(doc(db, 'products', newId), { ...product, id: newId });
     } catch (e) {
       logger.error("Error adding document: ", e);
     }
-  };
+  }, []);
 
-  const updateProduct = async (id, updatedFields) => {
+  const updateProduct = useCallback(async (id, updatedFields) => {
     try {
       await setDoc(doc(db, 'products', id), updatedFields, { merge: true });
     } catch (e) {
       logger.error("Error updating document: ", e);
     }
-  };
+  }, []);
 
-  const deleteProduct = async (id) => {
+  const deleteProduct = useCallback(async (id) => {
     try {
       await deleteDoc(doc(db, 'products', id));
     } catch (e) {
       logger.error("Error deleting document: ", e);
     }
-  };
+  }, []);
 
   const value = useMemo(() => ({
     featuredProducts, isProductsLoading, productsError,
@@ -176,7 +176,8 @@ export const ProductProvider = ({ children }) => {
     featuredProducts, isProductsLoading, productsError, 
     searchCatalog, fetchSearchCatalog,
     adminCatalog, fetchAdminCatalog, clearAdminCatalog,
-    fetchCategoryProducts, fetchMoreCategoryProducts
+    fetchCategoryProducts, fetchMoreCategoryProducts,
+    addProduct, updateProduct, deleteProduct
   ]);
 
   return (
