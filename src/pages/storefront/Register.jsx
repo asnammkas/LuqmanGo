@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import DOMPurify from 'dompurify';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Mail, Lock, User, UserPlus, ArrowLeft, AlertCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -48,7 +49,7 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      await signup(name, email, password);
+      await signup(DOMPurify.sanitize(name), email, password);
       navigate(from, { replace: true });
     } catch (err) {
       const code = err.code;

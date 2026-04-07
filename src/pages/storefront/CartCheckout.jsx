@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import DOMPurify from 'dompurify';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useOrders } from '../../context/OrderContext';
@@ -31,9 +32,18 @@ const CartCheckout = () => {
   const handleCheckoutSubmit = async (e) => {
     e.preventDefault();
     setErrors({});
+
+    // 1. Sanitize Form Data
+    const sanitizedData = {
+      name: DOMPurify.sanitize(formData.name),
+      email: DOMPurify.sanitize(formData.email),
+      phone: DOMPurify.sanitize(formData.phone),
+      address: DOMPurify.sanitize(formData.address),
+      paymentMethod: formData.paymentMethod
+    };
     
-    // 1. Validate Form Data using Zod
-    const validation = checkoutSchema.safeParse(formData);
+    // 2. Validate Form Data using Zod
+    const validation = checkoutSchema.safeParse(sanitizedData);
     if (!validation.success) {
       const formattedErrors = validation.error.format();
       const newErrors = {};
@@ -50,18 +60,18 @@ const CartCheckout = () => {
     setIsSubmitting(true); 
     
     try {
-      // 2. Execute the Secure Checkout (Firestore Transaction + Function)
-      const orderId = await checkout(formData, cart, getCartTotal());
+      // 3. Execute the Secure Checkout (Firestore Transaction + Function)
+      const orderId = await checkout(sanitizedData, cart, getCartTotal());
       
-      // 2. Format the message for WhatsApp (Now used for notification only)
+      // 4. Format the message for WhatsApp (Now used for notification only)
       let orderDetails = cart.map(item => `${item.quantity}x ${item.title} (LKR ${item.price.toFixed(2)})`).join('%0A');
-      const textMessage = `*📦 NEW ORDER - LuqmanGo*%0A%0A*👤 Customer Details*%0A━━━━━━━━━━━━━━%0A*Name:* ${formData.name}%0A*Email:* ${formData.email}%0A*Phone:* ${formData.phone}%0A*Address:* ${formData.address}%0A%0A*💳 Payment Method:* ${formData.paymentMethod}%0A%0A*🛒 Order Summary*%0A━━━━━━━━━━━━━━%0A${orderDetails}%0A%0A*💰 TOTAL AMOUNT: LKR ${getCartTotal().toFixed(2)}*%0A%0A_Order ID: ${orderId}_%0A%0A_Thank you for shopping with LuqmanGo!_`;
+      const textMessage = `*📦 NEW ORDER - LuqmanGo*%0A%0A*👤 Customer Details*%0A━━━━━━━━━━━━━━%0A*Name:* ${sanitizedData.name}%0A*Email:* ${sanitizedData.email}%0A*Phone:* ${sanitizedData.phone}%0A*Address:* ${sanitizedData.address}%0A%0A*💳 Payment Method:* ${sanitizedData.paymentMethod}%0A%0A*🛒 Order Summary*%0A━━━━━━━━━━━━━━%0A${orderDetails}%0A%0A*💰 TOTAL AMOUNT: LKR ${getCartTotal().toFixed(2)}*%0A%0A_Order ID: ${orderId}_%0A%0A_Thank you for shopping with LuqmanGo!_`;
       
-      // 3. Open WhatsApp Direct Link to Vendor
+      // 5. Open WhatsApp Direct Link to Vendor
       const vendorPhone = import.meta.env.VITE_VENDOR_WHATSAPP || "94725065252"; 
       window.open(`https://wa.me/${vendorPhone}?text=${textMessage}`, '_blank');
       
-      // 4. Finalize UI state
+      // 6. Finalize UI state
       clearCart();
       toast.success('Order placed successfully!', 'Your stock is secured and vendor notified');
       setIsSuccess(true);

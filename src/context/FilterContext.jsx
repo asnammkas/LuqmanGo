@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useMemo } from 'react';
 
 const FilterContext = createContext();
 
@@ -7,22 +7,15 @@ export const useFilter = () => useContext(FilterContext);
 export const FilterProvider = ({ children }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
-  const [isCategoryLoading, setIsCategoryLoading] = useState(false);
-
   const handleCategoryChange = (category) => {
     if (category === activeCategory) return;
-    setIsCategoryLoading(true);
     setActiveCategory(category);
-    setTimeout(() => {
-      setIsCategoryLoading(false);
-    }, 500);
   };
 
-  const value = {
+  const value = useMemo(() => ({
     searchQuery, setSearchQuery,
-    activeCategory, setActiveCategory: handleCategoryChange,
-    isCategoryLoading
-  };
+    activeCategory, setActiveCategory: handleCategoryChange
+  }), [searchQuery, activeCategory]);
 
   return (
     <FilterContext.Provider value={value}>

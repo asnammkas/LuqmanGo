@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { db, auth, functions } from '../config/firebase';
 import { collection, onSnapshot, query, where, orderBy, doc, setDoc } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
@@ -76,8 +76,12 @@ export const OrderProvider = ({ children }) => {
     }
   };
 
+  const value = useMemo(() => ({
+    orders, checkout, updateOrderStatus
+  }), [orders]);
+
   return (
-    <OrderContext.Provider value={{ orders, checkout, updateOrderStatus }}>
+    <OrderContext.Provider value={value}>
       {children}
     </OrderContext.Provider>
   );

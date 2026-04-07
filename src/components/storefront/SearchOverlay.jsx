@@ -4,40 +4,45 @@ import { useProducts } from '../../context/ProductContext';
 import { Search, X, ArrowRight, ShoppingBag, Tag } from 'lucide-react';
 
 const SearchOverlay = ({ isOpen, onClose }) => {
-  const { products } = useProducts();
+  const { searchCatalog, fetchSearchCatalog } = useProducts();
   const [searchQuery, setSearchQuery] = useState('');
   const [results, setResults] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef(null);
   const navigate = useNavigate();
 
-  // Focus input on open
+  // Focus input and fetch data on open
   useEffect(() => {
     if (isOpen) {
       setTimeout(() => inputRef.current?.focus(), 100);
       document.body.style.overflow = 'hidden';
+      if (!searchCatalog) {
+        setIsLoading(true);
+        fetchSearchCatalog().finally(() => setIsLoading(false));
+      }
     } else {
       document.body.style.overflow = 'unset';
       setSearchQuery('');
     }
     return () => { document.body.style.overflow = 'unset'; };
-  }, [isOpen]);
+  }, [isOpen, searchCatalog, fetchSearchCatalog]);
 
   // Fuzzy search logic
   useEffect(() => {
-    if (!searchQuery.trim()) {
+    if (!searchQuery.trim() || !searchCatalog) {
       setResults([]);
       return;
     }
 
     const query = searchQuery.toLowerCase();
-    const filtered = products.filter(p => 
+    const filtered = searchCatalog.filter(p => 
       p.title.toLowerCase().includes(query) || 
       p.category.toLowerCase().includes(query) ||
       (p.description && p.description.toLowerCase().includes(query))
     ).slice(0, 6); // Limit results for UI clarity
 
     setResults(filtered);
-  }, [searchQuery, products]);
+  }, [searchQuery, searchCatalog]);
 
   if (!isOpen) return null;
 
@@ -123,6 +128,11 @@ const SearchOverlay = ({ isOpen, onClose }) => {
                 </div>
               </div>
             ))
+          ) : isLoading ? (
+            <div style={{ textAlign: 'center', padding: '4rem 0', color: '#706F65' }}>
+              <div style={{ width: '24px', height: '24px', border: '2px solid rgba(0, 200, 83, 0.2)', borderTopColor: '#00C853', borderRadius: '50%', animation: 'spin 0.8s linear infinite', margin: '0 auto 1rem' }} />
+              <p style={{ fontSize: '0.9rem' }}>Loading catalog...</p>
+            </div>
           ) : searchQuery.trim() !== '' ? (
             <div style={{ textAlign: 'center', padding: '4rem 0', color: '#706F65' }}>
               <div style={{ marginBottom: '1rem', opacity: 0.5 }}><Search size={48} strokeWidth={1} style={{ margin: '0 auto' }} /></div>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import DOMPurify from 'dompurify';
 import { useParams, Link } from 'react-router-dom';
 import { useProducts } from '../../context/ProductContext';
 import { useCart } from '../../context/CartContext';
@@ -133,16 +134,17 @@ const ProductDetail = () => {
               </span>
             </div>
 
-            <p style={{ 
-              color: '#001d04', 
-              fontSize: '0.95rem', 
-              lineHeight: 1.5, 
-              marginBottom: '0.8rem',
-              opacity: 0.8,
-              fontWeight: 300
-            }}>
-              {product.description}
-            </p>
+            <div 
+              style={{ 
+                color: '#001d04', 
+                fontSize: '0.95rem', 
+                lineHeight: 1.5, 
+                marginBottom: '0.8rem',
+                opacity: 0.8,
+                fontWeight: 300
+              }}
+              dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(product.description || '') }}
+            />
 
             {/* Total Price Display - Compact Layout */}
             <div style={{ 

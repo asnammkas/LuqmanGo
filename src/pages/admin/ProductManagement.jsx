@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react';
+import DOMPurify from 'dompurify';
 import { useProducts } from '../../context/ProductContext';
 import { useCategories } from '../../context/CategoryContext';
 import {
@@ -73,8 +74,9 @@ const StyledInput = ({ style, ...props }) => (
 );
 
 const ProductManagement = () => {
-  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
+  const { adminCatalog, fetchAdminCatalog, clearAdminCatalog, addProduct, updateProduct, deleteProduct } = useProducts();
   const { categories: contextCategories, addCategory: addCatToContext } = useCategories();
+  const products = adminCatalog || [];
 
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState(null);
@@ -117,6 +119,12 @@ const ProductManagement = () => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Fetch Admin Catalog on mount
+  useEffect(() => {
+    fetchAdminCatalog();
+    return () => clearAdminCatalog();
+  }, [fetchAdminCatalog, clearAdminCatalog]);
 
   const selectCategory = (cat) => {
     setFormData(prev => ({ ...prev, category: cat }));
@@ -169,7 +177,14 @@ const ProductManagement = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const productData = { ...formData, price: parseFloat(formData.price), stock: parseInt(formData.stock, 10) };
+    const productData = { 
+      ...formData, 
+      title: DOMPurify.sanitize(formData.title),
+      category: DOMPurify.sanitize(formData.category),
+      description: DOMPurify.sanitize(formData.description),
+      price: parseFloat(formData.price), 
+      stock: parseInt(formData.stock, 10) 
+    };
     if (currentProduct) { updateProduct(currentProduct.id, productData); } else { addProduct(productData); }
     setIsEditing(false);
   };

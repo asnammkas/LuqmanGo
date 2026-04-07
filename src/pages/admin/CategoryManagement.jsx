@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import DOMPurify from 'dompurify';
 import { useCategories } from '../../context/CategoryContext';
 import {
   Plus, Edit2, Trash2, ArrowLeft, Image as ImageIcon,
@@ -111,10 +112,16 @@ const CategoryManagement = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const sanitizedData = {
+      name: DOMPurify.sanitize(formData.name),
+      image: formData.image, // URL shouldn't be fully DOMPurified, assuming valid storage url
+      description: DOMPurify.sanitize(formData.description)
+    };
+    
     if (currentCategory) { 
-      updateCategory(currentCategory.id, formData); 
+      updateCategory(currentCategory.id, sanitizedData); 
     } else { 
-      addCategory(formData); 
+      addCategory(sanitizedData); 
     }
     setIsEditing(false);
   };

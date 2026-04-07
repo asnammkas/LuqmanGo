@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { useProducts } from './ProductContext';
 import { logger } from '../utils/logger';
 
@@ -90,9 +90,9 @@ export const CartProvider = ({ children }) => {
     return cart.reduce((count, item) => count + item.quantity, 0);
   };
 
-  const value = {
+  const value = useMemo(() => ({
     cart, addToCart, toggleCart, isInCart, updateCartQuantity, removeFromCart, clearCart, getCartTotal, getCartCount
-  };
+  }), [cart]);
 
   return (
     <CartContext.Provider value={value}>

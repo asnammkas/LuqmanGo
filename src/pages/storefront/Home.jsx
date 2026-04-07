@@ -8,31 +8,54 @@ import { HeroSkeleton, ProductGridSkeleton } from '../../components/Skeletons';
 import { Loader, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
 
 const Home = () => {
-  const { products, featuredProducts, isProductsLoading, productsError } = useProducts();
-  const [visibleCount, setVisibleCount] = useState(6);
+  const { featuredProducts, isProductsLoading: isFeaturedLoading, productsError, fetchCategoryProducts, fetchMoreCategoryProducts } = useProducts();
+  
+  const [gridProducts, setGridProducts] = useState([]);
+  const [lastDoc, setLastDoc] = useState(null);
+  const [hasMore, setHasMore] = useState(false);
   const [isFetchingNext, setIsFetchingNext] = useState(false);
+  const [isLoadingInitial, setIsLoadingInitial] = useState(true);
   const observerRef = useRef();
 
-
+  // Initial Fetch for Grid
+  useEffect(() => {
+    const loadInitial = async () => {
+      const res = await fetchCategoryProducts('All', 6);
+      setGridProducts(res.products || []);
+      setLastDoc(res.lastDoc);
+      setHasMore(res.hasMore);
+      setIsLoadingInitial(false);
+    };
+    loadInitial();
+  }, [fetchCategoryProducts]);
 
   // Use the dedicated featuredProducts stream for the Hero Carousel
-  const heroProducts = featuredProducts.length > 0 ? featuredProducts : products.slice(0, 5);
+  const heroProducts = featuredProducts.length > 0 ? featuredProducts : gridProducts.slice(0, 5);
 
-  const allGridProducts = products.filter(p => !heroProducts.some(h => h.id === p.id));
-  const hasMore = visibleCount < allGridProducts.length;
-  const gridProducts = allGridProducts.slice(0, visibleCount);
+  const displayGridProducts = gridProducts.filter(p => !heroProducts.some(h => h.id === p.id));
 
   // Infinite Scroll Observer Implementation
   useEffect(() => {
-    if (!hasMore || isProductsLoading || isFetchingNext) return;
+    if (!hasMore || isLoadingInitial || isFetchingNext) return;
 
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting && hasMore && !isFetchingNext) {
         setIsFetchingNext(true);
         // Add a premium 400ms visual delay for the "Curating more..." loader
         setTimeout(() => {
-          setVisibleCount(prev => prev + 6);
-          setIsFetchingNext(false);
+          fetchMoreCategoryProducts('All', lastDoc, 6).then(res => {
+            if (res.products && res.products.length > 0) {
+              setGridProducts(prev => {
+                const newItems = res.products.filter(p => !prev.some(ext => ext.id === p.id));
+                return [...prev, ...newItems];
+              });
+              setLastDoc(res.lastDoc);
+              setHasMore(res.hasMore);
+            } else {
+              setHasMore(false);
+            }
+            setIsFetchingNext(false);
+          });
         }, 400);
       }
     }, { rootMargin: '200px' });
@@ -44,7 +67,7 @@ const Home = () => {
     return () => {
         if (observerRef.current) observer.unobserve(observerRef.current);
     };
-  }, [hasMore, isProductsLoading, isFetchingNext]);
+  }, [hasMore, isLoadingInitial, isFetchingNext, lastDoc, fetchMoreCategoryProducts]);
 
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -58,12 +81,12 @@ const Home = () => {
 
   // Auto-swipe every 4 seconds
   useEffect(() => {
-    if (heroProducts.length <= 1 || isProductsLoading) return;
+    if (heroProducts.length <= 1 || isFeaturedLoading) return;
     const interval = setInterval(() => {
       goToSlide((currentSlide + 1) % heroProducts.length);
     }, 4000);
     return () => clearInterval(interval);
-  }, [currentSlide, heroProducts.length, isProductsLoading, goToSlide]);
+  }, [currentSlide, heroProducts.length, isFeaturedLoading, goToSlide]);
 
   const currentHero = heroProducts[currentSlide];
 
@@ -72,7 +95,7 @@ const Home = () => {
     <div>
       {/* Hero Carousel with Floating Effect */}
       <section className="container" style={{ padding: '0.5rem 1.5rem 2rem' }}>
-        {isProductsLoading ? (
+        {isFeaturedLoading ? (
             <HeroSkeleton />
         ) : (
             <div style={{ 
@@ -194,12 +217,12 @@ const Home = () => {
           <div style={{ textAlign: 'center', padding: '4rem' }}>
             <p color="red">{productsError}</p>
           </div>
-        ) : isProductsLoading ? (
+        ) : isLoadingInitial ? (
           <ProductGridSkeleton count={4} />
         ) : (
           <>
             <div className="product-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '3rem 2rem' }}>
-              {gridProducts.map(product => (
+              {displayGridProducts.map(product => (
                  <ProductCard key={product.id} product={product} />
               ))}
             </div>

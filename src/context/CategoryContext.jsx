@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { db } from '../config/firebase';
 import { collection, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { logger } from '../utils/logger';
@@ -106,10 +106,10 @@ export const CategoryProvider = ({ children }) => {
     }
   };
 
-  const value = {
+  const value = useMemo(() => ({
     categories, isCategoriesLoading, categoriesError,
     addCategory, updateCategory, deleteCategory
-  };
+  }), [categories, isCategoriesLoading, categoriesError]);
 
   return (
     <CategoryContext.Provider value={value}>

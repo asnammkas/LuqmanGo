@@ -18,7 +18,14 @@ const Wishlist = lazy(() => import('./pages/storefront/Wishlist'));
 const SignIn = lazy(() => import('./pages/storefront/SignIn'));
 const Register = lazy(() => import('./pages/storefront/Register'));
 const CartCheckout = lazy(() => import('./pages/storefront/CartCheckout'));
-const UserProfile = lazy(() => import('./pages/storefront/UserProfile'));
+const ProfileLayout = lazy(() => import('./pages/storefront/profile/ProfileLayout'));
+const ProfileDashboard = lazy(() => import('./pages/storefront/profile/ProfileDashboard'));
+const ProfileOrders = lazy(() => import('./pages/storefront/profile/ProfileOrders'));
+const ProfileAddresses = lazy(() => import('./pages/storefront/profile/ProfileAddresses'));
+const ProfileSettings = lazy(() => import('./pages/storefront/profile/ProfileSettings'));
+const ProfilePayments = lazy(() => import('./pages/storefront/profile/ProfilePayments'));
+const ProfileHelp = lazy(() => import('./pages/storefront/profile/ProfileHelp'));
+const ProfilePrivacy = lazy(() => import('./pages/storefront/profile/ProfilePrivacy'));
 const AboutPage = lazy(() => import('./pages/storefront/AboutPage'));
 const PrivacyPolicyPage = lazy(() => import('./pages/storefront/PrivacyPolicyPage'));
 const TermsPage = lazy(() => import('./pages/storefront/TermsPage'));
@@ -203,7 +210,15 @@ function AppContent() {
               <Route path="/delivery-policy" element={<DeliveryPolicyPage />} />
               
               {/* Protected Routes - Requires Authentication */}
-              <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
+              <Route path="/profile" element={<ProtectedRoute><ProfileLayout /></ProtectedRoute>}>
+                <Route index element={<ProfileDashboard />} />
+                <Route path="orders" element={<ProfileOrders />} />
+                <Route path="addresses" element={<ProfileAddresses />} />
+                <Route path="settings" element={<ProfileSettings />} />
+                <Route path="payments" element={<ProfilePayments />} />
+                <Route path="help" element={<ProfileHelp />} />
+                <Route path="privacy" element={<ProfilePrivacy />} />
+              </Route>
               
               {/* Admin Routes - Requires Admin Role */}
               <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />

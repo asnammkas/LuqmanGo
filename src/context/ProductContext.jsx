@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { db } from '../config/firebase';
 import { 
   collection, onSnapshot, doc, setDoc, deleteDoc, 
@@ -11,35 +11,35 @@ const ProductContext = createContext();
 export const useProducts = () => useContext(ProductContext);
 
 export const ProductProvider = ({ children }) => {
-  // ─── Home Page State (All Products) ───
-  const [products, setProducts] = useState([]);
+  // ─── Home Page State ───
   const [featuredProducts, setFeaturedProducts] = useState([]);
   const [isProductsLoading, setIsProductsLoading] = useState(true);
   const [productsError, setProductsError] = useState(null);
-  const [hasMore, setHasMore] = useState(false);
   const initialLoadDone = useRef(false);
 
-  // ─── Real-time listener for ALL products ───
+  // ─── On Demand State ───
+  const [searchCatalog, setSearchCatalog] = useState(null);
+  const [adminCatalog, setAdminCatalog] = useState(null);
+  const adminUnsub = useRef(null);
+
+  // ─── Real-time listener for Featured products ───
   useEffect(() => {
-    const allProductsQuery = query(
+    const featuredQuery = query(
       collection(db, 'products'),
-      orderBy('title')
+      where('featured', '==', true)
     );
 
     const fallbackTimer = setTimeout(() => {
       if (!initialLoadDone.current) {
         console.warn("Firebase connection timed out (15s). Showing empty state.");
-        setProducts([]);
         setFeaturedProducts([]);
         setIsProductsLoading(false);
       }
     }, 15000);
 
-    // Real-time listener — automatically reflects adds, updates, AND deletes
-    const unsubAll = onSnapshot(allProductsQuery, (snapshot) => {
+    const unsubFeatured = onSnapshot(featuredQuery, (snapshot) => {
       const loaded = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      setProducts(loaded);
-      setFeaturedProducts(loaded.filter(p => p.featured));
+      setFeaturedProducts(loaded);
       initialLoadDone.current = true;
       setIsProductsLoading(false);
       clearTimeout(fallbackTimer);
@@ -50,21 +50,43 @@ export const ProductProvider = ({ children }) => {
     });
 
     return () => {
-      unsubAll();
+      unsubFeatured();
       clearTimeout(fallbackTimer);
     };
   }, []);
 
-  // fetchAllProducts is kept for manual refresh calls (e.g. after add/update)
-  // but now it's a no-op since the real-time listener handles everything
-  const fetchAllProducts = () => {
-    // Real-time listener already keeps products in sync
-  };
+  // ─── Fetch Search Catalog (On Demand) ───
+  const fetchSearchCatalog = useCallback(async () => {
+    if (searchCatalog !== null) return;
+    try {
+      const q = query(collection(db, 'products'), orderBy('title'));
+      const snapshot = await getDocs(q);
+      const loaded = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setSearchCatalog(loaded);
+    } catch (err) {
+      logger.error("Search Catalog Fetch Error:", err);
+    }
+  }, [searchCatalog]);
 
-  // ─── Load more is no longer needed since we fetch all via onSnapshot ───
-  const fetchMoreAllProducts = () => {
-    // All products are loaded via real-time listener
-  };
+  // ─── Fetch Admin Catalog (Real-time listener on mount) ───
+  const fetchAdminCatalog = useCallback(() => {
+    if (adminUnsub.current) return; // already listening
+    const q = query(collection(db, 'products'), orderBy('title'));
+    adminUnsub.current = onSnapshot(q, (snapshot) => {
+      const loaded = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      setAdminCatalog(loaded);
+    }, (err) => {
+      logger.error("Admin Catalog listener error:", err);
+    });
+  }, []);
+
+  const clearAdminCatalog = useCallback(() => {
+    if (adminUnsub.current) {
+      adminUnsub.current();
+      adminUnsub.current = null;
+    }
+    setAdminCatalog(null);
+  }, []);
 
   // ─── Category-Specific Fetch (used by CategoryPage locally) ───
   const fetchCategoryProducts = useCallback(async (category, pageSize = 12) => {
@@ -77,7 +99,11 @@ export const ProductProvider = ({ children }) => {
       }
       
       const snapshot = await getDocs(q);
-      const loaded = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      let loaded = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      
+      // If fetching All, but some are featured, this query might fetch them too. 
+      // We will let the consumer filter them if needed.
+
       const lastVisible = snapshot.docs[snapshot.docs.length - 1] || null;
       const canLoadMore = snapshot.docs.length === pageSize;
       
@@ -119,8 +145,6 @@ export const ProductProvider = ({ children }) => {
     try {
       const newId = Date.now().toString();
       await setDoc(doc(db, 'products', newId), { ...product, id: newId });
-      // Refresh home page products
-      fetchAllProducts();
     } catch (e) {
       logger.error("Error adding document: ", e);
     }
@@ -129,7 +153,6 @@ export const ProductProvider = ({ children }) => {
   const updateProduct = async (id, updatedFields) => {
     try {
       await setDoc(doc(db, 'products', id), updatedFields, { merge: true });
-      fetchAllProducts();
     } catch (e) {
       logger.error("Error updating document: ", e);
     }
@@ -138,21 +161,23 @@ export const ProductProvider = ({ children }) => {
   const deleteProduct = async (id) => {
     try {
       await deleteDoc(doc(db, 'products', id));
-      setProducts(prev => prev.filter(p => p.id !== id));
     } catch (e) {
       logger.error("Error deleting document: ", e);
     }
   };
 
-  const value = {
-    // Home page data
-    products, featuredProducts, isProductsLoading, productsError,
-    hasMore, fetchMoreAllProducts, fetchAllProducts,
-    // Category page helpers (return data, don't mutate shared state)
+  const value = useMemo(() => ({
+    featuredProducts, isProductsLoading, productsError,
+    fetchSearchCatalog, searchCatalog,
+    fetchAdminCatalog, clearAdminCatalog, adminCatalog,
     fetchCategoryProducts, fetchMoreCategoryProducts,
-    // CRUD
     addProduct, updateProduct, deleteProduct
-  };
+  }), [
+    featuredProducts, isProductsLoading, productsError, 
+    searchCatalog, fetchSearchCatalog,
+    adminCatalog, fetchAdminCatalog, clearAdminCatalog,
+    fetchCategoryProducts, fetchMoreCategoryProducts
+  ]);
 
   return (
     <ProductContext.Provider value={value}>
