@@ -1,7 +1,8 @@
 // @vitest-environment node
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import admin from 'firebase-admin';
 
-// Mocks MUST be before imports of the code under test
+// Mock admin
 vi.mock('firebase-admin', () => {
   const mockTransaction = {
     get: vi.fn(),
@@ -23,22 +24,17 @@ vi.mock('firebase-admin', () => {
           serverTimestamp: vi.fn(() => 'mock-timestamp'),
         },
       }),
-    },
-    initializeApp: vi.fn(),
-    firestore: Object.assign(vi.fn(() => mockDb), {
-      FieldValue: {
-        serverTimestamp: vi.fn(() => 'mock-timestamp'),
-      },
-    }),
+    }
   };
 });
 
 vi.mock('firebase-functions/v2/https', () => ({
-  onCall: (handler) => handler,
+  onCall: (cb) => cb,
   HttpsError: class HttpsError extends Error {
     constructor(code, message) {
       super(message);
       this.code = code;
+      this.message = message;
     }
   },
 }));
@@ -52,16 +48,17 @@ vi.mock('firebase-functions/v2', () => ({
   setGlobalOptions: vi.fn(),
 }));
 
-// Now import the function after mocks are hoisted
-import { validateAndCreateOrder } from '../index.js';
-import admin from 'firebase-admin';
+// Use import instead of require
+import { validateAndCreateOrder } from '../index';
 
 describe('validateAndCreateOrder Cloud Function', () => {
   let db;
+  let transaction;
 
   beforeEach(() => {
     vi.clearAllMocks();
     db = admin.firestore();
+    transaction = {}; 
   });
 
   it('should throw an error if cart is empty', async () => {
@@ -69,7 +66,7 @@ describe('validateAndCreateOrder Cloud Function', () => {
     await expect(validateAndCreateOrder(request)).rejects.toThrow('Cart is empty or invalid.');
   });
 
-  it('should throw an error if customer information is incomplete', async () => {
+  it('should throw an error if customer info is incomplete', async () => {
     const request = { data: { cart: [{ id: 1, quantity: 1 }], customerInfo: { email: '' } } };
     await expect(validateAndCreateOrder(request)).rejects.toThrow('Customer information is incomplete.');
   });
@@ -84,10 +81,7 @@ describe('validateAndCreateOrder Cloud Function', () => {
     // Mocking the behavior for the transaction
     db.runTransaction.mockImplementationOnce(async (cb) => {
       const tx = {
-        get: vi.fn().mockResolvedValue({ 
-          exists: true, 
-          data: () => mockProductData 
-        }),
+        get: vi.fn().mockResolvedValue({ exists: true, data: () => mockProductData }),
         update: vi.fn(),
         set: vi.fn(),
       };
@@ -110,10 +104,7 @@ describe('validateAndCreateOrder Cloud Function', () => {
 
     db.runTransaction.mockImplementationOnce(async (cb) => {
       const tx = {
-        get: vi.fn().mockResolvedValue({ 
-          exists: true, 
-          data: () => mockProductData 
-        }),
+        get: vi.fn().mockResolvedValue({ exists: true, data: () => mockProductData }),
         update: vi.fn(),
         set: vi.fn(),
       };
@@ -123,4 +114,3 @@ describe('validateAndCreateOrder Cloud Function', () => {
     await expect(validateAndCreateOrder(request)).rejects.toThrow('Insufficient stock for Product 1.');
   });
 });
-
