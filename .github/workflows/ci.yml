@@ -20,10 +20,10 @@ jobs:
         cache: 'npm'
     
     - name: Install root dependencies
-      run: npm ci
+      run: npm ci --no-audit --no-fund
     
     - name: Install functions dependencies
-      run: npm ci
+      run: npm ci --no-audit --no-fund
       working-directory: ./functions
 
     - name: Lint
