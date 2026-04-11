@@ -24,6 +24,7 @@ const CartCheckout = () => {
   const [showCheckoutForm, setShowCheckoutForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [orderId, setOrderId] = useState('');
   const [formData, setFormData] = useState({ name: '', email: '', phone: '+94', address: '', paymentMethod: 'Cash on Delivery' });
   const [errors, setErrors] = useState({});
 
@@ -59,15 +60,20 @@ const CartCheckout = () => {
     
     try {
       // 3. Execute the Secure Checkout (Firestore Transaction + Function)
-      const orderId = await checkout(sanitizedData, cart, getCartTotal());
+      const res = await checkout(sanitizedData, cart, getCartTotal());
+      const orderId = res;
+      setOrderId(orderId);
       
       // 4. Format the message for WhatsApp (Now used for notification only)
       let orderDetails = cart.map(item => `${item.quantity}x ${item.title} (LKR ${item.price.toFixed(2)})`).join('%0A');
       const textMessage = `*📦 NEW ORDER - LuqmanGo*%0A%0A*👤 Customer Details*%0A━━━━━━━━━━━━━━%0A*Name:* ${sanitizedData.name}%0A*Email:* ${sanitizedData.email}%0A*Phone:* ${sanitizedData.phone}%0A*Address:* ${sanitizedData.address}%0A%0A*💳 Payment Method:* ${sanitizedData.paymentMethod}%0A%0A*🛒 Order Summary*%0A━━━━━━━━━━━━━━%0A${orderDetails}%0A%0A*💰 TOTAL AMOUNT: LKR ${getCartTotal().toFixed(2)}*%0A%0A_Order ID: ${orderId}_%0A%0A_Thank you for shopping with LuqmanGo!_`;
       
       // 5. Open WhatsApp Direct Link to Vendor
+      // 5. Open WhatsApp Direct Link to Vendor after a slight delay
       const vendorPhone = import.meta.env.VITE_VENDOR_WHATSAPP || "94725065252"; 
-      window.open(`https://wa.me/${vendorPhone}?text=${textMessage}`, '_blank');
+      setTimeout(() => {
+        window.open(`https://wa.me/${vendorPhone}?text=${textMessage}`, '_blank');
+      }, 1500);
       
       // 6. Finalize UI state
       clearCart();
@@ -92,9 +98,13 @@ const CartCheckout = () => {
           <CheckCircle size={80} strokeWidth={1.5} />
         </div>
         <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem', color: 'var(--color-secondary)' }}>Order Sent to WhatsApp!</h2>
-        <p style={{ color: 'var(--color-text-muted)', marginBottom: '2.5rem', fontSize: '1.125rem', lineHeight: 1.6 }}>
+        <p style={{ color: 'var(--color-text-muted)', marginBottom: '0.5rem', fontSize: '1.125rem', lineHeight: 1.6 }}>
           Thank you for shopping at LuqmanGo. Your order details have been securely passed to our WhatsApp. Our team will message you shortly to confirm delivery!
         </p>
+        <div style={{ backgroundColor: '#FBF5EC', padding: '0.8rem 1.5rem', borderRadius: '12px', marginBottom: '2.5rem', border: '1px dashed #113013' }}>
+           <span style={{ fontSize: '0.85rem', color: '#706F65', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.1em' }}>Order ID: </span>
+           <span style={{ fontSize: '1rem', fontWeight: 700, color: '#113013', fontFamily: 'monospace' }}>{orderId}</span>
+        </div>
         <Link to="/" className="btn btn-primary" style={{ padding: '1rem 2rem', fontSize: '1.1rem', fontWeight: 700 }}>
           Continue Shopping
         </Link>
@@ -325,7 +335,7 @@ const CartCheckout = () => {
                       transition: 'all 0.2s ease'
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', opacity: method !== 'Cash on Delivery' ? 0.5 : 1 }}>
                       <div style={{ 
                         width: '18px', 
                         height: '18px', 
@@ -340,7 +350,7 @@ const CartCheckout = () => {
                         )}
                       </div>
                       <span style={{ fontSize: '0.9rem', fontWeight: formData.paymentMethod === method ? 600 : 400, color: '#113013' }}>
-                        {method}
+                        {method} {method !== 'Cash on Delivery' && '(Coming Soon)'}
                       </span>
                     </div>
                     <input 
@@ -348,7 +358,8 @@ const CartCheckout = () => {
                       name="paymentMethod" 
                       value={method} 
                       checked={formData.paymentMethod === method} 
-                      onChange={() => setFormData({...formData, paymentMethod: method})} 
+                      disabled={method !== 'Cash on Delivery'}
+                      onChange={e => setFormData({...formData, paymentMethod: e.target.value})} 
                       style={{ display: 'none' }}
                     />
                   </label>

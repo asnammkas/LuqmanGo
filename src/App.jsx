@@ -13,7 +13,7 @@ import SearchOverlay from './components/storefront/SearchOverlay';
 const Home = lazy(() => import('./pages/storefront/Home'));
 const CategoryPage = lazy(() => import('./pages/storefront/CategoryPage'));
 const ProductDetail = lazy(() => import('./pages/storefront/ProductDetail'));
-const StoresComingSoon = lazy(() => import('./pages/storefront/StoresComingSoon'));
+const Stores = lazy(() => import('./pages/storefront/Stores'));
 const Wishlist = lazy(() => import('./pages/storefront/Wishlist'));
 const SignIn = lazy(() => import('./pages/storefront/SignIn'));
 const Register = lazy(() => import('./pages/storefront/Register'));
@@ -79,7 +79,7 @@ function AppContent() {
     const timer = setTimeout(() => {
       setFadeOut(true);
       setTimeout(() => setIsLoading(false), 600);
-    }, 2200); 
+    }, 800); 
     return () => clearTimeout(timer);
   }, []);
 
@@ -199,7 +199,7 @@ function AppContent() {
               <Route path="/" element={<Home />} />
               <Route path="/category/:categoryName" element={<CategoryPage />} />
               <Route path="/product/:id" element={<ProductDetail />} />
-              <Route path="/stores" element={<StoresComingSoon />} />
+              <Route path="/stores" element={<Stores />} />
               <Route path="/wishlist" element={<Wishlist />} />
               <Route path="/signin" element={<SignIn />} />
               <Route path="/register" element={<Register />} />

@@ -148,6 +148,11 @@ const CategoryPage = () => {
         <meta name="description" content={description} />
         <meta property="og:title" content={`${activeCategory} | LuqmanGo`} />
         <meta property="og:description" content={description} />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://luqmango.com/public/images/og-category.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${activeCategory} | LuqmanGo`} />
+        <meta name="twitter:description" content={description} />
       </Helmet>
       <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', width: '100%', boxSizing: 'border-box', margin: '0 auto', flex: 1 }}>
         

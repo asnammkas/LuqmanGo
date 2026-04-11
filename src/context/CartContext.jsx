@@ -19,9 +19,11 @@ export const CartProvider = ({ children }) => {
   const { products } = useProducts();
 
   useEffect(() => {
+    // Safety check for consolidated products list
     if (!products || products.length === 0) return;
     
-    setTimeout(() => {
+    // Sync cart prices with live product data
+    const syncTimeout = setTimeout(() => {
       setCart((prevCart) => {
         let updated = false;
         const syncedCart = prevCart.map(item => {
@@ -37,6 +39,8 @@ export const CartProvider = ({ children }) => {
         return updated ? syncedCart : prevCart;
       });
     }, 0);
+
+    return () => clearTimeout(syncTimeout);
   }, [products]);
 
   useEffect(() => {
@@ -46,12 +50,19 @@ export const CartProvider = ({ children }) => {
   const addToCart = useCallback((product, quantity = 1) => {
     setCart((prevCart) => {
       const existing = prevCart.find(item => item.id === product.id);
+      const stock = product.stock || 0;
+      
       if (existing) {
+        const newQuantity = Math.min(existing.quantity + quantity, stock);
         return prevCart.map(item => 
-          item.id === product.id ? { ...item, quantity: item.quantity + quantity } : item
+          item.id === product.id ? { ...item, quantity: newQuantity } : item
         );
       }
-      return [...prevCart, { ...product, quantity }];
+      
+      const limitedQuantity = Math.min(quantity, stock);
+      if (limitedQuantity <= 0) return prevCart; // Don't add if out of stock
+      
+      return [...prevCart, { ...product, quantity: limitedQuantity }];
     });
   }, []);
 
@@ -60,13 +71,16 @@ export const CartProvider = ({ children }) => {
   }, []);
 
   const updateCartQuantity = useCallback((id, quantity) => {
-    const clamped = Math.min(Math.max(Math.round(quantity), 0), 99);
+    const item = cart.find(i => i.id === id);
+    const stock = item?.stock || 0;
+    const clamped = Math.min(Math.max(Math.round(quantity), 0), stock);
+    
     if (clamped <= 0) {
       removeFromCart(id);
       return;
     }
     setCart(prev => prev.map(item => item.id === id ? { ...item, quantity: clamped } : item));
-  }, [removeFromCart]);
+  }, [cart, removeFromCart]);
 
   const toggleCart = useCallback((product) => {
     setCart((prevCart) => {

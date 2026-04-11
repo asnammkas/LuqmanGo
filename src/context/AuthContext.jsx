@@ -7,7 +7,10 @@ import {
   updateProfile,
   sendPasswordResetEmail,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  setPersistence,
+  browserLocalPersistence,
+  browserSessionPersistence
 } from 'firebase/auth';
 import { doc, getDoc } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
@@ -33,8 +36,14 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Sign in with email and password
-  const login = useCallback((email, password) => {
-    return signInWithEmailAndPassword(auth, email, password);
+  const login = useCallback(async (email, password, remember = false) => {
+    try {
+      await setPersistence(auth, remember ? browserLocalPersistence : browserSessionPersistence);
+      return await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      logger.error("Login Error:", error);
+      throw error;
+    }
   }, []);
 
   // Sign out

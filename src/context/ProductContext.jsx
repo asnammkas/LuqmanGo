@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState, useEffect, useCallback, use
 import { db } from '../config/firebase';
 import { 
   collection, onSnapshot, doc, setDoc, deleteDoc, 
-  query, limit, orderBy, startAfter, getDocs, where
+  query, limit, orderBy, startAfter, getDocs, where, getDoc
 } from 'firebase/firestore';
 import { logger } from '../utils/logger';
 
@@ -21,6 +21,17 @@ export const ProductProvider = ({ children }) => {
   const [searchCatalog, setSearchCatalog] = useState(null);
   const [adminCatalog, setAdminCatalog] = useState(null);
   const adminUnsub = useRef(null);
+  
+  // ─── Consolidated Products Cache ───
+  const products = useMemo(() => {
+    const map = new Map();
+    // Prioritize newest/more detailed data if there are duplicates
+    const all = [...featuredProducts, ...(searchCatalog || []), ...(adminCatalog || [])];
+    all.forEach(p => {
+      if (p && p.id) map.set(p.id, p);
+    });
+    return Array.from(map.values());
+  }, [featuredProducts, searchCatalog, adminCatalog]);
 
   // ─── Real-time listener for Featured products ───
   useEffect(() => {
@@ -143,7 +154,7 @@ export const ProductProvider = ({ children }) => {
   // ─── CRUD Operations ───
   const addProduct = useCallback(async (product) => {
     try {
-      const newId = Date.now().toString();
+      const newId = crypto.randomUUID();
       await setDoc(doc(db, 'products', newId), { ...product, id: newId });
     } catch (e) {
       logger.error("Error adding document: ", e);
@@ -166,18 +177,36 @@ export const ProductProvider = ({ children }) => {
     }
   }, []);
 
+  const fetchProductById = useCallback(async (id) => {
+    // Check local consolidated cache first
+    const cached = products.find(p => p.id === id);
+    if (cached) return cached;
+
+    try {
+      const docRef = doc(db, 'products', id);
+      const snapshot = await getDoc(docRef);
+      if (snapshot.exists()) {
+        return { id: snapshot.id, ...snapshot.data() };
+      }
+      return null;
+    } catch (err) {
+      logger.error("Fetch Product By ID Error:", err);
+      return null;
+    }
+  }, [products]);
+
   const value = useMemo(() => ({
-    featuredProducts, isProductsLoading, productsError,
+    products, featuredProducts, isProductsLoading, productsError,
     fetchSearchCatalog, searchCatalog,
     fetchAdminCatalog, clearAdminCatalog, adminCatalog,
     fetchCategoryProducts, fetchMoreCategoryProducts,
-    addProduct, updateProduct, deleteProduct
+    fetchProductById, addProduct, updateProduct, deleteProduct
   }), [
-    featuredProducts, isProductsLoading, productsError, 
+    products, featuredProducts, isProductsLoading, productsError, 
     searchCatalog, fetchSearchCatalog,
     adminCatalog, fetchAdminCatalog, clearAdminCatalog,
     fetchCategoryProducts, fetchMoreCategoryProducts,
-    addProduct, updateProduct, deleteProduct
+    fetchProductById, addProduct, updateProduct, deleteProduct
   ]);
 
   return (

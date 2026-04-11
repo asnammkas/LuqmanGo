@@ -8,6 +8,7 @@ import Footer from '../../components/storefront/Footer';
 const SignIn = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showResetModal, setShowResetModal] = useState(false);
@@ -74,7 +75,7 @@ const SignIn = () => {
     setIsLoading(true);
 
     try {
-      await login(email, password);
+      await login(email, password, rememberMe);
       toast.success('Signed in successfully!');
       navigate(from, { replace: true });
     } catch (err) {
@@ -165,7 +166,11 @@ const SignIn = () => {
 
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.85rem' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', color: 'var(--color-text-muted)' }}>
-                <input type="checkbox" /> Remember me
+                <input 
+                  type="checkbox" 
+                  checked={rememberMe}
+                  onChange={(e) => setRememberMe(e.target.checked)}
+                /> Remember me
               </label>
               <button 
                 type="button" 

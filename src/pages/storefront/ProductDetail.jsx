@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DOMPurify from 'dompurify';
 import { useParams, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
@@ -11,14 +11,39 @@ import Footer from '../../components/storefront/Footer';
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const { products } = useProducts();
+  const { products, fetchProductById } = useProducts();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const toast = useToast();
-  const isHearted = isInWishlist(id);
-  const [quantity, setQuantity] = useState(1);
   
-  const product = products.find(p => p.id === id);
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [quantity, setQuantity] = useState(1);
+  const isHearted = isInWishlist(id);
+
+  useEffect(() => {
+    let active = true;
+    const loadProduct = async () => {
+      setLoading(true);
+      const data = await fetchProductById(id);
+      if (active) {
+        setProduct(data);
+        setLoading(false);
+      }
+    };
+    loadProduct();
+    return () => { active = false; };
+  }, [id, fetchProductById]);
+
+  if (loading) {
+    return (
+      <div style={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', flexDirection: 'column' }}>
+          <div style={{ width: '30px', height: '30px', border: '2px solid rgba(0,0,0,0.05)', borderTopColor: '#00C853', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+          <span style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.1em', color: '#706F65' }}>Curating Experience...</span>
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      </div>
+    );
+  }
 
   if (!product) {
     return (
@@ -41,6 +66,10 @@ const ProductDetail = () => {
         <meta name="description" content={product.description?.substring(0, 150) + "..." || `Buy ${product.title} at LuqmanGo.`} />
         <meta property="og:title" content={`${product.title} | LuqmanGo`} />
         <meta property="og:description" content={product.description?.substring(0, 150) + "..." || `Buy ${product.title} at LuqmanGo.`} />
+        <meta property="og:type" content="product" />
+        <meta property="og:image" content={product.image} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={`${product.title} | LuqmanGo`} />
       </Helmet>
       <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', width: '100%', boxSizing: 'border-box', margin: '0 auto', flex: 1 }}>
         
@@ -192,8 +221,9 @@ const ProductDetail = () => {
                 </button>
                 <span style={{ width: '40px', textAlign: 'center', fontWeight: 600, fontSize: '1rem' }}>{quantity}</span>
                 <button 
-                  onClick={() => setQuantity(quantity + 1)}
-                  style={{ background: 'none', border: 'none', width: '36px', height: '36px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                  onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
+                  disabled={quantity >= product.stock}
+                  style={{ background: 'none', border: 'none', width: '36px', height: '36px', cursor: quantity >= product.stock ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: quantity >= product.stock ? 0.3 : 1 }}
                 >
                   <Plus size={16} />
                 </button>
@@ -204,21 +234,23 @@ const ProductDetail = () => {
                   addToCart(product, quantity);
                   toast.success(`${product.title} added to bag`);
                 }}
+                disabled={product.stock <= 0}
                 className="btn"
                 style={{ 
                   flexGrow: 1, 
                   height: '3.5rem', 
-                  backgroundColor: '#001d04', 
+                  backgroundColor: product.stock <= 0 ? '#6b7a6d' : '#001d04', 
                   color: 'white', 
                   borderRadius: '12px',
                   fontWeight: 600,
                   fontSize: '0.85rem',
                   letterSpacing: '0.15em',
                   transition: 'all 0.2s ease',
-                  cursor: 'pointer'
+                  cursor: product.stock <= 0 ? 'not-allowed' : 'pointer',
+                  opacity: product.stock <= 0 ? 0.7 : 1
                 }}
               >
-                ADD TO BAG
+                {product.stock <= 0 ? 'SOLD OUT' : 'ADD TO BAG'}
               </button>
             </div>
 

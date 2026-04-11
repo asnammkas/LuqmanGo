@@ -40,11 +40,22 @@ export const logger = {
         console.error(errorObj);
       }
     } else {
-      // PROD: Send to Crashlytics / Sentry
-      // Example: Sentry.captureException(errorObj, { extra: { context: message } });
+      // PROD: Structured Error Reporting
+      // In a real Sentry setup, you'd call Sentry.captureException(errorObj)
       
-      // Fallback for current deployment to ensure errors are still visible in browser tools if needed
-      console.error(`[Error Tracking]: Encountered a critical issue. Please contact support if this persists.`);
+      const reportPayload = {
+        message,
+        error: errorObj?.message || errorObj,
+        stack: errorObj?.stack,
+        timestamp: new Date().toISOString(),
+        url: window.location.href
+      };
+
+      // Mocking a reporting service call
+      console.error(`[Production Error Reported]:`, reportPayload);
+      
+      // If we had a reporting endpoint or SDK:
+      // fetch('/api/report-error', { method: 'POST', body: JSON.stringify(reportPayload) }).catch(() => {});
     }
   },
 
