@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Cookie, X } from 'lucide-react';
+import { initAnalytics } from '../../config/firebase';
 import styles from './CookieConsent.module.css';
 
 const CookieConsent = () => {
@@ -8,6 +9,10 @@ const CookieConsent = () => {
 
   useEffect(() => {
     const consent = localStorage.getItem('luqmango_cookie_consent');
+    if (consent === 'true') {
+      initAnalytics();
+    }
+    
     if (!consent) {
       const timer = setTimeout(() => setIsVisible(true), 5000);
       return () => clearTimeout(timer);
@@ -16,6 +21,7 @@ const CookieConsent = () => {
 
   const handleAccept = () => {
     localStorage.setItem('luqmango_cookie_consent', 'true');
+    initAnalytics();
     setIsVisible(false);
   };
 

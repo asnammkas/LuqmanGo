@@ -19,8 +19,19 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
-// Initialize Analytics
-export const analytics = getAnalytics(app);
+// Conditional Analytics Initialization
+let analytics = null;
+export const initAnalytics = () => {
+  if (typeof window !== 'undefined' && !analytics) {
+    const consent = localStorage.getItem('luqmango_cookie_consent');
+    if (consent === 'true') {
+      import('firebase/analytics').then(({ getAnalytics }) => {
+        analytics = getAnalytics(app);
+      });
+    }
+  }
+  return analytics;
+};
 
 // Initialize Cloud Firestore
 export const db = getFirestore(app);
