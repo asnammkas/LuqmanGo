@@ -1,20 +1,21 @@
 {
+  "name": "LuqmanGo Premium Store",
   "short_name": "LuqmanGo",
-  "name": "LuqmanGo Premium Storefront",
+  "description": "Premium curated shopping experience with LuqmanGo.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F7F3ED",
+  "theme_color": "#113013",
   "icons": [
     {
-      "src": "vite.svg",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "/vite.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
     },
     {
-      "src": "vite.svg",
-      "type": "image/svg+xml",
-      "sizes": "512x512"
+      "src": "/vite.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
     }
-  ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#113013",
-  "background_color": "#F7F3ED"
+  ]
 }

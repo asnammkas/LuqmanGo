@@ -5,7 +5,7 @@ import { useProducts } from '../../context/ProductContext';
 import ProductCard from '../../components/storefront/ProductCard';
 import CategoryGrid from '../../components/storefront/CategoryGrid';
 import Footer from '../../components/storefront/Footer';
-import { HeroSkeleton, ProductGridSkeleton } from '../../components/Skeletons';
+import { HeroSkeleton, ProductGridSkeleton } from '../../components/ui/Skeleton';
 import { Loader, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
 
 const Home = () => {

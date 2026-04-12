@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
-import { useProducts } from './ProductContext';
+import { db } from '../config/firebase';
+import { doc, getDoc } from 'firebase/firestore';
 import { logger } from '../utils/logger';
 
 const CartContext = createContext();
@@ -16,32 +17,59 @@ export const CartProvider = ({ children }) => {
     }
   });
   
-  const { products } = useProducts();
-
   useEffect(() => {
-    // Safety check for consolidated products list
-    if (!products || products.length === 0) return;
-    
-    // Sync cart prices with live product data
-    const syncTimeout = setTimeout(() => {
-      setCart((prevCart) => {
+    if (cart.length === 0) return;
+
+    const verifyCartPrices = async () => {
+      try {
         let updated = false;
-        const syncedCart = prevCart.map(item => {
-          const liveProduct = products.find(p => p.id === item.id);
-          if (liveProduct && liveProduct.price !== item.price) {
+        const syncedCart = await Promise.all(cart.map(async (item) => {
+          const docRef = doc(db, 'products', item.id.toString());
+          const snapshot = await getDoc(docRef);
+          if (snapshot.exists()) {
+            const liveData = snapshot.data();
+            const currentStock = liveData.stock || 0;
+            const newQuantity = Math.min(item.quantity, currentStock);
+
+            if (
+              liveData.price !== item.price || 
+              newQuantity !== item.quantity || 
+              liveData.title !== item.title || 
+              item.image !== liveData.image
+            ) {
+              updated = true;
+              logger.info(`Automatically updated stale cart item: ${item.title}`);
+              return { 
+                ...item, 
+                price: liveData.price, 
+                title: liveData.title, 
+                image: liveData.image, 
+                stock: liveData.stock, 
+                quantity: newQuantity 
+              };
+            }
+          } else {
+            // Product was deleted from database
             updated = true;
-            logger.info(`Automatically updated stale price in cart for: ${item.title}`);
-            return { ...item, price: liveProduct.price };
+            logger.info(`Removed deleted product from cart: ${item.title}`);
+            return null;
           }
           return item;
-        });
-  
-        return updated ? syncedCart : prevCart;
-      });
-    }, 0);
+        }));
+        
+        if (updated) {
+           const finalCart = syncedCart.filter(Boolean);
+           setCart(finalCart);
+           logger.info("Cart fully synchronized with live server data.");
+        }
+      } catch(err) {
+        logger.error("Failed to sync cart prices with server:", err);
+      }
+    };
 
-    return () => clearTimeout(syncTimeout);
-  }, [products]);
+    verifyCartPrices();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Run once on mount to verify local storage cart
 
   useEffect(() => {
     localStorage.setItem('luqman_cart', JSON.stringify(cart));

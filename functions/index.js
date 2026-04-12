@@ -56,6 +56,9 @@ export const validateAndCreateOrder = onCall(async (request) => {
   if (customerInfo.orderNotes && customerInfo.orderNotes.length > 500) {
     throw new HttpsError("invalid-argument", "Order notes cannot exceed 500 characters.");
   }
+  if (customerInfo.paymentMethod !== 'Cash on Delivery') {
+    throw new HttpsError("invalid-argument", "Invalid payment method. Only Cash on Delivery is supported at this time.");
+  }
 
   let serverTotal = 0;
   const orderItems = [];

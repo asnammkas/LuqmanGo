@@ -12,7 +12,7 @@ import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const { products, fetchProductById } = useProducts();
+  const { fetchProductById } = useProducts();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const toast = useToast();
