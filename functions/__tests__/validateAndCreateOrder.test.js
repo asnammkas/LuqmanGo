@@ -76,7 +76,13 @@ describe('validateAndCreateOrder Cloud Function', () => {
 
   it('should successfully create an order and decrement stock', async () => {
     const cart = [{ id: 'prod1', quantity: 2, price: 100 }];
-    const customerInfo = { email: 'user@test.com', phone: '+94712345678', name: 'User', address: '123 Main St' };
+    const customerInfo = { 
+      email: 'user@test.com', 
+      phone: '+94712345678', 
+      name: 'User', 
+      address: '123 Main St',
+      paymentMethod: 'Cash on Delivery' 
+    };
     const request = { data: { cart, customerInfo }, auth: { uid: 'user_123' } };
 
     const mockProductData = { title: 'Product 1', stock: 10, price: 100 };
@@ -100,7 +106,13 @@ describe('validateAndCreateOrder Cloud Function', () => {
 
   it('should throw an error if insufficient stock', async () => {
     const cart = [{ id: 'prod1', quantity: 20 }]; // 20 requested, 10 in stock
-    const customerInfo = { email: 'user@test.com', phone: '+94712345678', name: 'User', address: '123 Main St' };
+    const customerInfo = { 
+      email: 'user@test.com', 
+      phone: '+94712345678', 
+      name: 'User', 
+      address: '123 Main St',
+      paymentMethod: 'Cash on Delivery' 
+    };
     const request = { data: { cart, customerInfo }, auth: { uid: 'user_123' } };
 
     const mockProductData = { title: 'Product 1', stock: 10, price: 100 };
