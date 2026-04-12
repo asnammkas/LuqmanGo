@@ -4,7 +4,9 @@ import { Helmet } from 'react-helmet-async';
 import { useProducts } from '../../context/ProductContext';
 import { useCategories } from '../../context/CategoryContext';
 import ProductCard from '../../components/storefront/ProductCard';
+import { ProductSkeleton } from '../../components/ui/Skeleton';
 import Footer from '../../components/storefront/Footer';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { SlidersHorizontal, ArrowUpDown, Check, ArrowLeft, Search as SearchIcon, XCircle } from 'lucide-react';
 
 // Default descriptions for common categories to make them feel premium
@@ -290,9 +292,8 @@ const CategoryPage = () => {
         {isLoading ? (
             <div className="product-grid">
                {[1,2,3,4,5,6,7,8].map(i => (
-                  <div key={i} style={{ aspectRatio: '4/5', backgroundColor: '#F3F2EE', borderRadius: 'var(--radius-lg)', animation: 'pulse 1.5s ease-in-out infinite' }} />
+                  <ProductSkeleton key={i} />
                ))}
-               <style>{`@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }`}</style>
             </div>
         ) : displayProducts.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '6rem 1rem' }}>
@@ -324,12 +325,10 @@ const CategoryPage = () => {
               {/* Infinite Scroll Sentinel & Subtle Loader */}
               <div ref={observerRef} style={{ height: '40px', margin: '2rem 0', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 {isFetchingNext && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', color: '#706F65', opacity: 0.8 }}>
-                        <div style={{ width: '14px', height: '14px', border: '2px solid rgba(17,48,19,0.1)', borderTopColor: '#113013', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
-                        <span style={{ fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>Discovering more...</span>
-                    </div>
+                    <LoadingSpinner size={20} label="Discovering more..." />
                 )}
               </div>
+
             </>
         )}
       </div>

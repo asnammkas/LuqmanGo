@@ -41,6 +41,9 @@ export const validateAndCreateOrder = onCall(async (request) => {
   }
 
   // ─── P1: Server-side Basic Validation ───
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(customerInfo.email)) {
+    throw new HttpsError("invalid-argument", "Invalid email format.");
+  }
   if (customerInfo.name.length < 2 || customerInfo.name.length > 100) {
     throw new HttpsError("invalid-argument", "Invalid name length.");
   }
@@ -49,6 +52,9 @@ export const validateAndCreateOrder = onCall(async (request) => {
   }
   if (!/^\+?[\d\s-]{8,20}$/.test(customerInfo.phone)) {
     throw new HttpsError("invalid-argument", "Invalid phone number format.");
+  }
+  if (customerInfo.orderNotes && customerInfo.orderNotes.length > 500) {
+    throw new HttpsError("invalid-argument", "Order notes cannot exceed 500 characters.");
   }
 
   let serverTotal = 0;
@@ -110,6 +116,7 @@ export const validateAndCreateOrder = onCall(async (request) => {
         date: admin.firestore.FieldValue.serverTimestamp(),
         customer: {
           ...customerInfo,
+          orderNotes: customerInfo.orderNotes ? customerInfo.orderNotes.substring(0, 500) : "",
           userId: request.auth?.uid || null
         },
         items: orderItems,

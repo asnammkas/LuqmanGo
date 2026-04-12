@@ -62,8 +62,9 @@ const SignIn = () => {
       if (code === 'auth/popup-closed-by-user') {
         // User closed the popup, don't show an error
       } else {
-        setError(`Error (${code}): Google sign-in failed. Please try again.`);
+        setError(`Something went wrong${import.meta.env.DEV ? ` (${code})` : ''}. Please try again.`);
       }
+
     } finally {
       setIsLoading(false);
     }
@@ -88,8 +89,9 @@ const SignIn = () => {
       } else if (code === 'auth/invalid-email') {
         setError('The email address provided is not valid.');
       } else {
-        setError(`Error (${code}): Something went wrong. Please try again.`);
+        setError(`Something went wrong${import.meta.env.DEV ? ` (${code})` : ''}. Please try again.`);
       }
+
     } finally {
       setIsLoading(false);
     }

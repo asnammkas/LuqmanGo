@@ -88,6 +88,10 @@ export const CartProvider = ({ children }) => {
       if (exists) {
         return prevCart.filter(item => item.id !== product.id);
       }
+      if (product.stock <= 0) {
+        logger.info(`Cannot toggle out-of-stock item: ${product.title}`);
+        return prevCart;
+      }
       return [...prevCart, { ...product, quantity: 1 }];
     });
   }, []);

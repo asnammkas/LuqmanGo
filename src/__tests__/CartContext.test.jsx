@@ -7,7 +7,7 @@ import React from 'react';
 // Mock ProductContext for CartProvider
 const mockProductContext = {
   products: [
-    { id: '1', title: 'Test Product', price: 100, category: 'Test' }
+    { id: '1', title: 'Test Product', price: 100, category: 'Test', stock: 10 }
   ],
   isProductsLoading: false,
   productsError: null,
@@ -36,7 +36,7 @@ describe('CartContext', () => {
 
   it('should add a product to the cart', () => {
     const { result } = renderHook(() => useCart(), { wrapper });
-    const product = { id: '1', title: 'Test Product', price: 100 };
+    const product = { id: '1', title: 'Test Product', price: 100, stock: 10 };
 
     act(() => {
       result.current.addToCart(product, 1);
@@ -50,7 +50,7 @@ describe('CartContext', () => {
 
   it('should increase quantity when adding the same product', () => {
     const { result } = renderHook(() => useCart(), { wrapper });
-    const product = { id: '1', title: 'Test Product', price: 100 };
+    const product = { id: '1', title: 'Test Product', price: 100, stock: 10 };
 
     act(() => {
       result.current.addToCart(product, 1);
@@ -65,7 +65,7 @@ describe('CartContext', () => {
 
   it('should remove a product from the cart', () => {
     const { result } = renderHook(() => useCart(), { wrapper });
-    const product = { id: '1', title: 'Test Product', price: 100 };
+    const product = { id: '1', title: 'Test Product', price: 100, stock: 10 };
 
     act(() => {
       result.current.addToCart(product, 1);
@@ -81,7 +81,7 @@ describe('CartContext', () => {
 
   it('should clear the cart', () => {
     const { result } = renderHook(() => useCart(), { wrapper });
-    const product = { id: '1', title: 'Test Product', price: 100 };
+    const product = { id: '1', title: 'Test Product', price: 100, stock: 10 };
 
     act(() => {
       result.current.addToCart(product, 1);
@@ -93,7 +93,7 @@ describe('CartContext', () => {
 
   it('should update cart quantity', () => {
     const { result } = renderHook(() => useCart(), { wrapper });
-    const product = { id: '1', title: 'Test Product', price: 100 };
+    const product = { id: '1', title: 'Test Product', price: 100, stock: 10 };
 
     act(() => {
       result.current.addToCart(product, 1);
@@ -109,7 +109,7 @@ describe('CartContext', () => {
 
   it('should persist to localStorage', () => {
     const { result } = renderHook(() => useCart(), { wrapper });
-    const product = { id: '1', title: 'Test Product', price: 100 };
+    const product = { id: '1', title: 'Test Product', price: 100, stock: 10 };
 
     act(() => {
       result.current.addToCart(product, 2);

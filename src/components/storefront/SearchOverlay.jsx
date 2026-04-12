@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProducts } from '../../context/ProductContext';
+import { useDebounce } from '../../hooks/useDebounce';
+import { formatCurrency } from '../../utils/formatters';
 import { Search, X, ArrowRight, ShoppingBag, Tag } from 'lucide-react';
 
 const SearchOverlay = ({ isOpen, onClose }) => {
   const { searchCatalog, fetchSearchCatalog } = useProducts();
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedQuery = useDebounce(searchQuery, 300);
   const [results, setResults] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef(null);
@@ -29,12 +32,12 @@ const SearchOverlay = ({ isOpen, onClose }) => {
 
   // Fuzzy search logic
   useEffect(() => {
-    if (!searchQuery.trim() || !searchCatalog) {
+    if (!debouncedQuery.trim() || !searchCatalog) {
       setTimeout(() => setResults([]), 0);
       return;
     }
 
-    const query = searchQuery.toLowerCase();
+    const query = debouncedQuery.toLowerCase();
     const filtered = searchCatalog.filter(p => 
       p.title.toLowerCase().includes(query) || 
       p.category.toLowerCase().includes(query) ||
@@ -42,7 +45,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
     ).slice(0, 6); // Limit results for UI clarity
 
     setTimeout(() => setResults(filtered), 0);
-  }, [searchQuery, searchCatalog]);
+  }, [debouncedQuery, searchCatalog]);
 
   if (!isOpen) return null;
 
@@ -124,9 +127,8 @@ const SearchOverlay = ({ isOpen, onClose }) => {
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.15rem', justifyContent: 'flex-end' }}>
-                    <span style={{ fontSize: '0.6rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
                     <span style={{ fontSize: '1rem', fontWeight: 700, color: '#00C853', letterSpacing: '-0.01em' }}>
-                      {product.price?.toLocaleString()}
+                      {formatCurrency(product.price)}
                     </span>
                   </div>
                   <ArrowRight size={16} color="#706F65" style={{ marginTop: '0.4rem' }} />

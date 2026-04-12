@@ -13,6 +13,8 @@ vi.mock('firebase-admin', () => {
   const mockDb = {
     collection: vi.fn().mockReturnThis(),
     doc: vi.fn().mockReturnThis(),
+    get: vi.fn().mockResolvedValue({ exists: false }),
+    set: vi.fn().mockResolvedValue({}),
     runTransaction: vi.fn().mockImplementation((cb) => cb(mockTransaction)),
   };
 
@@ -42,6 +44,7 @@ vi.mock('firebase-functions/v2/https', () => ({
 vi.mock('firebase-functions/v2/firestore', () => ({
   onDocumentCreated: vi.fn(),
   onDocumentDeleted: vi.fn(),
+  onDocumentUpdated: vi.fn(),
 }));
 
 vi.mock('firebase-functions/v2', () => ({
@@ -62,18 +65,18 @@ describe('validateAndCreateOrder Cloud Function', () => {
   });
 
   it('should throw an error if cart is empty', async () => {
-    const request = { data: { cart: [], customerInfo: {} } };
+    const request = { data: { cart: [], customerInfo: {} }, auth: { uid: 'user_123' } };
     await expect(validateAndCreateOrder(request)).rejects.toThrow('Cart is empty or invalid.');
   });
 
   it('should throw an error if customer info is incomplete', async () => {
-    const request = { data: { cart: [{ id: 1, quantity: 1 }], customerInfo: { email: '' } } };
+    const request = { data: { cart: [{ id: 1, quantity: 1 }], customerInfo: { email: '' } }, auth: { uid: 'user_123' } };
     await expect(validateAndCreateOrder(request)).rejects.toThrow('Customer information is incomplete.');
   });
 
   it('should successfully create an order and decrement stock', async () => {
     const cart = [{ id: 'prod1', quantity: 2, price: 100 }];
-    const customerInfo = { email: 'user@test.com', phone: '12345', name: 'User' };
+    const customerInfo = { email: 'user@test.com', phone: '+94712345678', name: 'User', address: '123 Main St' };
     const request = { data: { cart, customerInfo }, auth: { uid: 'user_123' } };
 
     const mockProductData = { title: 'Product 1', stock: 10, price: 100 };
@@ -97,8 +100,8 @@ describe('validateAndCreateOrder Cloud Function', () => {
 
   it('should throw an error if insufficient stock', async () => {
     const cart = [{ id: 'prod1', quantity: 20 }]; // 20 requested, 10 in stock
-    const customerInfo = { email: 'user@test.com', phone: '12345' };
-    const request = { data: { cart, customerInfo } };
+    const customerInfo = { email: 'user@test.com', phone: '+94712345678', name: 'User', address: '123 Main St' };
+    const request = { data: { cart, customerInfo }, auth: { uid: 'user_123' } };
 
     const mockProductData = { title: 'Product 1', stock: 10, price: 100 };
 

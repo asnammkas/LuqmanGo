@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useToast } from '../../context/ToastContext';
+import { formatCurrency } from '../../utils/formatters';
 import { ShoppingBag, Image as ImageIcon, Heart } from 'lucide-react';
 
 const ProductCard = ({ product }) => {
@@ -150,9 +151,8 @@ const ProductCard = ({ product }) => {
               {product.title}
             </h3>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem', flexShrink: 0 }}>
-              <span style={{ fontSize: '0.65rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
               <span style={{ fontSize: '1.05rem', fontWeight: 800, color: '#436132', letterSpacing: '-0.02em' }}>
-                {Math.round(product.price).toLocaleString()}
+                {formatCurrency(product.price)}
               </span>
             </div>
           </div>

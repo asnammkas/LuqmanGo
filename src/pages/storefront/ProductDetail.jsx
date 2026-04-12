@@ -8,6 +8,7 @@ import { useWishlist } from '../../context/WishlistContext';
 import { useToast } from '../../context/ToastContext';
 import { ArrowLeft, Truck, ShieldCheck, Clock, Image as ImageIcon, Heart, Minus, Plus } from 'lucide-react';
 import Footer from '../../components/storefront/Footer';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -37,13 +38,12 @@ const ProductDetail = () => {
 
   if (loading) {
     return (
-      <div style={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '1rem', flexDirection: 'column' }}>
-          <div style={{ width: '30px', height: '30px', border: '2px solid rgba(0,0,0,0.05)', borderTopColor: '#00C853', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-          <span style={{ fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.1em', color: '#706F65' }}>Curating Experience...</span>
-          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+      <div style={{ height: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <LoadingSpinner size={32} label="Curating Experience..." />
       </div>
     );
   }
+
 
   if (!product) {
     return (

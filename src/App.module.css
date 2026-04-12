@@ -1,0 +1,144 @@
+.appContainer {
+  composes: app-container from global;
+}
+
+.loaderOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: #F7F3ED;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 12vh;
+  background: radial-gradient(circle at center, #FFFFFF 0%, #F7F3ED 100%);
+}
+
+.ambientGlow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, rgba(0, 200, 83, 0.1) 0%, transparent 60%);
+  z-index: 0;
+}
+
+.loaderLogoContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+  width: 90%;
+}
+
+.brandName {
+  font-size: clamp(5rem, 22vw, 7.5rem);
+  font-weight: 800;
+  margin: 0;
+  display: inline-flex;
+  align-items: baseline;
+  letter-spacing: -0.02em;
+  color: #00C853;
+  text-shadow: 0 4px 30px rgba(0, 200, 83, 0.2);
+  position: relative;
+  padding-bottom: 1.2rem;
+  white-space: nowrap;
+}
+
+.brandGo {
+  color: #C4D300;
+}
+
+.arrowContainer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+}
+
+.tagline {
+  margin-top: 0.8rem;
+  font-family: "Georgia", serif;
+  font-style: italic;
+  font-size: 1.5rem;
+  color: #001d04;
+  letter-spacing: 0.02em;
+}
+
+.loaderSubtext {
+  margin-top: 2.5rem;
+  opacity: 0;
+  animation: fadeIn 0.8s ease-out 1.2s forwards;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.4em;
+  color: #706F65;
+}
+
+.footerNote {
+  position: absolute;
+  bottom: 8vh;
+  opacity: 0;
+  animation: fadeIn 0.6s ease-out 1.6s forwards;
+  text-align: center;
+}
+
+
+.globalNote {
+  font-size: 0.65rem;
+  font-weight: 900;
+  letter-spacing: 0.2rem;
+  color: #001d04;
+  margin-bottom: 0.5rem;
+}
+
+.pulseLine {
+  width: 40px;
+  height: 1.5px;
+  background-color: #436132;
+  margin: 0 auto;
+  opacity: 0.2;
+}
+
+.pageFallback {
+  height: 60vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  opacity: 0;
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(0, 200, 83, 0.1);
+  border-top-color: #00C853;
+  borderRadius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loadingText {
+  fontSize: 0.75rem;
+  fontWeight: 700;
+  letterSpacing: 0.2em;
+  color: #706F65;
+  textTransform: uppercase;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeIn { to { opacity: 1; } }
+
+/* For compatibility with global classes used in JSX */
+:global(.animate-fade-out) {
+  animation: fadeOut 0.6s ease forwards;
+}
+
+@keyframes fadeOut { to { opacity: 0; visibility: hidden; } }

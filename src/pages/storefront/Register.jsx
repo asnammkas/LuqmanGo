@@ -30,8 +30,9 @@ const Register = () => {
       if (code === 'auth/popup-closed-by-user') {
         // User closed the popup, don't show an error
       } else {
-        setError(`Error (${code}): Google registration failed. Please try again.`);
+        setError(`Something went wrong${import.meta.env.DEV ? ` (${code})` : ''}. Please try again.`);
       }
+
     } finally {
       setIsLoading(false);
     }

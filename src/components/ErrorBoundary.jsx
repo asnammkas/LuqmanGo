@@ -93,8 +93,8 @@ class ErrorBoundary extends Component {
               Don't worry — your data is safe. Try refreshing, or head back home.
             </p>
 
-            {/* Error Details (collapsible) */}
-            {this.state.error && (
+            {/* Error Details (collapsible) - Only shown in Development */}
+            {import.meta.env.DEV && this.state.error && (
               <details
                 style={{
                   textAlign: 'left',
@@ -119,7 +119,7 @@ class ErrorBoundary extends Component {
                     outline: 'none',
                   }}
                 >
-                  Technical Details
+                  Technical Details (Dev Only)
                 </summary>
                 <pre
                   style={{
@@ -146,6 +146,7 @@ class ErrorBoundary extends Component {
                 </pre>
               </details>
             )}
+
 
             {/* Action Buttons */}
             <div

@@ -6,6 +6,7 @@ import { useToast } from '../../context/ToastContext';
 import { Trash2, ArrowRight, CheckCircle, Heart, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { z } from 'zod';
+import { formatCurrency } from '../../utils/formatters';
 import Footer from '../../components/storefront/Footer';
 
 // Define Robust Validation Schema
@@ -14,6 +15,7 @@ const checkoutSchema = z.object({
   email: z.string().email("Invalid email address"),
   phone: z.string().regex(/^\+?[0-9]{10,14}$/, "Phone must be 10-14 digits (e.g. +947XXXXXXXX)"),
   address: z.string().min(10, "Address is too short"),
+  orderNotes: z.string().max(500, "Notes are too long").optional(),
   paymentMethod: z.enum(['Cash on Delivery', 'Credit Card', 'Bank Transfer'])
 });
 
@@ -25,7 +27,7 @@ const CartCheckout = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [orderId, setOrderId] = useState('');
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '+94', address: '', paymentMethod: 'Cash on Delivery' });
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '+94', address: '', orderNotes: '', paymentMethod: 'Cash on Delivery' });
   const [errors, setErrors] = useState({});
 
   const handleCheckoutSubmit = async (e) => {
@@ -38,6 +40,7 @@ const CartCheckout = () => {
       email: DOMPurify.sanitize(formData.email),
       phone: DOMPurify.sanitize(formData.phone),
       address: DOMPurify.sanitize(formData.address),
+      orderNotes: DOMPurify.sanitize(formData.orderNotes),
       paymentMethod: formData.paymentMethod
     };
     
@@ -60,15 +63,14 @@ const CartCheckout = () => {
     
     try {
       // 3. Execute the Secure Checkout (Firestore Transaction + Function)
-      const res = await checkout(sanitizedData, cart, getCartTotal());
+      const res = await checkout(sanitizedData, cart);
       const orderId = res;
       setOrderId(orderId);
       
       // 4. Format the message for WhatsApp (Now used for notification only)
-      let orderDetails = cart.map(item => `${item.quantity}x ${item.title} (LKR ${item.price.toFixed(2)})`).join('%0A');
-      const textMessage = `*📦 NEW ORDER - LuqmanGo*%0A%0A*👤 Customer Details*%0A━━━━━━━━━━━━━━%0A*Name:* ${sanitizedData.name}%0A*Email:* ${sanitizedData.email}%0A*Phone:* ${sanitizedData.phone}%0A*Address:* ${sanitizedData.address}%0A%0A*💳 Payment Method:* ${sanitizedData.paymentMethod}%0A%0A*🛒 Order Summary*%0A━━━━━━━━━━━━━━%0A${orderDetails}%0A%0A*💰 TOTAL AMOUNT: LKR ${getCartTotal().toFixed(2)}*%0A%0A_Order ID: ${orderId}_%0A%0A_Thank you for shopping with LuqmanGo!_`;
+      let orderDetails = cart.map(item => `${item.quantity}x ${item.title} (${formatCurrency(item.price)})`).join('%0A');
+      const textMessage = `*📦 NEW ORDER - LuqmanGo*%0A%0A*👤 Customer Details*%0A━━━━━━━━━━━━━━%0A*Name:* ${sanitizedData.name}%0A*Email:* ${sanitizedData.email}%0A*Phone:* ${sanitizedData.phone}%0A*Address:* ${sanitizedData.address}%0A*Notes:* ${sanitizedData.orderNotes || "None"}%0A%0A*💳 Payment Method:* ${sanitizedData.paymentMethod}%0A%0A*🛒 Order Summary*%0A━━━━━━━━━━━━━━%0A${orderDetails}%0A%0A*💰 TOTAL AMOUNT: ${formatCurrency(getCartTotal())}*%0A%0A_Order ID: ${orderId}_%0A%0A_Thank you for shopping with LuqmanGo!_`;
       
-      // 5. Open WhatsApp Direct Link to Vendor
       // 5. Open WhatsApp Direct Link to Vendor after a slight delay
       const vendorPhone = import.meta.env.VITE_VENDOR_WHATSAPP || "94725065252"; 
       setTimeout(() => {
@@ -154,9 +156,8 @@ const CartCheckout = () => {
                 <div style={{ flexGrow: 1, minWidth: 0 }} className="cart-item-details">
                   <h3 style={{ fontSize: '1rem', marginBottom: '0.25rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.title}</h3>
                   <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem', marginBottom: '0.75rem' }}>
-                    <span style={{ fontSize: '0.7rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
                     <span style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--color-primary)' }}>
-                      {Math.round(item.price).toLocaleString()}
+                      {formatCurrency(item.price)}
                     </span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }} className="cart-item-controls">
@@ -188,8 +189,10 @@ const CartCheckout = () => {
                         value={item.quantity}
                         onChange={(e) => {
                           const val = parseInt(e.target.value);
-                          if (!isNaN(val) && val >= 1) {
-                            updateCartQuantity(item.id, val);
+                          if (!isNaN(val)) {
+                            // Enforce min 1 and max stock
+                            const clamped = Math.max(1, Math.min(val, item.stock || 0));
+                            updateCartQuantity(item.id, clamped);
                           }
                         }}
                         style={{ 
@@ -252,9 +255,8 @@ const CartCheckout = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '2rem', fontSize: '1.25rem', fontWeight: 700 }}>
           <span>Total</span>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.3rem' }}>
-            <span style={{ fontSize: '0.8rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
             <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--color-primary)' }}>
-              {Math.round(getCartTotal()).toLocaleString()}
+              {formatCurrency(getCartTotal())}
             </span>
           </div>
         </div>
@@ -301,7 +303,7 @@ const CartCheckout = () => {
               />
               {errors.phone && <p style={{ color: '#EF4444', fontSize: '0.75rem', marginTop: '0.25rem' }}>{errors.phone}</p>}
             </div>
-            <div>
+             <div>
                <label className="label">Shipping Address</label>
                <textarea 
                 required 
@@ -313,6 +315,19 @@ const CartCheckout = () => {
                 style={{ backgroundColor: '#FBF5EC', border: errors.address ? '1px solid #EF4444' : '1px solid var(--color-border)', resize: 'none' }}
                ></textarea>
                {errors.address && <p style={{ color: '#EF4444', fontSize: '0.75rem', marginTop: '0.25rem' }}>{errors.address}</p>}
+            </div>
+
+            <div style={{ marginTop: '0.5rem' }}>
+               <label className="label">Special Instructions / Order Notes (Optional)</label>
+               <textarea 
+                className="input" 
+                rows="2" 
+                value={formData.orderNotes} 
+                onChange={e => setFormData({...formData, orderNotes: e.target.value})} 
+                placeholder="e.g., Leave package at the back door..."
+                style={{ backgroundColor: '#FBF5EC', border: errors.orderNotes ? '1px solid #EF4444' : '1px solid var(--color-border)', resize: 'none' }}
+               ></textarea>
+               {errors.orderNotes && <p style={{ color: '#EF4444', fontSize: '0.75rem', marginTop: '0.25rem' }}>{errors.orderNotes}</p>}
             </div>
             
             <div style={{ marginTop: '1.5rem' }}>
