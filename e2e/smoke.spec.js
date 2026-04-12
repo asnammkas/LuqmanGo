@@ -26,7 +26,7 @@ test.describe('E2E Smoke Test', () => {
     await searchButton.click();
     
     // Verify the search overlay is open (checking for the placeholder)
-    const searchInput = page.getByPlaceholder(/Search for products/i);
+    const searchInput = page.getByPlaceholder(/Search our catalog/i);
     await expect(searchInput).toBeVisible();
   });
 });
