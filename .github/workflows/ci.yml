@@ -35,6 +35,20 @@ jobs:
     - name: Test
       run: npm test -- --run
 
+    - name: Create dummy .env for E2E
+      run: |
+        cat > .env << 'EOF'
+        VITE_FIREBASE_API_KEY=dummy-key
+        VITE_FIREBASE_AUTH_DOMAIN=dummy.firebaseapp.com
+        VITE_FIREBASE_PROJECT_ID=dummy-project
+        VITE_FIREBASE_STORAGE_BUCKET=dummy.appspot.com
+        VITE_FIREBASE_MESSAGING_SENDER_ID=000000000000
+        VITE_FIREBASE_APP_ID=1:000:web:dummy
+        VITE_VENDOR_WHATSAPP=0000000000
+        VITE_SENTRY_DSN=https://dummy@sentry.io/0
+        VITE_FIREBASE_MEASUREMENT_ID=G-DUMMY
+        EOF
+
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
 
