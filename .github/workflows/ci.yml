@@ -20,10 +20,10 @@ jobs:
         cache: 'npm'
     
     - name: Install root dependencies
-      run: npm ci --no-audit --no-fund
+      run: npm ci --ignore-scripts --no-audit --no-fund
     
     - name: Install functions dependencies
-      run: npm ci --no-audit --no-fund
+      run: npm ci --ignore-scripts --no-audit --no-fund
       working-directory: ./functions
 
     - name: Lint
@@ -71,7 +71,7 @@ jobs:
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
       - name: Install Functions Dependencies
-        run: npm ci
+        run: npm ci --ignore-scripts
         working-directory: ./functions
       - name: Deploy to Firebase
         run: firebase deploy --only functions --token "${{ secrets.FIREBASE_TOKEN }}"
