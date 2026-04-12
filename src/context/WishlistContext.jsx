@@ -12,7 +12,10 @@ export const WishlistProvider = ({ children }) => {
   const [wishlist, setWishlist] = useState(() => {
     try {
       const saved = localStorage.getItem('luqman_wishlist');
-      return saved ? JSON.parse(saved) : [];
+      if (!saved) return [];
+      const parsed = JSON.parse(saved);
+      // Migration: convert objects to IDs if necessary
+      return parsed.map(item => (typeof item === 'object' ? item.id : item));
     } catch {
       return [];
     }
@@ -32,22 +35,21 @@ export const WishlistProvider = ({ children }) => {
         const localList = (() => {
           try {
             const saved = localStorage.getItem('luqman_wishlist');
-            return saved ? JSON.parse(saved) : [];
+            if (!saved) return [];
+            const parsed = JSON.parse(saved);
+            return parsed.map(item => (typeof item === 'object' ? item.id : item));
           } catch {
             return [];
           }
         })();
 
         if (snap.exists() && snap.data().wishlist) {
-          const cloudList = snap.data().wishlist || [];
+          const rawCloudList = snap.data().wishlist || [];
+          // Migration: convert objects to IDs
+          const cloudList = rawCloudList.map(item => (typeof item === 'object' ? item.id : item));
           
           // Merge lists removing duplicates
-          const mergedList = [...cloudList];
-          for (const item of localList) {
-             if (!mergedList.find(i => i.id === item.id)) {
-                mergedList.push(item);
-             }
-          }
+          const mergedList = [...new Set([...cloudList, ...localList])];
           
           setWishlist(mergedList);
           
@@ -59,7 +61,7 @@ export const WishlistProvider = ({ children }) => {
               await setDoc(userRef, { wishlist: localList }, { merge: true });
            }
         }
-        logger.info('Wishlist synced with cloud account.');
+        logger.info('Wishlist (IDs only) synced with cloud.');
       } catch (err) {
         logger.error('Failed to sync cloud wishlist:', err);
       }
@@ -80,18 +82,19 @@ export const WishlistProvider = ({ children }) => {
     }
   }, [wishlist, currentUser]);
 
-  const toggleWishlist = useCallback((product) => {
+  const toggleWishlist = useCallback((productId) => {
+    const id = typeof productId === 'object' ? productId.id : productId;
     setWishlist((prev) => {
-      const exists = prev.find(item => item.id === product.id);
+      const exists = prev.includes(id);
       if (exists) {
-        return prev.filter(item => item.id !== product.id);
+        return prev.filter(item => item !== id);
       }
-      return [...prev, product];
+      return [...prev, id];
     });
   }, []);
 
   const isInWishlist = useCallback((id) => {
-    return !!wishlist.find(item => item.id === id);
+    return wishlist.includes(id);
   }, [wishlist]);
 
   const value = useMemo(() => ({ wishlist, toggleWishlist, isInWishlist }), [wishlist, toggleWishlist, isInWishlist]);

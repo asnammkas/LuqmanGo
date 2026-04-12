@@ -1,5 +1,6 @@
 import { useWishlist } from '../../context/WishlistContext';
 import { useCart } from '../../context/CartContext';
+import { useProducts } from '../../context/ProductContext';
 import { useToast } from '../../context/ToastContext';
 import ProductCard from '../../components/storefront/ProductCard';
 import Footer from '../../components/storefront/Footer';
@@ -8,13 +9,19 @@ import { Heart, ArrowLeft, Trash2, ShoppingBag } from 'lucide-react';
 
 const Wishlist = () => {
   const { wishlist } = useWishlist();
+  const { products } = useProducts();
   const { toggleCart, isInCart } = useCart();
   const toast = useToast();
   const navigate = useNavigate();
 
+  // Resolve IDs to full product objects
+  const wishlistProducts = wishlist
+    .map(id => products.find(p => p.id === id))
+    .filter(p => !!p);
+
   const handleMoveAllToBag = () => {
     let movedCount = 0;
-    wishlist.forEach(product => {
+    wishlistProducts.forEach(product => {
       if (!isInCart(product.id)) {
         toggleCart(product);
         movedCount++;
@@ -50,7 +57,7 @@ const Wishlist = () => {
             <span style={{ fontSize: '1.1rem', fontWeight: 600, color: '#001d04', letterSpacing: '0.02em' }}>Saved Favourites</span>
           </div>
           
-          {wishlist.length > 0 && (
+          {wishlistProducts.length > 0 && (
             <button 
               onClick={handleMoveAllToBag}
               style={{ 
@@ -78,10 +85,10 @@ const Wishlist = () => {
         </div>
 
         <p style={{ fontSize: '0.85rem', color: '#706F65', lineHeight: '1.6', fontWeight: 400, marginTop: '-0.3rem', marginBottom: '2rem' }}>
-          Your personal curation of coveted pieces. {wishlist.length} {wishlist.length === 1 ? 'item' : 'items'} saved for later.
+          Your personal curation of coveted pieces. {wishlistProducts.length} {wishlistProducts.length === 1 ? 'item' : 'items'} saved for later.
         </p>
 
-        {wishlist.length === 0 ? (
+        {wishlistProducts.length === 0 ? (
           <div style={{ 
             textAlign: 'center', 
             padding: '5rem 2rem', 
@@ -117,7 +124,7 @@ const Wishlist = () => {
           </div>
         ) : (
           <div className="product-grid">
-            {wishlist.map((product) => (
+            {wishlistProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>

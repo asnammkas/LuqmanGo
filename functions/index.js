@@ -1,6 +1,7 @@
-import { onCall, HttpsError } from "firebase-functions/v2/https";
+import { onCall, HttpsError, onRequest } from "firebase-functions/v2/https";
 import { onDocumentCreated, onDocumentDeleted, onDocumentUpdated } from "firebase-functions/v2/firestore";
 import { setGlobalOptions } from "firebase-functions/v2";
+import { onSchedule } from "firebase-functions/v2/scheduler";
 import admin from "firebase-admin";
 import { randomUUID } from "node:crypto";
 import { sendEmail, emailTemplates } from "./utils/email.js";
@@ -271,4 +272,37 @@ export const onCategoryDeleted = onDocumentDeleted("categories/{categoryId}", as
   const deletedData = event.data?.data();
   if (deletedData) await cleanupStorage(deletedData);
   await createAuditLog("DELETE", "categories", event.params.categoryId);
+});
+/**
+ * Uptime Monitoring: Lightweight health check endpoint.
+ */
+export const healthCheck = onRequest({
+  cors: true,
+  maxInstances: 1,
+  memory: '128MiB'
+}, (req, res) => {
+  res.status(200).send({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
+/**
+ * Scheduled: Cleanup old audit logs (90 day retention).
+ * Runs daily at midnight.
+ */
+export const cleanupOldAuditLogs = onSchedule("0 0 * * *", async (event) => {
+  const ninetyDaysAgo = new Date();
+  ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+
+  const logsRef = admin.firestore().collection('audit_logs');
+  const snapshot = await logsRef
+    .where('timestamp', '<', ninetyDaysAgo)
+    .limit(500) // Process in chunks
+    .get();
+
+  if (snapshot.empty) return;
+
+  const batch = admin.firestore().batch();
+  snapshot.docs.forEach((doc) => batch.delete(doc.ref));
+  
+  await batch.commit();
+  console.log(`Cleaned up ${snapshot.size} old audit logs.`);
 });

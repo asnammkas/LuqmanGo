@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { db } from '../config/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { query, collection, where, getDocs } from 'firebase/firestore';
 import { logger } from '../utils/logger';
 
 const CartContext = createContext();
@@ -22,12 +22,25 @@ export const CartProvider = ({ children }) => {
 
     const verifyCartPrices = async () => {
       try {
+        if (cart.length === 0) return;
+
+        // Limit to first 30 items as 'in' query supports max 30 IDs
+        // For a typical shopping cart 30 is more than enough.
+        const ids = cart.slice(0, 30).map(item => item.id.toString());
+        
+        const q = query(
+          collection(db, 'products'),
+          where('__name__', 'in', ids)
+        );
+
+        const snapshot = await getDocs(q);
+        const liveProducts = new Map(snapshot.docs.map(d => [d.id, d.data()]));
+        
         let updated = false;
-        const syncedCart = await Promise.all(cart.map(async (item) => {
-          const docRef = doc(db, 'products', item.id.toString());
-          const snapshot = await getDoc(docRef);
-          if (snapshot.exists()) {
-            const liveData = snapshot.data();
+        const syncedCart = cart.map(item => {
+          const liveData = liveProducts.get(item.id.toString());
+          
+          if (liveData) {
             const currentStock = liveData.stock || 0;
             const newQuantity = Math.min(item.quantity, currentStock);
 
@@ -38,7 +51,6 @@ export const CartProvider = ({ children }) => {
               item.image !== liveData.image
             ) {
               updated = true;
-              logger.info(`Automatically updated stale cart item: ${item.title}`);
               return { 
                 ...item, 
                 price: liveData.price, 
@@ -48,22 +60,20 @@ export const CartProvider = ({ children }) => {
                 quantity: newQuantity 
               };
             }
+            return item;
           } else {
-            // Product was deleted from database
+            // Product not found in live data (was deleted)
             updated = true;
-            logger.info(`Removed deleted product from cart: ${item.title}`);
             return null;
           }
-          return item;
-        }));
-        
+        }).filter(Boolean);
+
         if (updated) {
-           const finalCart = syncedCart.filter(Boolean);
-           setCart(finalCart);
-           logger.info("Cart fully synchronized with live server data.");
+          setCart(syncedCart);
+          logger.info("Cart batched synchronization complete.");
         }
-      } catch(err) {
-        logger.error("Failed to sync cart prices with server:", err);
+      } catch (err) {
+        logger.error("Failed to sync cart prices (batched):", err);
       }
     };
 

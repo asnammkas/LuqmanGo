@@ -9,9 +9,12 @@ import { ArrowLeft, Bell, Star, TreePine } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const ProfileSettings = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, deleteAccount } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
+
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState('');
   
   const [loading, setLoading] = useState(false);
   const [profileData, setProfileData] = useState({
@@ -78,6 +81,25 @@ const ProfileSettings = () => {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    if (deleteConfirm !== 'DELETE') {
+      toast.warning('Please type DELETE to confirm');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await deleteAccount();
+      toast.success('Your account has been permanently deleted.');
+      navigate('/');
+    } catch (err) {
+      console.error(err);
+      toast.error('Failed to delete account. You may need to log out and log back in (recent authentication required).');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="animate-fade-in" style={{ padding: '0.8rem 1.2rem 5rem', maxWidth: '1280px', margin: '0 auto', minHeight: '100vh', backgroundColor: 'var(--color-bg-main)' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', marginBottom: '1.2rem' }}>
@@ -99,8 +121,10 @@ const ProfileSettings = () => {
         <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#001d04', marginBottom: '1.5rem' }}>Personal Details</h3>
         <form onSubmit={handleUpdateProfile} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
           <div>
-            <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>FULL NAME</label>
+            <label className="label" htmlFor="settings-name" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>FULL NAME</label>
             <input 
+              id="settings-name"
+              aria-label="Update Full Name"
               type="text" className="input" required
               value={profileData.name} onChange={(e) => setProfileData({...profileData, name: e.target.value})}
               style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.03)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} 
@@ -115,8 +139,10 @@ const ProfileSettings = () => {
             />
           </div>
           <div>
-            <label className="label" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>PHONE NUMBER</label>
+            <label className="label" htmlFor="settings-phone" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>PHONE NUMBER</label>
             <input 
+              id="settings-phone"
+              aria-label="Update Phone Number"
               type="tel" className="input" placeholder="+94 77 123 4567"
               value={profileData.phone} onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
               style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.03)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} 
@@ -168,6 +194,53 @@ const ProfileSettings = () => {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Danger Zone Section */}
+      <div style={{ backgroundColor: '#FBF5EC', borderRadius: '24px', padding: '2rem', border: '1px solid rgba(239, 68, 68, 0.1)', maxWidth: '600px', margin: '2.5rem auto 0' }}>
+        <h3 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#EF4444', marginBottom: '1rem' }}>Danger Zone</h3>
+        <p style={{ fontSize: '0.85rem', color: '#706F65', marginBottom: '1.5rem' }}>
+          Deleting your account is permanent. This will erase all your profile data and saved addresses. Orders history remains for regulatory bookkeeping.
+        </p>
+        
+        {!isDeleting ? (
+          <button 
+            onClick={() => setIsDeleting(true)}
+            style={{ 
+              backgroundColor: 'transparent', color: '#EF4444', border: '1px solid #EF4444', 
+              padding: '0.8rem 1.5rem', borderRadius: '12px', fontWeight: 700, fontSize: '0.85rem', cursor: 'pointer',
+              transition: 'all 0.2s'
+            }}
+            onMouseOver={(e) => e.currentTarget.style.backgroundColor = 'rgba(239, 68, 68, 0.05)'}
+            onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+          >
+            Delete My Account
+          </button>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <label style={{ fontSize: '0.75rem', fontWeight: 600, color: '#001d04' }}>Type "DELETE" to confirm:</label>
+            <input 
+              type="text" value={deleteConfirm} onChange={(e) => setDeleteConfirm(e.target.value)}
+              placeholder="DELETE"
+              style={{ padding: '0.8rem', borderRadius: '8px', border: '1px solid #EF4444', outline: 'none' }}
+            />
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button 
+                onClick={handleDeleteAccount}
+                disabled={loading || deleteConfirm !== 'DELETE'}
+                style={{ backgroundColor: '#EF4444', color: 'white', border: 'none', padding: '0.8rem 1.2rem', borderRadius: '10px', fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', opacity: deleteConfirm === 'DELETE' ? 1 : 0.5, flex: 1 }}
+              >
+                Permanently Delete
+              </button>
+              <button 
+                onClick={() => { setIsDeleting(false); setDeleteConfirm(''); }}
+                style={{ backgroundColor: '#C5BBB0', color: 'white', border: 'none', padding: '0.8rem 1.2rem', borderRadius: '10px', fontWeight: 600, cursor: 'pointer', flex: 1 }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </div>
       
     </div>

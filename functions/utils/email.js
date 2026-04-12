@@ -1,9 +1,13 @@
 import nodemailer from 'nodemailer';
 import { logger } from 'firebase-functions/v2';
-import { defineSecret } from 'firebase-functions/params';
+import { defineSecret, defineString } from 'firebase-functions/params';
 
-// Define secrets for production
+// Define secrets for production hardening
+const SMTP_HOST = defineString('SMTP_HOST', { default: 'smtp-relay.brevo.com' });
+const SMTP_PORT = defineString('SMTP_PORT', { default: '587' });
+const SMTP_USER = defineSecret('SMTP_USER');
 const SMTP_PASS = defineSecret('SMTP_PASS');
+const VENDOR_EMAIL = defineString('VENDOR_EMAIL', { default: 'orders@luqmango.com' });
 
 /**
  * Simple helper to escape HTML entities to prevent XSS in email templates.
@@ -19,29 +23,24 @@ function sanitizeHtml(str) {
   }[m]));
 }
 
-
 /**
  * Sends an email using Nodemailer with SMTP.
- * Credentials should ideally be stored in Firebase Environment Secrets.
+ * Credentials MUST be stored in Firebase Environment Secrets for production.
  */
 export async function sendEmail({ to, subject, text, html }) {
-  // ─── SMTP CONFIGURATION ───
-  // Note: For production, use defineSecret('SMTP_PASSWORD') and defineString('SMTP_USER')
-  const smtpConfig = {
-    host: process.env.SMTP_HOST || 'smtp.example.com',
-    port: parseInt(process.env.SMTP_PORT || '587'),
-    secure: process.env.SMTP_SECURE === 'true', // true for 465, false for other ports
+  const transporter = nodemailer.createTransport({
+    host: SMTP_HOST.value(),
+    port: parseInt(SMTP_PORT.value()),
+    secure: SMTP_PORT.value() === '465',
     auth: {
-      user: process.env.SMTP_USER || 'placeholder@example.com',
-      pass: process.env.SMTP_PASS || SMTP_PASS.value(),
+      user: SMTP_USER.value(),
+      pass: SMTP_PASS.value(),
     },
-  };
-
-  const transporter = nodemailer.createTransport(smtpConfig);
+  });
 
   try {
     const info = await transporter.sendMail({
-      from: `"LuqmanGo Notifications" <${smtpConfig.auth.user}>`,
+      from: `"LuqmanGo Orders" <${VENDOR_EMAIL.value()}>`,
       to,
       subject,
       text,
@@ -51,8 +50,7 @@ export async function sendEmail({ to, subject, text, html }) {
     logger.info('Email sent successfully:', info.messageId);
     return info;
   } catch (error) {
-    logger.error('Error sending email:', error);
-    // We don't throw here to avoid failing the trigger, but we log the error
+    logger.error('Error sending email. Ensure secrets (SMTP_USER/PASS) are set:', error);
     return null;
   }
 }

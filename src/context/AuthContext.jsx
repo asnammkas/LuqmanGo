@@ -10,9 +10,10 @@ import {
   signInWithPopup,
   setPersistence,
   browserLocalPersistence,
-  browserSessionPersistence
+  browserSessionPersistence,
+  deleteUser
 } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
 import { logger } from '../utils/logger';
 
@@ -91,6 +92,21 @@ export const AuthProvider = ({ children }) => {
     return unsubscribe;
   }, [checkAdminStatus]);
 
+  // Delete Account (GDPR Compliance)
+  const deleteAccount = useCallback(async () => {
+    if (!currentUser) return;
+    try {
+      // 1. Delete Firestore User Data first
+      await deleteDoc(doc(db, 'users', currentUser.uid));
+      // 2. Delete Auth Account (Requires recent login)
+      await deleteUser(currentUser);
+      logger.info("User account and data deleted successfully.");
+    } catch (error) {
+      logger.error("Account Deletion Error:", error);
+      throw error;
+    }
+  }, [currentUser]);
+
   const value = useMemo(() => ({
     currentUser,
     isAdmin,
@@ -99,8 +115,9 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     resetPassword,
-    loginWithGoogle
-  }), [currentUser, isAdmin, loading, signup, login, logout, resetPassword, loginWithGoogle]);
+    loginWithGoogle,
+    deleteAccount
+  }), [currentUser, isAdmin, loading, signup, login, logout, resetPassword, loginWithGoogle, deleteAccount]);
 
   return (
     <AuthContext.Provider value={value}>

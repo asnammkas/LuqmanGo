@@ -14,8 +14,9 @@ const CheckoutForm = ({ formData, setFormData, errors, isSubmitting, onSubmit, s
   return (
     <form onSubmit={onSubmit} className={`animate-fade-in ${styles.checkoutForm}`}>
       <div>
-        <label className="label">Full Name</label>
+        <label className="label" htmlFor="checkout-name">Full Name</label>
         <input 
+          id="checkout-name"
           required type="text" className={`input ${styles.formInput}`}
           value={formData.name} onChange={e => setFormData({...formData, name: e.target.value})} 
           placeholder="John Doe" style={{ border: errors.name ? '1px solid #EF4444' : '1px solid var(--color-border)' }}
@@ -23,8 +24,9 @@ const CheckoutForm = ({ formData, setFormData, errors, isSubmitting, onSubmit, s
         {errors.name && <p style={{ color: '#EF4444', fontSize: '0.75rem', marginTop: '0.25rem' }}>{errors.name}</p>}
       </div>
       <div>
-        <label className="label">Email Address</label>
+        <label className="label" htmlFor="checkout-email">Email Address</label>
         <input 
+          id="checkout-email"
           required type="email" className={`input ${styles.formInput}`}
           value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} 
           placeholder="john@example.com" style={{ border: errors.email ? '1px solid #EF4444' : '1px solid var(--color-border)' }}
@@ -32,8 +34,9 @@ const CheckoutForm = ({ formData, setFormData, errors, isSubmitting, onSubmit, s
         {errors.email && <p style={{ color: '#EF4444', fontSize: '0.75rem', marginTop: '0.25rem' }}>{errors.email}</p>}
       </div>
       <div>
-        <label className="label">Phone Number</label>
+        <label className="label" htmlFor="checkout-phone">Phone Number</label>
         <input 
+          id="checkout-phone"
           required type="tel" className={`input ${styles.formInput}`}
           value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} 
           placeholder="+94 7X XXX XXXX" style={{ border: errors.phone ? '1px solid #EF4444' : '1px solid var(--color-border)' }}
@@ -41,8 +44,9 @@ const CheckoutForm = ({ formData, setFormData, errors, isSubmitting, onSubmit, s
         {errors.phone && <p style={{ color: '#EF4444', fontSize: '0.75rem', marginTop: '0.25rem' }}>{errors.phone}</p>}
       </div>
       <div>
-        <label className="label">Shipping Address</label>
+        <label className="label" htmlFor="checkout-address">Shipping Address</label>
         <textarea 
+          id="checkout-address"
           required className={`input ${styles.formInput}`} rows="3" 
           value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} 
           placeholder="123 Main St..." style={{ border: errors.address ? '1px solid #EF4444' : '1px solid var(--color-border)', resize: 'none' }}
@@ -51,8 +55,9 @@ const CheckoutForm = ({ formData, setFormData, errors, isSubmitting, onSubmit, s
       </div>
 
       <div style={{ marginTop: '0.5rem' }}>
-        <label className="label">Special Instructions / Order Notes (Optional)</label>
+        <label className="label" htmlFor="checkout-notes">Special Instructions / Order Notes (Optional)</label>
         <textarea 
+          id="checkout-notes"
           className={`input ${styles.formInput}`} rows="2" 
           value={formData.orderNotes} onChange={e => setFormData({...formData, orderNotes: e.target.value})} 
           placeholder="e.g., Leave package at the back door..." style={{ border: errors.orderNotes ? '1px solid #EF4444' : '1px solid var(--color-border)', resize: 'none' }}
