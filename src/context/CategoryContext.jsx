@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { db } from '../config/firebase';
 import { collection, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
 import { logger } from '../utils/logger';
@@ -39,20 +39,9 @@ export const CategoryProvider = ({ children }) => {
         clearTimeout(fallbackTimer);
         
         if (snapshot.empty) {
-          logger.info("Seeding category database with initial data...");
-          const seedDatabase = async () => {
-            try {
-              for (const c of initialMockCategories) {
-                 await setDoc(doc(db, 'categories', c.id.toString()), c);
-              }
-              logger.info("Category database seeded successfully.");
-            } catch (err) {
-              logger.error("Category seeding failed:", err.message);
-              setCategories(initialMockCategories);
-              setIsCategoriesLoading(false);
-            }
-          };
-          seedDatabase();
+          logger.info("Category collection is empty. Falling back to mock categories locally.");
+          setCategories(initialMockCategories);
+          setIsCategoriesLoading(false);
         } else {
           // Keep Exclusive Deals (All) at the end if it exists, otherwise sort alphabetically
           const loadedCategories = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

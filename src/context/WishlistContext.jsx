@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { db } from '../config/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { useAuth } from './AuthContext';
@@ -89,6 +89,7 @@ export const WishlistProvider = ({ children }) => {
       if (exists) {
         return prev.filter(item => item !== id);
       }
+      if (prev.length >= 100) return prev; // hard cap limit for document size
       return [...prev, id];
     });
   }, []);

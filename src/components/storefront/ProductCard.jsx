@@ -67,6 +67,7 @@ const ProductCard = ({ product }) => {
 
           {/* Wishlist Heart Button */}
           <button 
+            aria-label={isHearted ? "Remove from wishlist" : "Add to wishlist"}
             onClick={(e) => { 
               e.preventDefault(); e.stopPropagation(); 
               toggleWishlist(product);
@@ -99,6 +100,7 @@ const ProductCard = ({ product }) => {
 
           {/* Quick Add to Bag button */}
           <button 
+            aria-label={isBagged ? "Remove from cart" : "Add to cart"}
             onClick={(e) => { 
               e.preventDefault(); e.stopPropagation(); 
               toggleCart(product);

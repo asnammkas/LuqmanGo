@@ -2,8 +2,9 @@ import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useProducts } from '../../context/ProductContext';
 import { useDebounce } from '../../hooks/useDebounce';
+import { useFocusTrap } from '../../hooks/useFocusTrap';
 import { formatCurrency } from '../../utils/formatters';
-import { Search, X, ArrowRight, ShoppingBag, Tag } from 'lucide-react';
+import { Search, X, ArrowRight, Tag } from 'lucide-react';
 
 const SearchOverlay = ({ isOpen, onClose }) => {
   const { searchCatalog, fetchSearchCatalog } = useProducts();
@@ -13,6 +14,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef(null);
   const navigate = useNavigate();
+  const trapRef = useFocusTrap(isOpen);
 
   // Focus input and fetch data on open
   useEffect(() => {
@@ -56,6 +58,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
 
   return (
     <div 
+      ref={trapRef}
       role="dialog" 
       aria-modal="true"
       aria-label="Search Catalog"

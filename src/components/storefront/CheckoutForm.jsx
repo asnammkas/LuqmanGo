@@ -24,10 +24,10 @@ const CheckoutForm = ({ formData, setFormData, errors, isSubmitting, onSubmit, s
         {errors.name && <p style={{ color: '#EF4444', fontSize: '0.75rem', marginTop: '0.25rem' }}>{errors.name}</p>}
       </div>
       <div>
-        <label className="label" htmlFor="checkout-email">Email Address</label>
+        <label className="label" htmlFor="checkout-email">Email Address <span style={{fontSize: '0.8rem', color: '#9CA3AF', fontWeight: 'normal'}}>(Optional)</span></label>
         <input 
           id="checkout-email"
-          required type="email" className={`input ${styles.formInput}`}
+          type="email" className={`input ${styles.formInput}`}
           value={formData.email} onChange={e => setFormData({...formData, email: e.target.value})} 
           placeholder="john@example.com" style={{ border: errors.email ? '1px solid #EF4444' : '1px solid var(--color-border)' }}
         />

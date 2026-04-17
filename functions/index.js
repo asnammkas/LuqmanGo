@@ -5,6 +5,7 @@ import { onSchedule } from "firebase-functions/v2/scheduler";
 import admin from "firebase-admin";
 import { randomUUID } from "node:crypto";
 import { sendEmail, emailTemplates } from "./utils/email.js";
+import { optimizeImage } from "./imageOpt.js";
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -140,6 +141,8 @@ export const validateAndCreateOrder = onCall(async (request) => {
     throw new HttpsError("internal", "An error occurred while processing your order.");
   }
 });
+
+export { optimizeImage };
 
 /**
  * Cleanup function helper: Deletes storage blobs.

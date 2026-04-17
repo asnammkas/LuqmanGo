@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { db } from '../config/firebase';
 import { query, collection, where, getDocs } from 'firebase/firestore';
 import { logger } from '../utils/logger';
@@ -78,7 +78,6 @@ export const CartProvider = ({ children }) => {
     };
 
     verifyCartPrices();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Run once on mount to verify local storage cart
 
   useEffect(() => {
@@ -109,16 +108,19 @@ export const CartProvider = ({ children }) => {
   }, []);
 
   const updateCartQuantity = useCallback((id, quantity) => {
-    const item = cart.find(i => i.id === id);
-    const stock = item?.stock || 0;
-    const clamped = Math.min(Math.max(Math.round(quantity), 0), stock);
-    
-    if (clamped <= 0) {
-      removeFromCart(id);
-      return;
-    }
-    setCart(prev => prev.map(item => item.id === id ? { ...item, quantity: clamped } : item));
-  }, [cart, removeFromCart]);
+    setCart(prev => {
+      const item = prev.find(i => i.id === id);
+      if (!item) return prev;
+      
+      const stock = item.stock || 0;
+      const clamped = Math.min(Math.max(Math.round(quantity), 0), stock);
+      
+      if (clamped <= 0) {
+        return prev.filter(item => item.id !== id);
+      }
+      return prev.map(item => item.id === id ? { ...item, quantity: clamped } : item);
+    });
+  }, []);
 
   const toggleCart = useCallback((product) => {
     setCart((prevCart) => {

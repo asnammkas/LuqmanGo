@@ -6,6 +6,7 @@ import { AppProviders } from './context/AppProviders'
 import { ToastProvider } from './context/ToastContext'
 import ErrorBoundary from './components/ErrorBoundary'
 import * as Sentry from "@sentry/react";
+import { registerSW } from 'virtual:pwa-register';
 import './index.css'
 import App from './App.jsx'
 
@@ -21,6 +22,13 @@ Sentry.init({
   replaysSessionSampleRate: 0.1,
   replaysOnErrorSampleRate: 1.0,
   environment: import.meta.env.MODE,
+});
+
+registerSW({
+  onNeedRefresh() {},
+  onOfflineReady() {
+    console.log('App ready to work offline')
+  },
 });
 
 createRoot(document.getElementById('root')).render(

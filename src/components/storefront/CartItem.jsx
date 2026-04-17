@@ -10,6 +10,7 @@ const CartItem = ({ item, updateCartQuantity, removeFromCart }) => {
         <img 
           src={item.image} 
           alt={item.title} 
+          loading="lazy"
           className={styles.itemImage} 
         />
         <div className={styles.itemDetails}>
