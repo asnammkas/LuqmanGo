@@ -32,6 +32,7 @@ vi.mock('firebase-admin', () => {
 
 vi.mock('firebase-functions/v2/https', () => ({
   onCall: (cb) => cb,
+  onRequest: vi.fn((opts, cb) => cb || opts),
   HttpsError: class HttpsError extends Error {
     constructor(code, message) {
       super(message);
@@ -49,6 +50,34 @@ vi.mock('firebase-functions/v2/firestore', () => ({
 
 vi.mock('firebase-functions/v2', () => ({
   setGlobalOptions: vi.fn(),
+  logger: {
+    info: vi.fn(),
+    error: vi.fn(),
+    log: vi.fn(),
+    warn: vi.fn(),
+  },
+}));
+
+vi.mock('firebase-functions/v2/storage', () => ({
+  onObjectFinalized: (opts, handler) => handler,
+}));
+
+vi.mock('firebase-functions/v2/scheduler', () => ({
+  onSchedule: (opts, handler) => handler,
+}));
+
+vi.mock('firebase-admin/storage', () => ({
+  getStorage: vi.fn(() => ({
+    bucket: vi.fn(() => ({
+      file: vi.fn(),
+      upload: vi.fn(),
+    })),
+  })),
+}));
+
+vi.mock('firebase-functions/params', () => ({
+  defineSecret: vi.fn(() => ({ value: () => 'mock-secret' })),
+  defineString: vi.fn(() => ({ value: () => 'mock-string' })),
 }));
 
 // Use import instead of require
