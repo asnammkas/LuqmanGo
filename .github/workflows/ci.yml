@@ -32,8 +32,11 @@ jobs:
     - name: Type Check
       run: npx tsc --noEmit
 
-    - name: Test
+    - name: Test Frontend
       run: npm test -- --run
+
+    - name: Test Functions
+      run: npm run test:functions
 
     - name: Create dummy .env for E2E
       run: |
@@ -75,3 +78,10 @@ jobs:
         working-directory: ./functions
       - name: Deploy to Firebase
         run: firebase deploy --only functions --token "${{ secrets.FIREBASE_TOKEN }}"
+        
+      - name: Notify Discord/Slack Webhook
+        if: success()
+        run: |
+          if [ -n "${{ secrets.DEPLOY_WEBHOOK_URL }}" ]; then
+            curl -H "Content-Type: application/json" -d '{"content": "✅ **LuqmanGo Production** deployment completed successfully! New changes are live on Firebase."}' ${{ secrets.DEPLOY_WEBHOOK_URL }} || true
+          fi

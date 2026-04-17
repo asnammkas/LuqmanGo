@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { db } from '../config/firebase';
+import { db, functions } from '../config/firebase';
 import { 
-  collection, onSnapshot, doc, setDoc, deleteDoc, 
+  collection, onSnapshot, doc,
   query, limit, orderBy, startAfter, getDocs, where, getDoc
 } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions';
 import { logger } from '../utils/logger';
 
 export const ProductContext = createContext();
@@ -151,29 +152,35 @@ export const ProductProvider = ({ children }) => {
     }
   }, []);
 
-  // ─── CRUD Operations ───
+  // ─── CRUD Operations (Secure Server-Side) ───
   const addProduct = useCallback(async (product) => {
     try {
       const newId = crypto.randomUUID();
-      await setDoc(doc(db, 'products', newId), { ...product, id: newId });
+      const manageProduct = httpsCallable(functions, 'manageProduct');
+      await manageProduct({ action: 'create', id: newId, productData: { ...product, id: newId } });
     } catch (e) {
-      logger.error("Error adding document: ", e);
+      logger.error("Error securely adding document: ", e);
+      throw e;
     }
   }, []);
 
   const updateProduct = useCallback(async (id, updatedFields) => {
     try {
-      await setDoc(doc(db, 'products', id), updatedFields, { merge: true });
+      const manageProduct = httpsCallable(functions, 'manageProduct');
+      await manageProduct({ action: 'update', id, productData: updatedFields });
     } catch (e) {
-      logger.error("Error updating document: ", e);
+      logger.error("Error securely updating document: ", e);
+      throw e;
     }
   }, []);
 
   const deleteProduct = useCallback(async (id) => {
     try {
-      await deleteDoc(doc(db, 'products', id));
+      const manageProduct = httpsCallable(functions, 'manageProduct');
+      await manageProduct({ action: 'delete', id });
     } catch (e) {
-      logger.error("Error deleting document: ", e);
+      logger.error("Error securely deleting document: ", e);
+      throw e;
     }
   }, []);
 

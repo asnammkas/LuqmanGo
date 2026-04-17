@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from 'react';
-import { db } from '../config/firebase';
-import { collection, onSnapshot, doc, setDoc, deleteDoc } from 'firebase/firestore';
+import { db, functions } from '../config/firebase';
+import { collection, onSnapshot } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions';
 import { logger } from '../utils/logger';
 
 const CategoryContext = createContext();
@@ -78,25 +79,31 @@ export const CategoryProvider = ({ children }) => {
   const addCategory = useCallback(async (category) => {
     try {
       const newId = category.id || Date.now().toString();
-      await setDoc(doc(db, 'categories', newId), { ...category, id: newId });
+      const manageCategory = httpsCallable(functions, 'manageCategory');
+      await manageCategory({ action: 'create', id: newId, categoryData: { ...category, id: newId } });
     } catch (e) {
-      logger.error("Error adding category: ", e);
+      logger.error("Error securely adding category: ", e);
+      throw e;
     }
   }, []);
 
   const updateCategory = useCallback(async (id, updatedFields) => {
     try {
-      await setDoc(doc(db, 'categories', id), updatedFields, { merge: true });
+      const manageCategory = httpsCallable(functions, 'manageCategory');
+      await manageCategory({ action: 'update', id, categoryData: updatedFields });
     } catch (e) {
-      logger.error("Error updating category: ", e);
+      logger.error("Error securely updating category: ", e);
+      throw e;
     }
   }, []);
 
   const deleteCategory = useCallback(async (id) => {
     try {
-      await deleteDoc(doc(db, 'categories', id));
+      const manageCategory = httpsCallable(functions, 'manageCategory');
+      await manageCategory({ action: 'delete', id });
     } catch (e) {
-      logger.error("Error deleting category: ", e);
+      logger.error("Error securely deleting category: ", e);
+      throw e;
     }
   }, []);
 

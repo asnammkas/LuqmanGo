@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { db, auth, functions } from '../config/firebase';
-import { collection, onSnapshot, query, where, orderBy, doc, setDoc } from 'firebase/firestore';
+import { collection, onSnapshot, query, where, orderBy } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { useAuth } from './AuthContext';
 import { logger } from '../utils/logger';
@@ -70,9 +70,11 @@ export const OrderProvider = ({ children }) => {
 
   const updateOrderStatus = useCallback(async (orderId, newStatus) => {
     try {
-      await setDoc(doc(db, 'orders', orderId), { status: newStatus }, { merge: true });
+      const setStatusFunc = httpsCallable(functions, 'updateOrderStatus');
+      await setStatusFunc({ orderId, newStatus });
     } catch (e) {
-      logger.error("Error updating order status:", e);
+      logger.error("Error securely updating order status:", e);
+      throw e;
     }
   }, []);
 

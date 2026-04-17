@@ -63,6 +63,10 @@ export const optimizeImage = onObjectFinalized({ minInstances: 0, memory: "1GiB"
     try {
       await fs.unlink(tempFilePath);
       await fs.unlink(tempOptimizedPath);
-    } catch (e) {}
+    } catch (e) {
+      if (e.code !== 'ENOENT') {
+        logger.error(`Error cleaning up temp files: ${e.message}`);
+      }
+    }
   }
 });

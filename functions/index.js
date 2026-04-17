@@ -6,6 +6,9 @@ import admin from "firebase-admin";
 import { randomUUID } from "node:crypto";
 import { sendEmail, emailTemplates } from "./utils/email.js";
 import { optimizeImage } from "./imageOpt.js";
+import { scheduledFirestoreExport } from "./backup.js";
+import { anonymizeUserOrders } from "./gdpr.js";
+import { manageProduct, manageCategory, updateOrderStatus } from "./admin.js";
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -142,7 +145,7 @@ export const validateAndCreateOrder = onCall(async (request) => {
   }
 });
 
-export { optimizeImage };
+export { optimizeImage, scheduledFirestoreExport, anonymizeUserOrders, manageProduct, manageCategory, updateOrderStatus };
 
 /**
  * Cleanup function helper: Deletes storage blobs.
