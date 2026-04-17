@@ -14,7 +14,7 @@ export function useFocusTrap(isActive: boolean): RefObject<HTMLElement | null> {
 
       if (!trapRef.current) return;
       
-      const focusableElements = trapRef.current.querySelectorAll(focusableElementsSelector);
+      const focusableElements = trapRef.current.querySelectorAll<HTMLElement>(focusableElementsSelector);
       const firstElement = focusableElements[0];
       const lastElement = focusableElements[focusableElements.length - 1];
 
@@ -35,7 +35,7 @@ export function useFocusTrap(isActive: boolean): RefObject<HTMLElement | null> {
 
     // Initial focus
     if (trapRef.current) {
-        const focusableElements = trapRef.current.querySelectorAll(focusableElementsSelector);
+        const focusableElements = trapRef.current.querySelectorAll<HTMLElement>(focusableElementsSelector);
         if (focusableElements.length > 0) {
             // setTimeout to wait for render
             setTimeout(() => focusableElements[0].focus(), 100);
