@@ -35,6 +35,7 @@ const CategoryPage = () => {
   const [isFetchingNext, setIsFetchingNext] = useState(false);
   const [sortBy, setSortBy] = useState('default');
   const [filterBy, setFilterBy] = useState('all');
+  const [priceRange, setPriceRange] = useState({ min: '', max: '' });
   const [showSort, setShowSort] = useState(false);
   const [showFilter, setShowFilter] = useState(false);
   const observerRef = useRef();
@@ -73,6 +74,13 @@ const CategoryPage = () => {
     displayProducts = displayProducts.filter(p => p.stock > 0);
   } else if (filterBy === 'featured') {
     displayProducts = displayProducts.filter(p => p.featured);
+  }
+
+  if (priceRange.min !== '') {
+    displayProducts = displayProducts.filter(p => p.price >= Number(priceRange.min));
+  }
+  if (priceRange.max !== '') {
+    displayProducts = displayProducts.filter(p => p.price <= Number(priceRange.max));
   }
 
   if (searchQuery) {
@@ -228,7 +236,7 @@ const CategoryPage = () => {
                 {filterOptions.map(opt => (
                   <button
                     key={opt.value}
-                    onClick={() => { setFilterBy(opt.value); setShowFilter(false); }}
+                    onClick={() => { setFilterBy(opt.value); }}
                     style={{
                       width: '100%', padding: '0.7rem 1rem', borderRadius: '10px',
                       border: 'none', background: filterBy === opt.value ? '#F2E7D2' : 'transparent',
@@ -241,6 +249,26 @@ const CategoryPage = () => {
                     {filterBy === opt.value && <Check size={14} strokeWidth={3} />}
                   </button>
                 ))}
+                
+                <div style={{ marginTop: '0.8rem', paddingTop: '0.8rem', borderTop: '1px solid #eee' }}>
+                  <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#9CA3AF', padding: '0 0.5rem', display: 'block', marginBottom: '0.5rem' }}>PRICE RANGE (LKR)</span>
+                  <div style={{ display: 'flex', gap: '0.5rem', padding: '0 0.5rem' }}>
+                    <input 
+                      type="number" 
+                      placeholder="Min" 
+                      value={priceRange.min}
+                      onChange={(e) => setPriceRange({ ...priceRange, min: e.target.value })}
+                      style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px solid #ddd', fontSize: '0.8rem' }}
+                    />
+                    <input 
+                      type="number" 
+                      placeholder="Max" 
+                      value={priceRange.max}
+                      onChange={(e) => setPriceRange({ ...priceRange, max: e.target.value })}
+                      style={{ width: '100%', padding: '0.5rem', borderRadius: '6px', border: '1px solid #ddd', fontSize: '0.8rem' }}
+                    />
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -307,7 +335,7 @@ const CategoryPage = () => {
                    : "We couldn't find any items matching your filters."}
                </p>
                <button 
-                 onClick={() => { setFilterBy('all'); setSortBy('default'); if (searchQuery) navigate(`/category/${activeCategory}`); }}
+                 onClick={() => { setFilterBy('all'); setSortBy('default'); setPriceRange({min: '', max: ''}); if (searchQuery) navigate(`/category/${activeCategory}`); }}
                  className="btn btn-outline" 
                  style={{ padding: '0.8rem 2rem', cursor: 'pointer', borderRadius: '12px' }}
                >
