@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, RefObject } from 'react';
 
-export function useFocusTrap(isActive) {
-  const trapRef = useRef(null);
+export function useFocusTrap(isActive: boolean): RefObject<HTMLElement | null> {
+  const trapRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!isActive) return;
@@ -9,7 +9,7 @@ export function useFocusTrap(isActive) {
     const focusableElementsSelector = 
       'a[href], button, textarea, input[type="text"], input[type="radio"], input[type="checkbox"], select, [tabindex]:not([tabindex="-1"])';
     
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key !== 'Tab') return;
 
       if (!trapRef.current) return;
