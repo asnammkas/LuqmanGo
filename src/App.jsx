@@ -62,7 +62,7 @@ function AppContent() {
     const timer = setTimeout(() => {
       setFadeOut(true);
       setTimeout(() => setIsLoading(false), 600);
-    }, 1200); 
+    }, 1800); 
     return () => clearTimeout(timer);
   }, []);
 
