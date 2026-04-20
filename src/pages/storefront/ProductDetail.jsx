@@ -6,20 +6,28 @@ import { useProducts } from '../../context/ProductContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useToast } from '../../context/ToastContext';
-import { ArrowLeft, Truck, ShieldCheck, Clock, Image as ImageIcon, Heart, Minus, Plus } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { db } from '../../config/firebase';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { ArrowLeft, Truck, ShieldCheck, Clock, Image as ImageIcon, Heart, Minus, Plus, Star } from 'lucide-react';
 import Footer from '../../components/storefront/Footer';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 
 const ProductDetail = () => {
   const { id } = useParams();
-  const { fetchProductById } = useProducts();
+  const { fetchProductById, submitReview } = useProducts();
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
+  const { currentUser } = useAuth();
   const toast = useToast();
   
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [reviews, setReviews] = useState([]);
+  const [reviewForm, setReviewForm] = useState({ rating: 5, comment: '' });
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  
   const isHearted = isInWishlist(id);
 
   useEffect(() => {
@@ -35,6 +43,30 @@ const ProductDetail = () => {
     loadProduct();
     return () => { active = false; };
   }, [id, fetchProductById]);
+
+  useEffect(() => {
+    if (!id) return;
+    const q = query(collection(db, 'products', id, 'reviews'), orderBy('createdAt', 'desc'));
+    const unsub = onSnapshot(q, (snap) => {
+      setReviews(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+    });
+    return () => unsub();
+  }, [id]);
+
+  const handleReviewSubmit = async (e) => {
+    e.preventDefault();
+    if (!currentUser) return toast.error("Please sign in to leave a review.");
+    setIsSubmittingReview(true);
+    try {
+      await submitReview(id, reviewForm.rating, reviewForm.comment, currentUser.displayName);
+      toast.success("Review submitted successfully!");
+      setReviewForm({ rating: 5, comment: '' });
+    } catch (err) {
+      toast.error(err.message || "Failed to submit review");
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -152,16 +184,25 @@ const ProductDetail = () => {
               Curated Selection
             </div>
 
-            <h1 style={{ 
-              fontSize: '2.5rem', 
-              fontWeight: 700, 
-              color: '#001d04', 
-              lineHeight: 1.1, 
-              marginBottom: '0.4rem',
-              letterSpacing: '-0.02em'
-            }}>
-               {product.title}
-            </h1>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.4rem' }}>
+              <h1 style={{ 
+                fontSize: '2.5rem', 
+                fontWeight: 700, 
+                color: '#001d04', 
+                lineHeight: 1.1, 
+                letterSpacing: '-0.02em',
+                margin: 0
+              }}>
+                {product.title}
+              </h1>
+              {product.reviewCount > 0 && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', backgroundColor: 'rgba(0,0,0,0.04)', padding: '0.3rem 0.6rem', borderRadius: '20px' }}>
+                  <Star size={14} fill="#EAB308" color="#EAB308" />
+                  <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#113013' }}>{product.rating}</span>
+                  <span style={{ fontSize: '0.75rem', color: '#706F65', marginLeft: '0.2rem' }}>({product.reviewCount})</span>
+                </div>
+              )}
+            </div>
 
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem', marginBottom: '1rem' }}>
               <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
@@ -263,6 +304,122 @@ const ProductDetail = () => {
                     <ShieldCheck size={16} strokeWidth={1} />
                     <span style={{ fontWeight: 300 }}>Secure payment processing</span>
                 </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Reviews Section */}
+        <div style={{ marginTop: '5rem', borderTop: '1px solid rgba(0,0,0,0.05)', paddingTop: '3rem' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem' }}>
+            <div>
+              <h2 style={{ fontSize: '1.8rem', fontWeight: 700, color: '#001d04', marginBottom: '0.4rem', letterSpacing: '-0.01em' }}>Customer Reviews</h2>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <div style={{ display: 'flex', gap: '2px' }}>
+                  {[1, 2, 3, 4, 5].map(star => (
+                    <Star key={star} size={16} fill={star <= Math.round(product.rating || 0) ? "#EAB308" : "transparent"} color={star <= Math.round(product.rating || 0) ? "#EAB308" : "#ccc"} />
+                  ))}
+                </div>
+                <span style={{ fontSize: '0.9rem', color: '#706F65' }}>
+                  {product.reviewCount ? `Based on ${product.reviewCount} review${product.reviewCount !== 1 ? 's' : ''}` : 'No reviews yet'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 2fr)', gap: '4rem', alignItems: 'start' }}>
+            {/* Review Form */}
+            <div style={{ backgroundColor: 'white', padding: '2rem', borderRadius: '24px', border: '1px solid rgba(0,0,0,0.05)' }}>
+              <h3 style={{ fontSize: '1.2rem', fontWeight: 600, color: '#001d04', marginBottom: '1.5rem' }}>Write a Review</h3>
+              {currentUser ? (
+                <form onSubmit={handleReviewSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#706F65', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Rating</label>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      {[1, 2, 3, 4, 5].map(star => (
+                        <button
+                          key={star}
+                          type="button"
+                          onClick={() => setReviewForm(prev => ({ ...prev, rating: star }))}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, transition: 'transform 0.1s' }}
+                          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
+                          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+                        >
+                          <Star size={28} fill={star <= reviewForm.rating ? "#EAB308" : "transparent"} color={star <= reviewForm.rating ? "#EAB308" : "#ccc"} />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: '#706F65', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Comment</label>
+                    <textarea 
+                      required
+                      rows={4}
+                      value={reviewForm.comment}
+                      onChange={(e) => setReviewForm(prev => ({ ...prev, comment: e.target.value }))}
+                      placeholder="Share your experience with this product..."
+                      style={{ 
+                        width: '100%', padding: '1rem', borderRadius: '12px', border: '1px solid rgba(0,0,0,0.1)', 
+                        fontFamily: 'inherit', resize: 'vertical', outline: 'none', transition: 'border-color 0.2s',
+                        boxSizing: 'border-box'
+                      }}
+                      onFocus={(e) => e.target.style.borderColor = '#00C853'}
+                      onBlur={(e) => e.target.style.borderColor = 'rgba(0,0,0,0.1)'}
+                    />
+                  </div>
+                  <button 
+                    type="submit"
+                    disabled={isSubmittingReview}
+                    className="btn"
+                    style={{ 
+                      padding: '1rem', backgroundColor: '#001d04', color: 'white', borderRadius: '12px', 
+                      fontWeight: 600, border: 'none', cursor: isSubmittingReview ? 'not-allowed' : 'pointer',
+                      opacity: isSubmittingReview ? 0.7 : 1, transition: 'all 0.2s'
+                    }}
+                  >
+                    {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
+                  </button>
+                </form>
+              ) : (
+                <div style={{ padding: '2.5rem 1.5rem', textAlign: 'center', backgroundColor: '#F3F2EE', borderRadius: '16px' }}>
+                  <p style={{ fontSize: '0.95rem', color: '#113013', marginBottom: '1.2rem', lineHeight: 1.5 }}>
+                    Please sign in to share your experience with this product.
+                  </p>
+                  <Link to="/signin" className="btn" style={{ padding: '0.8rem 1.5rem', backgroundColor: '#001d04', color: 'white', borderRadius: '10px', textDecoration: 'none', fontSize: '0.85rem', fontWeight: 600 }}>
+                    Sign In
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Reviews List */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+              {reviews.length === 0 ? (
+                <div style={{ padding: '3rem', textAlign: 'center', backgroundColor: '#F7F3ED', borderRadius: '24px', border: '1px dashed rgba(0,0,0,0.1)' }}>
+                  <Star size={32} color="#ccc" style={{ marginBottom: '1rem' }} />
+                  <p style={{ color: '#706F65', fontSize: '1rem' }}>No reviews yet. Be the first to review this product!</p>
+                </div>
+              ) : (
+                reviews.map(review => (
+                  <div key={review.id} style={{ padding: '1.5rem', backgroundColor: 'white', borderRadius: '20px', border: '1px solid rgba(0,0,0,0.04)', boxShadow: '0 4px 20px rgba(0,0,0,0.02)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.8rem' }}>
+                      <div>
+                        <h4 style={{ margin: '0 0 0.2rem', fontSize: '1rem', fontWeight: 600, color: '#113013' }}>{review.userName}</h4>
+                        <div style={{ display: 'flex', gap: '2px' }}>
+                          {[1, 2, 3, 4, 5].map(star => (
+                            <Star key={star} size={14} fill={star <= review.rating ? "#EAB308" : "transparent"} color={star <= review.rating ? "#EAB308" : "#ccc"} />
+                          ))}
+                        </div>
+                      </div>
+                      <span style={{ fontSize: '0.75rem', color: '#999' }}>
+                        {review.createdAt?.toDate ? review.createdAt.toDate().toLocaleDateString() : 'Just now'}
+                      </span>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '0.9rem', color: '#4A4A4A', lineHeight: 1.6 }}>
+                      {DOMPurify.sanitize(review.comment)}
+                    </p>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

@@ -184,6 +184,16 @@ export const ProductProvider = ({ children }) => {
     }
   }, []);
 
+  const submitReview = useCallback(async (productId, rating, comment, userName) => {
+    try {
+      const submitReviewFn = httpsCallable(functions, 'submitReview');
+      await submitReviewFn({ productId, rating, comment, userName });
+    } catch (e) {
+      logger.error("Error securely submitting review: ", e);
+      throw e;
+    }
+  }, []);
+
   const fetchProductById = useCallback(async (id) => {
     // Check local consolidated cache first
     const cached = products.find(p => p.id === id);
@@ -207,13 +217,13 @@ export const ProductProvider = ({ children }) => {
     fetchSearchCatalog, searchCatalog,
     fetchAdminCatalog, clearAdminCatalog, adminCatalog,
     fetchCategoryProducts, fetchMoreCategoryProducts,
-    fetchProductById, addProduct, updateProduct, deleteProduct
+    fetchProductById, addProduct, updateProduct, deleteProduct, submitReview
   }), [
     products, featuredProducts, isProductsLoading, productsError, 
     searchCatalog, fetchSearchCatalog,
     adminCatalog, fetchAdminCatalog, clearAdminCatalog,
     fetchCategoryProducts, fetchMoreCategoryProducts,
-    fetchProductById, addProduct, updateProduct, deleteProduct
+    fetchProductById, addProduct, updateProduct, deleteProduct, submitReview
   ]);
 
   return (

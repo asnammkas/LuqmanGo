@@ -75,10 +75,13 @@ export const WishlistProvider = ({ children }) => {
     
     // Sync changes back to cloud if logged in
     if (currentUser) {
-       const userRef = doc(db, 'users', currentUser.uid);
-       setDoc(userRef, { wishlist }, { merge: true }).catch(err => {
-         logger.error("Failed to update cloud wishlist", err);
-       });
+       const timer = setTimeout(() => {
+         const userRef = doc(db, 'users', currentUser.uid);
+         setDoc(userRef, { wishlist }, { merge: true }).catch(err => {
+           logger.error("Failed to update cloud wishlist", err);
+         });
+       }, 2000);
+       return () => clearTimeout(timer);
     }
   }, [wishlist, currentUser]);
 

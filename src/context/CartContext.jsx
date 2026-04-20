@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { db } from '../config/firebase';
 import { query, collection, where, getDocs } from 'firebase/firestore';
 import { logger } from '../utils/logger';
@@ -17,8 +17,11 @@ export const CartProvider = ({ children }) => {
     }
   });
   
+  const hasVerified = useRef(false);
+  
   useEffect(() => {
-    if (cart.length === 0) return;
+    if (hasVerified.current || cart.length === 0) return;
+    hasVerified.current = true;
 
     const verifyCartPrices = async () => {
       try {
@@ -78,7 +81,7 @@ export const CartProvider = ({ children }) => {
     };
 
     verifyCartPrices();
-  }, []); // Run once on mount to verify local storage cart
+  }, [cart]); // Run once on mount safely, referencing the cart array without stale closures
 
   useEffect(() => {
     localStorage.setItem('luqman_cart', JSON.stringify(cart));
@@ -94,6 +97,11 @@ export const CartProvider = ({ children }) => {
         return prevCart.map(item => 
           item.id === product.id ? { ...item, quantity: newQuantity } : item
         );
+      }
+      
+      if (!existing && prevCart.length >= 25) {
+        logger.warn('Cart size limit reached');
+        return prevCart;
       }
       
       const limitedQuantity = Math.min(quantity, stock);
@@ -127,6 +135,10 @@ export const CartProvider = ({ children }) => {
       const exists = prevCart.find(item => item.id === product.id);
       if (exists) {
         return prevCart.filter(item => item.id !== product.id);
+      }
+      if (prevCart.length >= 25) {
+        logger.warn('Cart size limit reached');
+        return prevCart;
       }
       if (product.stock <= 0) {
         logger.info(`Cannot toggle out-of-stock item: ${product.title}`);

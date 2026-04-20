@@ -11,6 +11,7 @@ import SearchOverlay from './components/storefront/SearchOverlay';
 import styles from './App.module.css';
 import CookieConsent from './components/storefront/CookieConsent';
 import LoadingSpinner from './components/ui/LoadingSpinner';
+import WhatsAppFloat from './components/ui/WhatsAppFloat';
 
 
 
@@ -187,6 +188,9 @@ function AppContent() {
       <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       {/* GDPR Cookie Consent */}
       <CookieConsent />
+      
+      {/* Persistent Global Floating Contact */}
+      <WhatsAppFloat />
     </div>
   );
 }

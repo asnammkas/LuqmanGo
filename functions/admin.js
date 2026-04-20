@@ -78,6 +78,11 @@ export const updateOrderStatus = onCall(async (request) => {
     throw new HttpsError("invalid-argument", "Missing orderId or newStatus.");
   }
   
+  const VALID_STATUSES = ['Processing', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled'];
+  if (!VALID_STATUSES.includes(newStatus)) {
+    throw new HttpsError("invalid-argument", "Invalid order status provided.");
+  }
+  
   try {
     await db.collection("orders").doc(orderId).set({ status: newStatus }, { merge: true });
     logger.info(`Order ${orderId} status updated to ${newStatus} securely by ${request.auth.uid}`);

@@ -94,7 +94,11 @@ const ProfileSettings = () => {
       navigate('/');
     } catch (err) {
       console.error(err);
-      toast.error('Failed to delete account. You may need to log out and log back in (recent authentication required).');
+      if (err.code === 'auth/requires-recent-login') {
+        toast.error('For security reasons, you must log out and log back in before deleting your account.');
+      } else {
+        toast.error('Failed to delete account. Please try again later.');
+      }
     } finally {
       setLoading(false);
     }

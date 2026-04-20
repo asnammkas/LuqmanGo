@@ -4,7 +4,7 @@ import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 import { useToast } from '../../context/ToastContext';
 import { formatCurrency } from '../../utils/formatters';
-import { ShoppingBag, Image as ImageIcon, Heart } from 'lucide-react';
+import { ShoppingBag, Image as ImageIcon, Heart, Star } from 'lucide-react';
 
 const ProductCard = ({ product }) => {
   const { toggleCart, isInCart } = useCart();
@@ -140,7 +140,7 @@ const ProductCard = ({ product }) => {
           alignItems: 'flex-start',
           textAlign: 'left' 
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'flex-start', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', width: '100%', alignItems: 'flex-start', gap: '0.4rem' }}>
             <h3 style={{ 
               fontSize: '0.95rem', 
               fontWeight: 500, 
@@ -148,11 +148,16 @@ const ProductCard = ({ product }) => {
               margin: 0,
               letterSpacing: '-0.01em',
               lineHeight: 1.4,
-              flex: 1
+              width: '100%',
+              display: '-webkit-box',
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: 'vertical',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis'
             }}>
               {product.title}
             </h3>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem', flexShrink: 0 }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem' }}>
               <span style={{ fontSize: '1.05rem', fontWeight: 800, color: '#436132', letterSpacing: '-0.02em' }}>
                 {formatCurrency(product.price)}
               </span>
@@ -169,6 +174,13 @@ const ProductCard = ({ product }) => {
           }}>
             {product.category}
           </span>
+          {product.reviewCount > 0 && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', marginTop: '0.4rem' }}>
+              <Star size={12} fill="#EAB308" color="#EAB308" />
+              <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#113013' }}>{product.rating}</span>
+              <span style={{ fontSize: '0.7rem', color: '#706F65' }}>({product.reviewCount})</span>
+            </div>
+          )}
         </div>
       </Link>
     </div>

@@ -1,23 +1,48 @@
+import { useState, useEffect } from 'react';
 import { useWishlist } from '../../context/WishlistContext';
 import { useCart } from '../../context/CartContext';
 import { useProducts } from '../../context/ProductContext';
 import { useToast } from '../../context/ToastContext';
 import ProductCard from '../../components/storefront/ProductCard';
 import Footer from '../../components/storefront/Footer';
+import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import { Link, useNavigate } from 'react-router-dom';
 import { Heart, ArrowLeft, Trash2, ShoppingBag } from 'lucide-react';
 
 const Wishlist = () => {
   const { wishlist } = useWishlist();
-  const { products } = useProducts();
+  const { fetchProductById } = useProducts();
   const { toggleCart, isInCart } = useCart();
   const toast = useToast();
   const navigate = useNavigate();
 
-  // Resolve IDs to full product objects
-  const wishlistProducts = wishlist
-    .map(id => products.find(p => p.id === id))
-    .filter(p => !!p);
+  const [wishlistProducts, setWishlistProducts] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    const loadProducts = async () => {
+      setIsLoading(true);
+      if (wishlist.length === 0) {
+        if (active) {
+          setWishlistProducts([]);
+          setIsLoading(false);
+        }
+        return;
+      }
+
+      const promises = wishlist.map(id => fetchProductById(id));
+      const results = await Promise.all(promises);
+      
+      if (active) {
+        setWishlistProducts(results.filter(p => !!p));
+        setIsLoading(false);
+      }
+    };
+
+    loadProducts();
+    return () => { active = false; };
+  }, [wishlist, fetchProductById]);
 
   const handleMoveAllToBag = () => {
     let movedCount = 0;
@@ -88,7 +113,11 @@ const Wishlist = () => {
           Your personal curation of coveted pieces. {wishlistProducts.length} {wishlistProducts.length === 1 ? 'item' : 'items'} saved for later.
         </p>
 
-        {wishlistProducts.length === 0 ? (
+        {isLoading ? (
+          <div style={{ height: '50vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <LoadingSpinner size={32} label="Loading favorites..." />
+          </div>
+        ) : wishlistProducts.length === 0 ? (
           <div style={{ 
             textAlign: 'center', 
             padding: '5rem 2rem', 
