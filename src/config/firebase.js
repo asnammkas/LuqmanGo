@@ -3,7 +3,7 @@ import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
-import { getFunctions } from "firebase/functions";
+import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 
 // Your web app's Firebase configuration using environment variables
 const firebaseConfig = {
@@ -44,3 +44,9 @@ export const storage = getStorage(app);
 
 // Initialize Firebase Functions
 export const functions = getFunctions(app);
+
+// Use local emulators in development mode for easier debugging
+if (import.meta.env.MODE === 'development') {
+  connectFunctionsEmulator(functions, "127.0.0.1", 5001);
+  console.log("Connected to local Firebase Functions Emulator");
+}

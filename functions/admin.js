@@ -41,7 +41,7 @@ export const manageProduct = onCall(async (request) => {
     throw new HttpsError("invalid-argument", "Unknown action provided.");
   } catch (error) {
     logger.error("manageProduct Server Error:", error);
-    throw new HttpsError("internal", "Server encountered an error managing the product.");
+    throw new HttpsError("aborted", `Server error: ${error.message}`);
   }
 });
 

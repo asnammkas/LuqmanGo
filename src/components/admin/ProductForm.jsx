@@ -117,18 +117,30 @@ const ProductForm = ({ currentProduct, onClose }) => {
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const productData = { 
-      ...formData, 
-      title: DOMPurify.sanitize(formData.title),
-      category: DOMPurify.sanitize(formData.category),
-      description: DOMPurify.sanitize(formData.description),
-      price: parseFloat(formData.price), 
-      stock: parseInt(formData.stock, 10) 
-    };
-    if (currentProduct) { updateProduct(currentProduct.id, productData); } else { addProduct(productData); }
-    onClose();
+    setUploading(true);
+    setUploadError('');
+    try {
+      const productData = { 
+        ...formData, 
+        title: DOMPurify.sanitize(formData.title),
+        category: DOMPurify.sanitize(formData.category),
+        description: DOMPurify.sanitize(formData.description),
+        price: parseFloat(formData.price), 
+        stock: parseInt(formData.stock, 10) 
+      };
+      if (currentProduct) { 
+        await updateProduct(currentProduct.id, productData); 
+      } else { 
+        await addProduct(productData); 
+      }
+      onClose();
+    } catch (err) {
+      console.error("Submit Error:", err);
+      setUploadError(err?.message || 'Failed to publish item. Please check permissions or try again.');
+      setUploading(false);
+    }
   };
 
   return (
