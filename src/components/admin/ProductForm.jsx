@@ -83,18 +83,36 @@ const ProductForm = ({ currentProduct, onClose }) => {
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/avif'];
     if (!allowedTypes.includes(file.type)) { setUploadError('Please upload a JPG, PNG, or WebP image.'); return; }
     if (file.size > 5 * 1024 * 1024) { setUploadError('Image must be under 5MB.'); return; }
-    setUploading(true); setUploadError(''); setUploadProgress(0);
-    const fileName = `products/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.]/g, '_')}`;
+    
+    setUploading(true); 
+    setUploadError(''); 
+    setUploadProgress(0);
+    
+    const fileName = `products/${Date.now()}_${(file.name || 'image.jpg').replace(/[^a-zA-Z0-9.]/g, '_')}`;
     const storageRef = ref(storage, fileName);
     const uploadTask = uploadBytesResumable(storageRef, file);
+    
     uploadTask.on('state_changed',
-      (snapshot) => setUploadProgress(Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100)),
-      (error) => { console.error(error); setUploadError('Upload failed. Please try again.'); setUploading(false); },
-      async () => {
-        try {
-          const url = await getDownloadURL(uploadTask.snapshot.ref);
-          setFormData(p => ({ ...p, image: url })); setUploading(false);
-        } catch { setUploadError('Failed to get image URL.'); setUploading(false); }
+      (snapshot) => {
+        const progress = snapshot.totalBytes > 0 ? Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100) : 0;
+        setUploadProgress(progress);
+      },
+      (error) => { 
+        console.error('Upload error:', error); 
+        setUploadError('Upload failed. Please try again.'); 
+        setUploading(false); 
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref)
+          .then((url) => {
+            setFormData(p => ({ ...p, image: url }));
+            setUploading(false);
+          })
+          .catch((err) => {
+            console.error('Download URL error:', err);
+            setUploadError('Failed to get image URL.');
+            setUploading(false);
+          });
       }
     );
   };
