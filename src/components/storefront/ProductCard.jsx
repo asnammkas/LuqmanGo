@@ -174,13 +174,6 @@ const ProductCard = ({ product }) => {
           }}>
             {product.category}
           </span>
-          {product.reviewCount > 0 && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.2rem', marginTop: '0.4rem' }}>
-              <Star size={12} fill="#EAB308" color="#EAB308" />
-              <span style={{ fontSize: '0.75rem', fontWeight: 600, color: '#113013' }}>{product.rating}</span>
-              <span style={{ fontSize: '0.7rem', color: '#706F65' }}>({product.reviewCount})</span>
-            </div>
-          )}
         </div>
       </Link>
     </div>
