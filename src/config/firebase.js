@@ -42,13 +42,15 @@ export const auth = getAuth(app);
 // Initialize Firebase Storage
 export const storage = getStorage(app);
 
-// Initialize Firebase Functions
-export const functions = getFunctions(app);
+// Initialize Firebase Functions with explicit region
+export const functions = getFunctions(app, 'us-central1');
 
-// Use local emulators in development mode for easier debugging
-if (import.meta.env.MODE === 'development') {
-  // Use current hostname to allow connection from other devices on the same network
-  const host = window.location.hostname;
-  connectFunctionsEmulator(functions, host, 5001);
-  console.log(`Connected to local Firebase Functions Emulator at ${host}:5001`);
+// Debug Logger for environment verification
+if (typeof window !== 'undefined') {
+  console.log(`[LuqmanGo] Running in ${import.meta.env.MODE} mode`);
+  if (import.meta.env.MODE === 'development') {
+    const host = window.location.hostname;
+    connectFunctionsEmulator(functions, host, 5001);
+    console.log(`[LuqmanGo] Connected to local Functions Emulator at ${host}:5001`);
+  }
 }
