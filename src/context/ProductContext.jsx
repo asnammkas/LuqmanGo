@@ -155,7 +155,11 @@ export const ProductProvider = ({ children }) => {
   // ─── CRUD Operations (Secure Server-Side) ───
   const addProduct = useCallback(async (product) => {
     try {
-      const newId = crypto.randomUUID();
+      // Fallback for randomUUID if not in a secure context (e.g. testing via IP address on mobile)
+      const newId = (typeof crypto !== 'undefined' && crypto.randomUUID) 
+        ? crypto.randomUUID() 
+        : `prod_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+        
       const manageProduct = httpsCallable(functions, 'manageProduct');
       await manageProduct({ action: 'create', id: newId, productData: { ...product, id: newId } });
     } catch (e) {

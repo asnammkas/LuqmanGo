@@ -47,6 +47,8 @@ export const functions = getFunctions(app);
 
 // Use local emulators in development mode for easier debugging
 if (import.meta.env.MODE === 'development') {
-  connectFunctionsEmulator(functions, "127.0.0.1", 5001);
-  console.log("Connected to local Firebase Functions Emulator");
+  // Use current hostname to allow connection from other devices on the same network
+  const host = window.location.hostname;
+  connectFunctionsEmulator(functions, host, 5001);
+  console.log(`Connected to local Firebase Functions Emulator at ${host}:5001`);
 }
