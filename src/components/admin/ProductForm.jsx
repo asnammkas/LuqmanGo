@@ -232,15 +232,6 @@ const ProductForm = ({ currentProduct, onClose }) => {
                     </div>
                   )}
                 </div>
-                <div>
-                  <FieldLabel>Status</FieldLabel>
-                  <div style={{ height: '3.2rem', display: 'flex', alignItems: 'center', padding: '0 1.1rem', backgroundColor: 'white', border: '1px solid rgba(0,0,0,0.06)', borderRadius: '12px' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', fontSize: '0.88rem', width: '100%', color: '#001d04' }}>
-                      <input type="checkbox" checked={formData.featured} onChange={e => setFormData({ ...formData, featured: e.target.checked })} style={{ width: '1.1rem', height: '1.1rem', accentColor: '#001d04', cursor: 'pointer' }} />
-                      Feature on Homepage
-                    </label>
-                  </div>
-                </div>
               </div>
               <div>
                 <FieldLabel>Product Description</FieldLabel>

@@ -30,10 +30,29 @@ const Home = () => {
     loadInitial();
   }, [fetchCategoryProducts]);
 
-  // Use the dedicated featuredProducts stream for the Hero Carousel
-  const heroProducts = featuredProducts.length > 0 ? featuredProducts : gridProducts.slice(0, 5);
+  // Promotional Banners for Hero Slider
+  const promotionalBanners = [
+    {
+      id: 'promo-1',
+      title: 'ORGANIC ARTISANAL COFFEE',
+      image: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1280&q=80',
+      link: '/category/Groceries'
+    },
+    {
+      id: 'promo-2',
+      title: 'SUMMER ESSENTIALS COLLECTION',
+      image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1280&q=80',
+      link: '/category/Dresses'
+    },
+    {
+      id: 'promo-3',
+      title: 'ELEVATE YOUR SPACE',
+      image: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&auto=format&fit=crop&w=1280&q=80',
+      link: '/category/Furniture'
+    }
+  ];
 
-  const displayGridProducts = gridProducts.filter(p => !heroProducts.some(h => h.id === p.id));
+  const displayGridProducts = gridProducts; // Show all products in the grid
 
   // Infinite Scroll Observer Implementation
   useEffect(() => {
@@ -83,15 +102,14 @@ const Home = () => {
 
   // Auto-swipe every 4 seconds
   useEffect(() => {
-    if (heroProducts.length <= 1 || isFeaturedLoading) return;
+    if (promotionalBanners.length <= 1) return;
     const interval = setInterval(() => {
-      goToSlide((currentSlide + 1) % heroProducts.length);
+      goToSlide((currentSlide + 1) % promotionalBanners.length);
     }, 4000);
     return () => clearInterval(interval);
-  }, [currentSlide, heroProducts.length, isFeaturedLoading, goToSlide]);
+  }, [currentSlide, goToSlide]);
 
-  const currentHero = heroProducts[currentSlide];
-
+  const currentHero = promotionalBanners[currentSlide];
 
   return (
     <div>
@@ -116,9 +134,9 @@ const Home = () => {
               boxShadow: '0 8px 30px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)',
             }}>
                 {/* Slides */}
-                {heroProducts.map((product, index) => (
+                {promotionalBanners.map((banner, index) => (
                   <div
-                    key={product.id}
+                    key={banner.id}
                     style={{
                       position: 'absolute',
                       inset: 0,
@@ -128,8 +146,8 @@ const Home = () => {
                     }}
                   >
                     <img 
-                      src={product.image} 
-                      alt={product.title} 
+                      src={banner.image} 
+                      alt={banner.title} 
                       style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
                     />
                   </div>
@@ -152,7 +170,7 @@ const Home = () => {
                         {currentHero?.title || 'The Collection'}
                     </h2>
                     <Link 
-                      to={`/product/${currentHero?.id}`} 
+                      to={currentHero?.link || '/'} 
                       className="btn" 
                       style={{ 
                         backgroundColor: 'white', color: '#0C2311', 
@@ -169,7 +187,7 @@ const Home = () => {
                 </div>
 
                 {/* Dot Indicators */}
-                {heroProducts.length > 1 && (
+                {promotionalBanners.length > 1 && (
                   <div style={{
                     position: 'absolute',
                     bottom: '12px',
@@ -179,7 +197,7 @@ const Home = () => {
                     gap: '6px',
                     zIndex: 2,
                   }}>
-                    {heroProducts.map((_, i) => (
+                    {promotionalBanners.map((_, i) => (
                       <div
                         key={i}
                         onClick={() => goToSlide(i)}
