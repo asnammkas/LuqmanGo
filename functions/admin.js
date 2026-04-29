@@ -41,7 +41,8 @@ export const manageProduct = onCall(async (request) => {
     throw new HttpsError("invalid-argument", "Unknown action provided.");
   } catch (error) {
     logger.error("manageProduct Server Error:", error);
-    throw new HttpsError("aborted", `Server error: ${error.message}`);
+    if (error instanceof HttpsError) throw error;
+    throw new HttpsError("internal", `Server error: ${error.message}`);
   }
 });
 
@@ -65,6 +66,7 @@ export const manageCategory = onCall(async (request) => {
     throw new HttpsError("invalid-argument", "Unknown action provided.");
   } catch (error) {
     logger.error("manageCategory Server Error:", error);
+    if (error instanceof HttpsError) throw error;
     throw new HttpsError("internal", "Server encountered an error managing the category.");
   }
 });
@@ -89,6 +91,7 @@ export const manageBanner = onCall(async (request) => {
     throw new HttpsError("invalid-argument", "Unknown action provided.");
   } catch (error) {
     logger.error("manageBanner Server Error:", error);
+    if (error instanceof HttpsError) throw error;
     throw new HttpsError("internal", "Server encountered an error managing the banner.");
   }
 });
@@ -113,6 +116,7 @@ export const updateOrderStatus = onCall(async (request) => {
     return { success: true };
   } catch (error) {
     logger.error("updateOrderStatus Server Error:", error);
+    if (error instanceof HttpsError) throw error;
     throw new HttpsError("internal", "Server encountered an error updating order status.");
   }
 });

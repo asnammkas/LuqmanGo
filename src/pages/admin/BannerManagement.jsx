@@ -99,7 +99,7 @@ const BannerManagement = () => {
       setIsEditing(false);
     } catch (error) {
       console.error("Submit error:", error);
-      setUploadError('Failed to save banner. Please check your connection and try again.');
+      setUploadError(`Failed to save banner: ${error.message || 'Unknown error'}`);
     } finally {
       setUploading(false);
     }
