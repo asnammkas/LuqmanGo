@@ -57,8 +57,8 @@ export const BannerProvider = ({ children }) => {
         clearTimeout(fallbackTimer);
         
         if (snapshot.empty) {
-          logger.info("Banner collection is empty. Falling back to mock banners locally.");
-          setBanners(initialMockBanners);
+          logger.info("Banner collection is empty.");
+          setBanners([]);
           setIsBannersLoading(false);
         } else {
           const loadedBanners = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));

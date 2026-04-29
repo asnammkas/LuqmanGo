@@ -103,7 +103,7 @@ const Home = () => {
       <section className="container" style={{ padding: '0.5rem 1.5rem 2rem' }}>
         {isFeaturedLoading ? (
             <HeroSkeleton />
-        ) : (
+        ) : promotionalBanners.length > 0 ? (
             <div style={{ 
               position: 'relative', 
               width: '100%', 
@@ -194,7 +194,7 @@ const Home = () => {
                   </div>
                 )}
             </div>
-        )}
+        ) : null}
       </section>
 
       {/* Category Filter Grid */}
