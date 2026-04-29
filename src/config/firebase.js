@@ -48,7 +48,8 @@ export const functions = getFunctions(app, 'us-central1');
 // Debug Logger for environment verification
 if (typeof window !== 'undefined') {
   console.log(`[LuqmanGo] Running in ${import.meta.env.MODE} mode`);
-  if (import.meta.env.MODE === 'development') {
+  // To use the local Functions Emulator, set VITE_USE_EMULATOR=true in your .env
+  if (import.meta.env.MODE === 'development' && import.meta.env.VITE_USE_EMULATOR === 'true') {
     const host = window.location.hostname;
     connectFunctionsEmulator(functions, host, 5001);
     console.log(`[LuqmanGo] Connected to local Functions Emulator at ${host}:5001`);

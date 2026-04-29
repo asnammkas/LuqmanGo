@@ -73,12 +73,18 @@ export const manageCategory = onCall(async (request) => {
 
 // ─── BANNERS ───
 export const manageBanner = onCall(async (request) => {
+  logger.info("manageBanner call received:", { data: request.data, auth: request.auth?.uid });
   const db = await verifyAdmin(request);
   const { action, id, bannerData } = request.data;
   
   try {
     if (action === "create" || action === "update") {
       if (!id || !bannerData) throw new HttpsError("invalid-argument", "Missing banner id or data.");
+      
+      // Ensure no NaN values in bannerData
+      bannerData.order = typeof bannerData.order === 'number' && !isNaN(bannerData.order) ? bannerData.order : 0;
+
+      logger.info(`Attempting to ${action} banner ${id}`, { bannerData });
       await db.collection("banners").doc(id).set(bannerData, { merge: true });
       logger.info(`Banner ${id} ${action}d securely by ${request.auth.uid}`);
       return { success: true, id };
@@ -90,9 +96,9 @@ export const manageBanner = onCall(async (request) => {
     }
     throw new HttpsError("invalid-argument", "Unknown action provided.");
   } catch (error) {
-    logger.error("manageBanner Server Error:", error);
+    logger.error("manageBanner Server Error:", { error, action, id });
     if (error instanceof HttpsError) throw error;
-    throw new HttpsError("internal", "Server encountered an error managing the banner.");
+    throw new HttpsError("internal", `Banner management failed: ${error.message || 'Unknown server error'}`);
   }
 });
 

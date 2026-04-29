@@ -88,7 +88,7 @@ const BannerManagement = () => {
         title: DOMPurify.sanitize(formData.title),
         image: formData.image, 
         link: DOMPurify.sanitize(formData.link),
-        order: Number(formData.order)
+        order: isNaN(Number(formData.order)) ? 0 : Number(formData.order)
       };
       
       if (currentBanner) { 

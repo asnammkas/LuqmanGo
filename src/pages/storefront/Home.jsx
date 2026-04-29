@@ -133,38 +133,18 @@ const Home = () => {
                   </div>
                 ))}
 
-                {/* Overlay with text */}
-                <div style={{ 
-                    position: 'absolute', inset: 0, 
-                    display: 'flex', flexDirection: 'column', 
-                    alignItems: 'center', justifyContent: 'flex-end',
-                    padding: '2rem',
-                    background: 'linear-gradient(to top, rgba(0,0,0,0.45) 0%, rgba(0,0,0,0.05) 50%, transparent)',
-                }}>
-                    <h2 style={{ 
-                      color: 'white', fontSize: '1.6rem', fontWeight: 300, 
-                      letterSpacing: '0.08em', textTransform: 'uppercase', 
-                      marginBottom: '0.8rem', textAlign: 'center',
-                      textShadow: '0 1px 4px rgba(0,0,0,0.3)',
-                    }}>
-                        {currentHero?.title || 'The Collection'}
-                    </h2>
-                    <Link 
-                      to={currentHero?.link || '/'} 
-                      className="btn" 
-                      style={{ 
-                        backgroundColor: 'white', color: '#0C2311', 
-                        padding: '0.8rem 2rem', borderRadius: '50px', 
-                        fontSize: '0.75rem', letterSpacing: '0.15em', 
-                        textTransform: 'uppercase', fontWeight: 600,
-                        boxShadow: '0 4px 15px rgba(0,0,0,0.15)',
-                        textDecoration: 'none',
-                        transition: 'transform 0.2s ease',
-                      }}
-                    >
-                        Explore Now
-                    </Link>
-                </div>
+                {/* Clickable Overlay */}
+                <Link 
+                  to={currentHero?.link || '/'}
+                  style={{ 
+                      position: 'absolute', inset: 0, 
+                      display: 'flex', flexDirection: 'column', 
+                      alignItems: 'center', justifyContent: 'flex-end',
+                      padding: '2rem',
+                      background: 'linear-gradient(to top, rgba(0,0,0,0.3) 0%, transparent 40%)',
+                      textDecoration: 'none'
+                  }}
+                />
 
                 {/* Dot Indicators */}
                 {promotionalBanners.length > 1 && (
