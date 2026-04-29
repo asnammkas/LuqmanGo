@@ -39,6 +39,7 @@ const DeliveryPolicyPage = lazy(() => import('./pages/storefront/DeliveryPolicyP
 const NotFound = lazy(() => import('./pages/storefront/NotFound'));
 
 // ─── Admin Pages (Lazy Loaded) ───────────────────────────────
+const AdminLayout = lazy(() => import('./components/admin/AdminLayout'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const ProductManagement = lazy(() => import('./pages/admin/ProductManagement'));
 const CategoryManagement = lazy(() => import('./pages/admin/CategoryManagement'));
@@ -165,10 +166,12 @@ function AppContent() {
               </Route>
               
               {/* Admin Routes - Requires Admin Role */}
-              <Route path="/admin" element={<AdminRoute><AdminDashboard /></AdminRoute>} />
-              <Route path="/admin/products" element={<AdminRoute><ProductManagement /></AdminRoute>} />
-              <Route path="/admin/categories" element={<AdminRoute><CategoryManagement /></AdminRoute>} />
-              <Route path="/admin/orders" element={<AdminRoute><OrderManagement /></AdminRoute>} />
+              <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
+                <Route index element={<AdminDashboard />} />
+                <Route path="products" element={<ProductManagement />} />
+                <Route path="categories" element={<CategoryManagement />} />
+                <Route path="orders" element={<OrderManagement />} />
+              </Route>
 
               {/* Catch-all 404 Route */}
               <Route path="*" element={<NotFound />} />
@@ -190,7 +193,7 @@ function AppContent() {
       <CookieConsent />
       
       {/* Persistent Global Floating Contact */}
-      <WhatsAppFloat />
+      {!isDrawerOpen && <WhatsAppFloat />}
     </div>
   );
 }

@@ -145,29 +145,22 @@ const ProductForm = ({ currentProduct, onClose }) => {
 
   return (
     <>
-      <div className={styles.header}>
-        <div className={styles.headerGlow} />
-        <div style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-          <div>
-            <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgba(255,255,255,0.5)', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.08em', marginBottom: '0.6rem', padding: 0, fontFamily: 'inherit' }}>
-              <ArrowLeft size={14} /> Back to Catalog
-            </button>
-            <h1 style={{ fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', fontWeight: 800, margin: 0, letterSpacing: '-0.03em', color: 'white' }}>
-              {currentProduct ? 'Edit Product' : 'Add New Item'}
-            </h1>
-            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem', margin: '0.3rem 0 0' }}>
-              Catalog Entry #{currentProduct?.id?.substring(0, 8) || 'New'}
-            </p>
-          </div>
-          {formData.image && (
-            <div style={{ width: '64px', height: '64px', borderRadius: '16px', overflow: 'hidden', border: '2px solid rgba(255,255,255,0.2)', flexShrink: 0 }}>
-              <img src={formData.image} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-            </div>
-          )}
+      <div className="admin-page-header">
+        <div>
+          <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-text-muted)', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '0.05em', marginBottom: '0.6rem', padding: 0, fontFamily: 'inherit' }}>
+            <ArrowLeft size={16} /> Back to Catalog
+          </button>
+          <h1>{currentProduct ? 'Edit Product' : 'Add New Item'}</h1>
+          <p>Catalog Entry #{currentProduct?.id?.substring(0, 8) || 'New'}</p>
         </div>
+        {formData.image && (
+          <div style={{ width: '64px', height: '64px', borderRadius: '16px', overflow: 'hidden', border: '2px solid var(--color-border)', flexShrink: 0 }}>
+            <img src={formData.image} alt="Preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
+        )}
       </div>
 
-      <div className={styles.formBody}>
+      <div className="admin-table-card" style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
           <FormSection icon={<LayoutGrid size={18} color="#001d04" />} title="General Details">
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>

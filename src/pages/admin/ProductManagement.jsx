@@ -35,7 +35,7 @@ const ProductManagement = () => {
   const categories = ['All', ...new Set(contextCategories.map(c => c.name).filter(Boolean))];
 
   return (
-    <div className={styles.pageContainer}>
+    <>
       {isEditing ? (
         <ProductForm 
           currentProduct={currentProduct} 
@@ -68,7 +68,7 @@ const ProductManagement = () => {
           setDeleteTarget(null);
         }}
       />
-    </div>
+    </>
   );
 };
 
