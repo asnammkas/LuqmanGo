@@ -242,7 +242,7 @@ const BannerManagement = () => {
       <div className="admin-page-header">
         <div>
           <h1>Banners</h1>
-          <p>{banners.length} hero slider banners</p>
+          <p>{banners.length} homepage banners</p>
         </div>
         <div className="admin-page-actions">
           <button onClick={handleAddNew} className="btn btn-primary">
@@ -253,38 +253,8 @@ const BannerManagement = () => {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1.2rem' }}>
         {banners.map((banner, index) => (
-          <div key={banner.id} className="admin-product-row" style={{ padding: '1.2rem', animationDelay: `${index * 0.05}s`, flexDirection: 'column', alignItems: 'stretch' }}>
-            
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <div style={{ display: 'flex', gap: '0.4rem' }}>
-                <button 
-                  onClick={() => moveBanner(index, -1)} 
-                  disabled={index === 0}
-                  className="admin-action-btn"
-                  style={{ background: 'none', border: 'none', cursor: index === 0 ? 'default' : 'pointer', opacity: index === 0 ? 0.3 : 1, padding: '4px' }}
-                >
-                  <ArrowUp size={16} />
-                </button>
-                <button 
-                  onClick={() => moveBanner(index, 1)} 
-                  disabled={index === banners.length - 1}
-                  className="admin-action-btn"
-                  style={{ background: 'none', border: 'none', cursor: index === banners.length - 1 ? 'default' : 'pointer', opacity: index === banners.length - 1 ? 0.3 : 1, padding: '4px' }}
-                >
-                  <ArrowDown size={16} />
-                </button>
-              </div>
-              <div className="admin-product-actions" style={{ gap: '0.4rem' }}>
-                <button title="Edit Banner" onClick={() => handleEdit(banner)} className="admin-action-btn">
-                  <Edit2 size={16} />
-                </button>
-                <button title="Delete Banner" onClick={() => { if (window.confirm('Remove this banner permanently?')) deleteBanner(banner.id); }} className="admin-action-btn danger">
-                  <Trash2 size={16} />
-                </button>
-              </div>
-            </div>
-
-            <div className="admin-product-thumb" style={{ width: '100%', height: '140px', backgroundColor: 'var(--color-bg-main)', borderRadius: '12px', overflow: 'hidden', marginBottom: '1rem' }}>
+          <div key={banner.id} className="admin-product-row" style={{ padding: '1.2rem', animationDelay: `${index * 0.05}s` }}>
+            <div className="admin-product-thumb" style={{ backgroundColor: 'var(--color-bg-main)' }}>
               {banner.image ? (
                 <img src={banner.image} alt={banner.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (
@@ -295,8 +265,17 @@ const BannerManagement = () => {
             </div>
 
             <div className="admin-product-info">
-              <h3 className="admin-product-title" style={{ fontSize: '0.95rem', marginBottom: '0.2rem' }}>{banner.title || 'Untitled Banner'}</h3>
-              <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', wordBreak: 'break-all' }}>{banner.link || '/'}</p>
+              <h3 className="admin-product-title">{banner.title || 'Untitled Banner'}</h3>
+              <p style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', marginTop: '0.15rem' }}>Order: {banner.order ?? index} · {banner.link || '/'}</p>
+            </div>
+
+            <div className="admin-product-actions" style={{ flexDirection: 'column', gap: '0.4rem' }}>
+              <button title="Edit Banner" onClick={() => handleEdit(banner)} className="admin-action-btn">
+                <Edit2 size={16} />
+              </button>
+              <button title="Delete Banner" onClick={() => { if (window.confirm('Remove this banner permanently?')) deleteBanner(banner.id); }} className="admin-action-btn danger">
+                <Trash2 size={16} />
+              </button>
             </div>
           </div>
         ))}
@@ -305,7 +284,7 @@ const BannerManagement = () => {
           <div style={{ gridColumn: '1 / -1' }} className="admin-empty-state">
             <AlertCircle size={40} color="var(--color-border)" style={{ marginBottom: '1rem' }} />
             <h2>No banners found</h2>
-            <p>Your hero slider is currently empty.</p>
+            <p>Start by adding your first promotional banner for the homepage.</p>
             <button onClick={handleAddNew} className="btn btn-primary" style={{ marginTop: '1.5rem' }}>
               <Plus size={16} /> Add First Banner
             </button>
