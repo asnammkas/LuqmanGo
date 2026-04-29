@@ -71,23 +71,23 @@ const Home = () => {
   }, [hasMore, isLoadingInitial, isFetchingNext, lastDoc, fetchMoreCategoryProducts]);
 
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const transitionRef = useRef(false);
 
   const goToSlide = useCallback((index) => {
-    if (isTransitioning) return;
-    setIsTransitioning(true);
+    if (transitionRef.current) return;
+    transitionRef.current = true;
     setCurrentSlide(index);
-    setTimeout(() => setIsTransitioning(false), 600);
-  }, [isTransitioning]);
+    setTimeout(() => { transitionRef.current = false; }, 600);
+  }, []);
 
   // Auto-swipe every 4 seconds
   useEffect(() => {
     if (promotionalBanners.length <= 1) return;
     const interval = setInterval(() => {
-      goToSlide((currentSlide + 1) % promotionalBanners.length);
+      setCurrentSlide(prev => (prev + 1) % promotionalBanners.length);
     }, 4000);
     return () => clearInterval(interval);
-  }, [currentSlide, goToSlide]);
+  }, [promotionalBanners.length]);
 
   const currentHero = promotionalBanners[currentSlide];
 
