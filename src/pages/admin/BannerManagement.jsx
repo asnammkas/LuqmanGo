@@ -78,21 +78,31 @@ const BannerManagement = () => {
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const sanitizedData = {
-      title: DOMPurify.sanitize(formData.title),
-      image: formData.image, 
-      link: DOMPurify.sanitize(formData.link),
-      order: Number(formData.order)
-    };
+    setUploading(true); // Reuse uploading state for the final save
+    setUploadError('');
     
-    if (currentBanner) { 
-      updateBanner(currentBanner.id, sanitizedData); 
-    } else { 
-      addBanner(sanitizedData); 
+    try {
+      const sanitizedData = {
+        title: DOMPurify.sanitize(formData.title),
+        image: formData.image, 
+        link: DOMPurify.sanitize(formData.link),
+        order: Number(formData.order)
+      };
+      
+      if (currentBanner) { 
+        await updateBanner(currentBanner.id, sanitizedData); 
+      } else { 
+        await addBanner(sanitizedData); 
+      }
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Submit error:", error);
+      setUploadError('Failed to save banner. Please check your connection and try again.');
+    } finally {
+      setUploading(false);
     }
-    setIsEditing(false);
   };
 
   const moveBanner = (index, direction) => {
