@@ -43,6 +43,7 @@ const AdminLayout = lazy(() => import('./components/admin/AdminLayout'));
 const AdminDashboard = lazy(() => import('./pages/admin/AdminDashboard'));
 const ProductManagement = lazy(() => import('./pages/admin/ProductManagement'));
 const CategoryManagement = lazy(() => import('./pages/admin/CategoryManagement'));
+const BannerManagement = lazy(() => import('./pages/admin/BannerManagement'));
 const OrderManagement = lazy(() => import('./pages/admin/OrderManagement'));
 
 // ─── Premium Loading Fallback ────────────────────────────────
@@ -170,6 +171,7 @@ function AppContent() {
                 <Route index element={<AdminDashboard />} />
                 <Route path="products" element={<ProductManagement />} />
                 <Route path="categories" element={<CategoryManagement />} />
+                <Route path="banners" element={<BannerManagement />} />
                 <Route path="orders" element={<OrderManagement />} />
               </Route>
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, Outlet, Link } from 'react-router-dom';
-import { LayoutDashboard, Package, LayoutGrid, ShoppingBag, Store, LogOut } from 'lucide-react';
+import { LayoutDashboard, Package, LayoutGrid, ShoppingBag, Store, LogOut, Image } from 'lucide-react';
 import '../../admin.css';
 
 const AdminLayout = () => {
@@ -8,6 +8,7 @@ const AdminLayout = () => {
     { to: '/admin', icon: <LayoutDashboard size={18} />, label: 'Dashboard', end: true },
     { to: '/admin/products', icon: <Package size={18} />, label: 'Products' },
     { to: '/admin/categories', icon: <LayoutGrid size={18} />, label: 'Categories' },
+    { to: '/admin/banners', icon: <Image size={18} />, label: 'Banners' },
     { to: '/admin/orders', icon: <ShoppingBag size={18} />, label: 'Orders' },
   ];
 

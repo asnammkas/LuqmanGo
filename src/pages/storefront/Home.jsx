@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { useProducts } from '../../context/ProductContext';
+import { useBanners } from '../../context/BannerContext';
 import ProductCard from '../../components/storefront/ProductCard';
 import CategoryGrid from '../../components/storefront/CategoryGrid';
 import Footer from '../../components/storefront/Footer';
@@ -10,6 +11,7 @@ import { Loader, SlidersHorizontal, ArrowUpDown } from 'lucide-react';
 
 const Home = () => {
   const { featuredProducts, isProductsLoading: isFeaturedLoading, productsError, fetchCategoryProducts, fetchMoreCategoryProducts } = useProducts();
+  const { banners: promotionalBanners, isBannersLoading } = useBanners();
   
   const [gridProducts, setGridProducts] = useState([]);
   const [lastDoc, setLastDoc] = useState(null);
@@ -29,28 +31,6 @@ const Home = () => {
     };
     loadInitial();
   }, [fetchCategoryProducts]);
-
-  // Promotional Banners for Hero Slider
-  const promotionalBanners = [
-    {
-      id: 'promo-1',
-      title: 'ORGANIC ARTISANAL COFFEE',
-      image: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1280&q=80',
-      link: '/category/Groceries'
-    },
-    {
-      id: 'promo-2',
-      title: 'SUMMER ESSENTIALS COLLECTION',
-      image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1280&q=80',
-      link: '/category/Dresses'
-    },
-    {
-      id: 'promo-3',
-      title: 'ELEVATE YOUR SPACE',
-      image: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&auto=format&fit=crop&w=1280&q=80',
-      link: '/category/Furniture'
-    }
-  ];
 
   const displayGridProducts = gridProducts; // Show all products in the grid
 

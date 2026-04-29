@@ -69,6 +69,30 @@ export const manageCategory = onCall(async (request) => {
   }
 });
 
+// ─── BANNERS ───
+export const manageBanner = onCall(async (request) => {
+  const db = await verifyAdmin(request);
+  const { action, id, bannerData } = request.data;
+  
+  try {
+    if (action === "create" || action === "update") {
+      if (!id || !bannerData) throw new HttpsError("invalid-argument", "Missing banner id or data.");
+      await db.collection("banners").doc(id).set(bannerData, { merge: true });
+      logger.info(`Banner ${id} ${action}d securely by ${request.auth.uid}`);
+      return { success: true, id };
+    } else if (action === "delete") {
+      if (!id) throw new HttpsError("invalid-argument", "Missing banner id for deletion.");
+      await db.collection("banners").doc(id).delete();
+      logger.info(`Banner ${id} deleted securely by ${request.auth.uid}`);
+      return { success: true };
+    }
+    throw new HttpsError("invalid-argument", "Unknown action provided.");
+  } catch (error) {
+    logger.error("manageBanner Server Error:", error);
+    throw new HttpsError("internal", "Server encountered an error managing the banner.");
+  }
+});
+
 // ─── ORDERS ───
 export const updateOrderStatus = onCall(async (request) => {
   const db = await verifyAdmin(request);

@@ -34,6 +34,13 @@ service cloud.firestore {
       allow write: if false;
     }
 
+    // ─── Banners ────────────────────────────────────────────────
+    // Securing Production: All writes are now handled via Secure Cloud Functions.
+    match /banners/{bannerId} {
+      allow read: if true;
+      allow write: if false;
+    }
+
     // ─── Orders ─────────────────────────────────────────────────
     // Secure Production Logic:
     // Client-side creates/updates are fully DISABLED. 

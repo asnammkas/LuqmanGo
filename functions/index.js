@@ -8,7 +8,7 @@ import { sendEmail, emailTemplates } from "./utils/email.js";
 import { optimizeImage } from "./imageOpt.js";
 import { scheduledFirestoreExport } from "./backup.js";
 import { anonymizeUserOrders } from "./gdpr.js";
-import { manageProduct, manageCategory, updateOrderStatus } from "./admin.js";
+import { manageProduct, manageCategory, manageBanner, updateOrderStatus } from "./admin.js";
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -145,7 +145,7 @@ export const validateAndCreateOrder = onCall(async (request) => {
   }
 });
 
-export { optimizeImage, scheduledFirestoreExport, anonymizeUserOrders, manageProduct, manageCategory, updateOrderStatus };
+export { optimizeImage, scheduledFirestoreExport, anonymizeUserOrders, manageProduct, manageCategory, manageBanner, updateOrderStatus };
 
 /**
  * Cleanup function helper: Deletes storage blobs.
@@ -278,6 +278,24 @@ export const onCategoryDeleted = onDocumentDeleted("categories/{categoryId}", as
   const deletedData = event.data?.data();
   if (deletedData) await cleanupStorage(deletedData);
   await createAuditLog("DELETE", "categories", event.params.categoryId);
+});
+
+/**
+ * Audit Triggers for Banners.
+ */
+export const onBannerCreated = onDocumentCreated("banners/{bannerId}", async (event) => {
+  await createAuditLog("CREATE", "banners", event.params.bannerId, event.data?.data());
+});
+
+export const onBannerUpdated = onDocumentUpdated("banners/{bannerId}", async (event) => {
+  const newData = event.data?.after.data();
+  await createAuditLog("UPDATE", "banners", event.params.bannerId, newData);
+});
+
+export const onBannerDeleted = onDocumentDeleted("banners/{bannerId}", async (event) => {
+  const deletedData = event.data?.data();
+  if (deletedData) await cleanupStorage(deletedData);
+  await createAuditLog("DELETE", "banners", event.params.bannerId);
 });
 /**
  * Uptime Monitoring: Lightweight health check endpoint.
