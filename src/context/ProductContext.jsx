@@ -51,7 +51,7 @@ export const ProductProvider = ({ children }) => {
 
     const unsubFeatured = onSnapshot(featuredQuery, (snapshot) => {
       const loaded = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      setFeaturedProducts(loaded);
+      setFeaturedProducts(loaded.filter(p => p.visible !== false));
       initialLoadDone.current = true;
       setIsProductsLoading(false);
       clearTimeout(fallbackTimer);
@@ -74,7 +74,7 @@ export const ProductProvider = ({ children }) => {
       const q = query(collection(db, 'products'), orderBy('title'));
       const snapshot = await getDocs(q);
       const loaded = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setSearchCatalog(loaded);
+      setSearchCatalog(loaded.filter(p => p.visible !== false));
     } catch (err) {
       logger.error("Search Catalog Fetch Error:", err);
     }
@@ -111,7 +111,7 @@ export const ProductProvider = ({ children }) => {
       }
       
       const snapshot = await getDocs(q);
-      let loaded = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      let loaded = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(p => p.visible !== false);
       
       // If fetching All, but some are featured, this query might fetch them too. 
       // We will let the consumer filter them if needed.
@@ -141,7 +141,7 @@ export const ProductProvider = ({ children }) => {
       const snapshot = await getDocs(q);
       if (snapshot.empty) return { products: [], lastDoc: afterDoc, hasMore: false };
 
-      const loaded = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const loaded = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(p => p.visible !== false);
       const lastVisible = snapshot.docs[snapshot.docs.length - 1];
       const canLoadMore = snapshot.docs.length === pageSize;
       

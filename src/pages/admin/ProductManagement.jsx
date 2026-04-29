@@ -7,7 +7,7 @@ import DeleteProductModal from '../../components/admin/DeleteProductModal';
 import styles from './ProductManagement.module.css';
 
 const ProductManagement = () => {
-  const { adminCatalog, fetchAdminCatalog, clearAdminCatalog, deleteProduct } = useProducts();
+  const { adminCatalog, fetchAdminCatalog, clearAdminCatalog, deleteProduct, updateProduct } = useProducts();
   const { categories: contextCategories } = useCategories();
   const products = adminCatalog || [];
 
@@ -32,6 +32,15 @@ const ProductManagement = () => {
     setIsEditing(true);
   };
 
+  const handleToggleVisibility = async (product) => {
+    try {
+      const newVisibility = product.visible === false ? true : false;
+      await updateProduct(product.id, { visible: newVisibility });
+    } catch (err) {
+      console.error('Toggle visibility failed:', err);
+    }
+  };
+
   const categories = ['All', ...new Set(contextCategories.map(c => c.name).filter(Boolean))];
 
   return (
@@ -50,6 +59,7 @@ const ProductManagement = () => {
           handleAddNew={handleAddNew}
           handleEdit={handleEdit}
           setDeleteTarget={setDeleteTarget}
+          onToggleVisibility={handleToggleVisibility}
         />
       )}
 

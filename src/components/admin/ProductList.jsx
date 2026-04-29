@@ -1,5 +1,5 @@
 import React from 'react';
-import { Plus, Edit2, Trash2, AlertCircle, Star, Search } from 'lucide-react';
+import { Plus, Edit2, Trash2, AlertCircle, Star, Search, Eye, EyeOff } from 'lucide-react';
 import styles from '../../pages/admin/ProductManagement.module.css';
 
 const getStockConfig = (stock) => {
@@ -10,7 +10,7 @@ const getStockConfig = (stock) => {
 
 const ProductList = ({
   products, categories, filterCategory, setFilterCategory,
-  handleAddNew, handleEdit, setDeleteTarget
+  handleAddNew, handleEdit, setDeleteTarget, onToggleVisibility
 }) => {
   const filteredProducts = products.filter(p => filterCategory === 'All' || p.category === filterCategory);
 
@@ -58,8 +58,9 @@ const ProductList = ({
           <div style={{ display: 'flex', flexDirection: 'column', padding: '1rem' }}>
             {filteredProducts.map((product, index) => {
               const sc = getStockConfig(product.stock);
+              const isHidden = product.visible === false;
               return (
-                <div key={product.id} className="admin-product-row" style={{ animationDelay: `${index * 0.05}s` }}>
+                <div key={product.id} className="admin-product-row" style={{ animationDelay: `${index * 0.05}s`, opacity: isHidden ? 0.5 : 1, transition: 'opacity 0.3s ease' }}>
                   <div className="admin-product-thumb">
                     <img src={product.image} alt={product.title} />
                   </div>
@@ -73,6 +74,11 @@ const ProductList = ({
                           <Star size={10} fill="currentColor" /> Featured
                         </span>
                       )}
+                      {isHidden && (
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.2rem', fontSize: '0.65rem', fontWeight: 600, color: '#9CA3AF', backgroundColor: '#F3F4F6', padding: '0.15rem 0.5rem', borderRadius: '999px', marginLeft: '0.5rem', verticalAlign: 'middle' }}>
+                          <EyeOff size={10} /> Hidden
+                        </span>
+                      )}
                     </h3>
                     <div className="admin-product-meta">
                       <span className="admin-product-price">LKR {product.price.toFixed(2)}</span>
@@ -84,6 +90,14 @@ const ProductList = ({
                   </div>
 
                   <div className="admin-product-actions">
+                    <button 
+                      title={isHidden ? 'Show on Storefront' : 'Hide from Storefront'} 
+                      onClick={() => onToggleVisibility(product)} 
+                      className="admin-action-btn"
+                      style={{ color: isHidden ? '#9CA3AF' : 'var(--color-primary)' }}
+                    >
+                      {isHidden ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </button>
                     <button title="Edit Product" onClick={() => handleEdit(product)} className="admin-action-btn">
                       <Edit2 size={16} />
                     </button>
