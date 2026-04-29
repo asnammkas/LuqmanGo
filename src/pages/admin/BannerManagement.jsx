@@ -197,13 +197,28 @@ const BannerManagement = () => {
               </div>
             </FormSection>
 
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', marginTop: '1rem', flexWrap: 'wrap' }}>
               <button type="button" onClick={() => setIsEditing(false)} className="btn btn-outline" style={{ background: 'white' }}>
                 Discard
               </button>
               <button type="submit" disabled={uploading || !formData.image} className="btn btn-primary">
                 {currentBanner ? 'Save Changes' : 'Create Banner'}
               </button>
+              {currentBanner && (
+                <button 
+                  type="button" 
+                  onClick={() => { 
+                    if (window.confirm('Remove this banner permanently?')) {
+                      deleteBanner(currentBanner.id);
+                      setIsEditing(false);
+                    }
+                  }} 
+                  className="btn" 
+                  style={{ backgroundColor: '#FEF2F2', color: '#991B1B', border: '1px solid #FECACA' }}
+                >
+                  Delete Banner
+                </button>
+              )}
             </div>
           </form>
         </div>
