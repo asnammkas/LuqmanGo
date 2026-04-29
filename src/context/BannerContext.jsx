@@ -8,30 +8,7 @@ const BannerContext = createContext();
 
 export const useBanners = () => useContext(BannerContext);
 
-// Initial fallback mock banners in case DB is empty or fails
-const initialMockBanners = [
-  {
-    id: 'promo-1',
-    title: 'ORGANIC ARTISANAL COFFEE',
-    image: 'https://images.unsplash.com/photo-1559525839-b184a4d698c7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1280&q=80',
-    link: '/category/Groceries',
-    order: 0
-  },
-  {
-    id: 'promo-2',
-    title: 'SUMMER ESSENTIALS COLLECTION',
-    image: 'https://images.unsplash.com/photo-1523381210434-271e8be1f52b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1280&q=80',
-    link: '/category/Dresses',
-    order: 1
-  },
-  {
-    id: 'promo-3',
-    title: 'ELEVATE YOUR SPACE',
-    image: 'https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?ixlib=rb-4.0.3&auto=format&fit=crop&w=1280&q=80',
-    link: '/category/Furniture',
-    order: 2
-  }
-];
+// No mock banners loaded locally
 
 export const BannerProvider = ({ children }) => {
   const [banners, setBanners] = useState([]);
@@ -45,8 +22,8 @@ export const BannerProvider = ({ children }) => {
     logger.info("Initializing Firebase Banner Listener...");
     const fallbackTimer = setTimeout(() => {
       if (loadingRef.current) {
-        logger.warn("Firebase connection timed out (15s). Falling back to mock banners.");
-        setBanners(initialMockBanners);
+        logger.warn("Firebase connection timed out (15s).");
+        setBanners([]);
         setIsBannersLoading(false);
       }
     }, 15000);
@@ -69,7 +46,7 @@ export const BannerProvider = ({ children }) => {
         clearTimeout(fallbackTimer);
         logger.error("Firebase Banner Snapshot Error:", error.message, error.code);
         setBannersError(error.message);
-        setBanners(initialMockBanners);
+        setBanners([]);
         setIsBannersLoading(false);
       });
       
@@ -80,7 +57,7 @@ export const BannerProvider = ({ children }) => {
     } catch (err) {
       logger.error("Error setting up onSnapshot for banners:", err.message);
       setTimeout(() => {
-        setBanners(initialMockBanners);
+        setBanners([]);
         setIsBannersLoading(false);
       }, 0);
     }
