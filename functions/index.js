@@ -8,7 +8,7 @@ import { sendEmail, emailTemplates } from "./utils/email.js";
 import { optimizeImage } from "./imageOpt.js";
 import { scheduledFirestoreExport } from "./backup.js";
 import { anonymizeUserOrders } from "./gdpr.js";
-import { manageProduct, manageCategory, manageBanner, updateOrderStatus } from "./admin.js";
+import { manageProduct, manageCategory, manageBanner, updateOrderStatus, manageOrder } from "./admin.js";
 
 admin.initializeApp();
 const db = admin.firestore();
@@ -145,7 +145,7 @@ export const validateAndCreateOrder = onCall(async (request) => {
   }
 });
 
-export { optimizeImage, scheduledFirestoreExport, anonymizeUserOrders, manageProduct, manageCategory, manageBanner, updateOrderStatus };
+export { optimizeImage, scheduledFirestoreExport, anonymizeUserOrders, manageProduct, manageCategory, manageBanner, updateOrderStatus, manageOrder };
 
 /**
  * Cleanup function helper: Deletes storage blobs.

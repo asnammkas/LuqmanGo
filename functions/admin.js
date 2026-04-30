@@ -132,3 +132,45 @@ export const updateOrderStatus = onCall(async (request) => {
     throw new HttpsError("internal", "Server encountered an error updating order status.");
   }
 });
+
+// ─── ORDER MANAGEMENT (Delete) ───
+export const manageOrder = onCall(async (request) => {
+  const db = await verifyAdmin(request);
+  const { action, id } = request.data;
+
+  try {
+    if (action === "delete") {
+      if (!id) throw new HttpsError("invalid-argument", "Missing order id for deletion.");
+      await db.collection("orders").doc(id).delete();
+      logger.info(`Order ${id} deleted securely by ${request.auth.uid}`);
+      return { success: true };
+    } else if (action === "deleteAll") {
+      // Delete all orders in batches of 500 (Firestore batch limit)
+      let totalDeleted = 0;
+      let hasMore = true;
+
+      while (hasMore) {
+        const snapshot = await db.collection("orders").limit(500).get();
+        if (snapshot.empty) {
+          hasMore = false;
+          break;
+        }
+
+        const batch = db.batch();
+        snapshot.docs.forEach(doc => batch.delete(doc.ref));
+        await batch.commit();
+        totalDeleted += snapshot.size;
+        
+        if (snapshot.size < 500) hasMore = false;
+      }
+
+      logger.info(`All orders (${totalDeleted}) deleted securely by ${request.auth.uid}`);
+      return { success: true, deletedCount: totalDeleted };
+    }
+    throw new HttpsError("invalid-argument", "Unknown action provided.");
+  } catch (error) {
+    logger.error("manageOrder Server Error:", error);
+    if (error instanceof HttpsError) throw error;
+    throw new HttpsError("internal", `Server error: ${error.message}`);
+  }
+});

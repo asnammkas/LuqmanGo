@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useOrders } from '../../context/OrderContext';
-import { ShoppingBag, Search, Trash2, ChevronRight, X } from 'lucide-react';
+import { ShoppingBag, Search, Trash2, ChevronRight, X, AlertTriangle } from 'lucide-react';
 
 const STATUS_OPTIONS = ['All', 'Processing', 'Shipped', 'Delivered', 'Cancelled'];
 
@@ -15,10 +15,11 @@ const getStatusConfig = (status) => {
 };
 
 const OrderManagement = () => {
-  const { orders, updateOrderStatus } = useOrders();
+  const { orders, updateOrderStatus, deleteOrder, deleteAllOrders } = useOrders();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
   const [expandedOrder, setExpandedOrder] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(null); // holds orderId or 'all'
 
   const filteredOrders = orders.filter(order => {
     const matchesSearch =
@@ -37,6 +38,34 @@ const OrderManagement = () => {
           <h1>Orders</h1>
           <p>{orders.length} total · <span style={{ color: 'var(--color-primary)', fontWeight: 600 }}>{pendingCount} pending</span></p>
         </div>
+        {orders.length > 0 && (
+          <button
+            onClick={async () => {
+              if (!window.confirm('⚠️ Are you sure you want to delete ALL orders? This cannot be undone.')) return;
+              if (!window.confirm('This will permanently erase every single order from the database. Type OK to confirm.')) return;
+              setIsDeleting('all');
+              try {
+                const count = await deleteAllOrders();
+                alert(`Successfully deleted ${count} orders.`);
+              } catch (e) {
+                alert('Failed to delete orders: ' + e.message);
+              } finally {
+                setIsDeleting(null);
+              }
+            }}
+            disabled={isDeleting === 'all'}
+            className="admin-action-btn danger"
+            style={{ 
+              width: 'auto', padding: '0.6rem 1.2rem', gap: '0.5rem', 
+              color: '#DC2626', borderColor: '#FCA5A5',
+              opacity: isDeleting === 'all' ? 0.6 : 1,
+              cursor: isDeleting === 'all' ? 'wait' : 'pointer'
+            }}
+          >
+            <AlertTriangle size={16} />
+            {isDeleting === 'all' ? 'Deleting…' : 'Delete All Orders'}
+          </button>
+        )}
       </div>
 
       <div className="admin-controls">
@@ -110,7 +139,7 @@ const OrderManagement = () => {
                       <div style={{ padding: '0 1.2rem 1.2rem', borderTop: '1px solid var(--color-border)', animation: 'fadeIn 0.25s ease' }}>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1.2rem', marginBottom: '1.5rem' }}>
                           {order.customer.email && <InfoItem label="Email" value={order.customer.email} />}
-                          <InfoItem label="Date" value={new Date(order.date).toLocaleDateString()} />
+                          <InfoItem label="Date" value={order.date?.toDate ? order.date.toDate().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A'} />
                           <InfoItem label="Items" value={`${order.items?.length || 0} item(s)`} />
                           <InfoItem label="Payment" value="Paid" valueColor="var(--color-leaf-green)" />
                         </div>
@@ -133,8 +162,24 @@ const OrderManagement = () => {
                           </div>
                         </div>
                         <div style={{ marginTop: '1.2rem', display: 'flex', justifyContent: 'flex-end' }}>
-                          <button className="admin-action-btn danger" style={{ width: 'auto', padding: '0 1rem', gap: '0.4rem', color: '#DC2626' }}>
-                            <Trash2 size={16} /> Delete Order
+                          <button 
+                            className="admin-action-btn danger" 
+                            style={{ width: 'auto', padding: '0 1rem', gap: '0.4rem', color: '#DC2626', opacity: isDeleting === order.id ? 0.6 : 1, cursor: isDeleting === order.id ? 'wait' : 'pointer' }}
+                            disabled={!!isDeleting}
+                            onClick={async () => {
+                              if (!window.confirm(`Delete order #${order.id.substring(0, 8)}? This cannot be undone.`)) return;
+                              setIsDeleting(order.id);
+                              try {
+                                await deleteOrder(order.id);
+                                setExpandedOrder(null);
+                              } catch (e) {
+                                alert('Failed to delete order: ' + e.message);
+                              } finally {
+                                setIsDeleting(null);
+                              }
+                            }}
+                          >
+                            <Trash2 size={16} /> {isDeleting === order.id ? 'Deleting…' : 'Delete Order'}
                           </button>
                         </div>
                       </div>

@@ -90,9 +90,30 @@ export const OrderProvider = ({ children }) => {
     }
   }, []);
 
+  const deleteOrder = useCallback(async (orderId) => {
+    try {
+      const manageOrderFunc = httpsCallable(functions, 'manageOrder');
+      await manageOrderFunc({ action: 'delete', id: orderId });
+    } catch (e) {
+      logger.error("Error securely deleting order:", e);
+      throw e;
+    }
+  }, []);
+
+  const deleteAllOrders = useCallback(async () => {
+    try {
+      const manageOrderFunc = httpsCallable(functions, 'manageOrder');
+      const result = await manageOrderFunc({ action: 'deleteAll' });
+      return result.data.deletedCount;
+    } catch (e) {
+      logger.error("Error securely deleting all orders:", e);
+      throw e;
+    }
+  }, []);
+
   const value = useMemo(() => ({
-    orders, checkout, updateOrderStatus
-  }), [orders, checkout, updateOrderStatus]);
+    orders, checkout, updateOrderStatus, deleteOrder, deleteAllOrders
+  }), [orders, checkout, updateOrderStatus, deleteOrder, deleteAllOrders]);
 
   return (
     <OrderContext.Provider value={value}>
