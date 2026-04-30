@@ -157,13 +157,13 @@ const ProductCard = ({ product }) => {
             }}>
               {product.title}
             </h3>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.2rem', minHeight: '2.4rem', justifyContent: 'flex-end' }}>
               {product.compareAtPrice && product.compareAtPrice > product.price && (
-                <span style={{ fontSize: '0.85rem', fontWeight: 500, color: '#9CA3AF', textDecoration: 'line-through' }}>
+                <span style={{ fontSize: '0.75rem', fontWeight: 500, color: '#9CA3AF', textDecoration: 'line-through', lineHeight: 1 }}>
                   {formatCurrency(product.compareAtPrice)}
                 </span>
               )}
-              <span style={{ fontSize: '1.05rem', fontWeight: 800, color: '#436132', letterSpacing: '-0.02em' }}>
+              <span style={{ fontSize: '1rem', fontWeight: 800, color: '#436132', letterSpacing: '-0.02em', lineHeight: 1 }}>
                 {formatCurrency(product.price)}
               </span>
             </div>
