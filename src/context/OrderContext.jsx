@@ -25,18 +25,28 @@ export const OrderProvider = ({ children }) => {
       // Admins see all orders, sorted by date
       q = query(collection(db, 'orders'), orderBy('date', 'desc'));
     } else {
-      // Regular users only see their own orders
+      // Regular users only see their own orders. 
+      // Query without orderBy to avoid needing a composite index while it builds on the server.
       q = query(
         collection(db, 'orders'),
-        where('customer.userId', '==', currentUser.uid),
-        orderBy('date', 'desc')
+        where('customer.userId', '==', currentUser.uid)
       );
     }
 
     const unsubscribe = onSnapshot(
       q,
       (snapshot) => {
-        const loadedOrders = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        let loadedOrders = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        
+        // Sort client-side to ensure newest orders appear first
+        if (!isAdmin) {
+          loadedOrders.sort((a, b) => {
+            const dateA = a.date?.toMillis ? a.date.toMillis() : 0;
+            const dateB = b.date?.toMillis ? b.date.toMillis() : 0;
+            return dateB - dateA;
+          });
+        }
+        
         setOrders(loadedOrders);
       },
       (error) => {

@@ -51,7 +51,7 @@ const ProfileOrders = () => {
             <span style={{ fontSize: '1rem', fontWeight: 700, color: '#001d04' }}>{Math.round(order.total).toLocaleString()}</span>
           </div>
           <div style={{ fontSize: '0.75rem', color: '#706F65' }}>
-            {order.date ? new Date(order.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}
+            {order.date && order.date.toDate ? order.date.toDate().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : ''}
           </div>
         </div>
       </div>
