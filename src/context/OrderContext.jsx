@@ -22,8 +22,8 @@ export const OrderProvider = ({ children }) => {
 
     let q;
     if (isAdmin) {
-      // Admins see all orders, sorted by date
-      q = query(collection(db, 'orders'), orderBy('date', 'desc'));
+      // Admins see all orders. Sorted client-side to ensure nothing is excluded.
+      q = query(collection(db, 'orders'));
     } else {
       // Regular users only see their own orders. 
       // Query without orderBy to avoid needing a composite index while it builds on the server.
@@ -38,14 +38,16 @@ export const OrderProvider = ({ children }) => {
       (snapshot) => {
         let loadedOrders = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
         
-        // Sort client-side to ensure newest orders appear first
-        if (!isAdmin) {
-          loadedOrders.sort((a, b) => {
-            const dateA = a.date?.toMillis ? a.date.toMillis() : 0;
-            const dateB = b.date?.toMillis ? b.date.toMillis() : 0;
-            return dateB - dateA;
-          });
-        }
+        // Sort client-side to ensure newest orders appear first for everyone
+        loadedOrders.sort((a, b) => {
+          const dateA = a.date?.toMillis ? a.date.toMillis() : 0;
+          const dateB = b.date?.toMillis ? b.date.toMillis() : 0;
+          // Fallback to ID sorting if timestamps are identical or missing
+          if (dateA === dateB) {
+            return a.id < b.id ? 1 : -1;
+          }
+          return dateB - dateA;
+        });
         
         setOrders(loadedOrders);
       },
