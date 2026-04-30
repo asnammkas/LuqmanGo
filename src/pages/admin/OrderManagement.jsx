@@ -14,12 +14,120 @@ const getStatusConfig = (status) => {
   }
 };
 
+/* ─── Custom Confirmation Modal ─── */
+const ConfirmModal = ({ isOpen, title, message, confirmLabel, onConfirm, onCancel, isLoading }) => {
+  if (!isOpen) return null;
+
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, zIndex: 9999,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+      backgroundColor: 'rgba(0,0,0,0.5)', backdropFilter: 'blur(4px)',
+      animation: 'fadeIn 0.2s ease'
+    }} onClick={onCancel}>
+      <div onClick={e => e.stopPropagation()} style={{
+        background: 'white', borderRadius: '16px', padding: '2rem',
+        maxWidth: '400px', width: '90%',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
+        animation: 'fadeIn 0.25s ease',
+      }}>
+        {/* Icon */}
+        <div style={{
+          width: '48px', height: '48px', borderRadius: '50%',
+          backgroundColor: '#FEE2E2', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          margin: '0 auto 1.2rem'
+        }}>
+          <AlertTriangle size={24} color="#DC2626" />
+        </div>
+
+        {/* Title */}
+        <h3 style={{
+          textAlign: 'center', fontSize: '1.1rem', fontWeight: 700,
+          color: 'var(--color-text-main)', margin: '0 0 0.6rem'
+        }}>{title}</h3>
+
+        {/* Message */}
+        <p style={{
+          textAlign: 'center', fontSize: '0.88rem', color: 'var(--color-text-muted)',
+          lineHeight: 1.5, margin: '0 0 1.8rem'
+        }}>{message}</p>
+
+        {/* Actions */}
+        <div style={{ display: 'flex', gap: '0.8rem' }}>
+          <button
+            onClick={onCancel}
+            disabled={isLoading}
+            style={{
+              flex: 1, padding: '0.75rem', borderRadius: '10px',
+              border: '1px solid var(--color-border)', background: 'white',
+              fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer',
+              color: 'var(--color-text-main)', fontFamily: 'inherit',
+              transition: 'all 0.2s ease',
+            }}
+          >Cancel</button>
+          <button
+            onClick={onConfirm}
+            disabled={isLoading}
+            style={{
+              flex: 1, padding: '0.75rem', borderRadius: '10px',
+              border: 'none', background: '#DC2626',
+              fontSize: '0.9rem', fontWeight: 600, cursor: isLoading ? 'wait' : 'pointer',
+              color: 'white', fontFamily: 'inherit',
+              opacity: isLoading ? 0.7 : 1,
+              transition: 'all 0.2s ease',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.4rem'
+            }}
+          >
+            {isLoading && (
+              <div style={{
+                width: '14px', height: '14px',
+                border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white',
+                borderRadius: '50%', animation: 'spin 0.8s linear infinite'
+              }} />
+            )}
+            {isLoading ? 'Deleting…' : confirmLabel}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const OrderManagement = () => {
   const { orders, updateOrderStatus, deleteOrder, deleteAllOrders } = useOrders();
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('All');
   const [expandedOrder, setExpandedOrder] = useState(null);
-  const [isDeleting, setIsDeleting] = useState(null); // holds orderId or 'all'
+  const [isDeleting, setIsDeleting] = useState(null);
+
+  // Modal state
+  const [confirmModal, setConfirmModal] = useState({ open: false, type: null, orderId: null });
+
+  const handleDeleteSingle = async () => {
+    const orderId = confirmModal.orderId;
+    setIsDeleting(orderId);
+    try {
+      await deleteOrder(orderId);
+      setExpandedOrder(null);
+    } catch (e) {
+      // silently handled
+    } finally {
+      setIsDeleting(null);
+      setConfirmModal({ open: false, type: null, orderId: null });
+    }
+  };
+
+  const handleDeleteAll = async () => {
+    setIsDeleting('all');
+    try {
+      await deleteAllOrders();
+    } catch (e) {
+      // silently handled
+    } finally {
+      setIsDeleting(null);
+      setConfirmModal({ open: false, type: null, orderId: null });
+    }
+  };
 
   const filteredOrders = orders.filter(order => {
     const matchesSearch =
@@ -33,6 +141,19 @@ const OrderManagement = () => {
 
   return (
     <>
+      {/* Confirmation Modal */}
+      <ConfirmModal
+        isOpen={confirmModal.open}
+        title={confirmModal.type === 'all' ? 'Delete All Orders?' : `Delete Order #${confirmModal.orderId?.substring(0, 8) || ''}?`}
+        message={confirmModal.type === 'all'
+          ? 'This will permanently erase every single order from the database. This action cannot be undone.'
+          : 'This order will be permanently deleted. This action cannot be undone.'}
+        confirmLabel={confirmModal.type === 'all' ? 'Delete All' : 'Delete'}
+        onConfirm={confirmModal.type === 'all' ? handleDeleteAll : handleDeleteSingle}
+        onCancel={() => setConfirmModal({ open: false, type: null, orderId: null })}
+        isLoading={!!isDeleting}
+      />
+
       <div className="admin-page-header">
         <div>
           <h1>Orders</h1>
@@ -40,19 +161,7 @@ const OrderManagement = () => {
         </div>
         {orders.length > 0 && (
           <button
-            onClick={async () => {
-              if (!window.confirm('⚠️ Are you sure you want to delete ALL orders? This cannot be undone.')) return;
-              if (!window.confirm('This will permanently erase every single order from the database. Type OK to confirm.')) return;
-              setIsDeleting('all');
-              try {
-                const count = await deleteAllOrders();
-                alert(`Successfully deleted ${count} orders.`);
-              } catch (e) {
-                alert('Failed to delete orders: ' + e.message);
-              } finally {
-                setIsDeleting(null);
-              }
-            }}
+            onClick={() => setConfirmModal({ open: true, type: 'all', orderId: null })}
             disabled={isDeleting === 'all'}
             className="admin-action-btn danger"
             style={{ 
@@ -63,7 +172,7 @@ const OrderManagement = () => {
             }}
           >
             <AlertTriangle size={16} />
-            {isDeleting === 'all' ? 'Deleting…' : 'Delete All Orders'}
+            Delete All Orders
           </button>
         )}
       </div>
@@ -164,22 +273,11 @@ const OrderManagement = () => {
                         <div style={{ marginTop: '1.2rem', display: 'flex', justifyContent: 'flex-end' }}>
                           <button 
                             className="admin-action-btn danger" 
-                            style={{ width: 'auto', padding: '0 1rem', gap: '0.4rem', color: '#DC2626', opacity: isDeleting === order.id ? 0.6 : 1, cursor: isDeleting === order.id ? 'wait' : 'pointer' }}
+                            style={{ width: 'auto', padding: '0 1rem', gap: '0.4rem', color: '#DC2626' }}
                             disabled={!!isDeleting}
-                            onClick={async () => {
-                              if (!window.confirm(`Delete order #${order.id.substring(0, 8)}? This cannot be undone.`)) return;
-                              setIsDeleting(order.id);
-                              try {
-                                await deleteOrder(order.id);
-                                setExpandedOrder(null);
-                              } catch (e) {
-                                alert('Failed to delete order: ' + e.message);
-                              } finally {
-                                setIsDeleting(null);
-                              }
-                            }}
+                            onClick={() => setConfirmModal({ open: true, type: 'single', orderId: order.id })}
                           >
-                            <Trash2 size={16} /> {isDeleting === order.id ? 'Deleting…' : 'Delete Order'}
+                            <Trash2 size={16} /> Delete Order
                           </button>
                         </div>
                       </div>
