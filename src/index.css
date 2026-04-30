@@ -50,6 +50,33 @@ textarea:-webkit-autofill:focus {
   gap: 1.5rem;
 }
 
+/* ─── Hero Banner Responsive ─── */
+.hero-banner-container {
+  aspect-ratio: 3 / 4;
+  max-height: 520px;
+}
+
+@media (min-width: 480px) {
+  .hero-banner-container {
+    aspect-ratio: 4 / 5;
+    max-height: 560px;
+  }
+}
+
+@media (min-width: 768px) {
+  .hero-banner-container {
+    aspect-ratio: 16 / 10;
+    max-height: 500px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-banner-container {
+    aspect-ratio: 16 / 9;
+    max-height: 520px;
+  }
+}
+
 @media (max-width: 768px) {
   .product-grid {
     grid-template-columns: repeat(2, 1fr) !important; /* Force 2 columns on mobile */

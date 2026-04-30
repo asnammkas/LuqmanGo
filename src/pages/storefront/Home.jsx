@@ -104,11 +104,9 @@ const Home = () => {
         {isFeaturedLoading ? (
             <HeroSkeleton />
         ) : promotionalBanners.length > 0 ? (
-            <div style={{ 
+            <div className="hero-banner-container" style={{ 
               position: 'relative', 
               width: '100%', 
-              height: '55vh', 
-              maxHeight: '500px', 
               overflow: 'hidden', 
               borderRadius: '20px',
               boxShadow: '0 8px 30px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06)',
@@ -128,7 +126,7 @@ const Home = () => {
                     <img 
                       src={banner.image} 
                       alt={banner.title} 
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                      style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} 
                     />
                   </div>
                 ))}
