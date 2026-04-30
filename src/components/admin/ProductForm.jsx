@@ -62,6 +62,11 @@ const ProductForm = ({ currentProduct, onClose }) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Scroll to top when the form mounts (editing or adding)
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
   const selectCategory = (cat) => {
     setFormData(prev => ({ ...prev, category: cat }));
     setCatSearch('');
