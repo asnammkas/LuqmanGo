@@ -168,11 +168,18 @@ const ProductDetail = () => {
               </h1>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem', marginBottom: '1rem' }}>
-              <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
-              <span style={{ fontSize: '1.8rem', fontWeight: 700, color: '#436132', letterSpacing: '-0.02em' }}>
-                {product.price ? product.price.toLocaleString() : '0'}
-              </span>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.6rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+              {product.compareAtPrice && product.compareAtPrice > product.price && (
+                <span style={{ fontSize: '1.2rem', fontWeight: 500, color: '#9CA3AF', textDecoration: 'line-through' }}>
+                  LKR {product.compareAtPrice.toLocaleString()}
+                </span>
+              )}
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
+                <span style={{ fontSize: '0.9rem', fontWeight: 700, color: '#706F65' }}>LKR</span>
+                <span style={{ fontSize: '1.8rem', fontWeight: 700, color: '#436132', letterSpacing: '-0.02em' }}>
+                  {product.price ? product.price.toLocaleString() : '0'}
+                </span>
+              </div>
             </div>
 
             <div 

@@ -157,7 +157,12 @@ const ProductCard = ({ product }) => {
             }}>
               {product.title}
             </h3>
-            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.2rem' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.4rem' }}>
+              {product.compareAtPrice && product.compareAtPrice > product.price && (
+                <span style={{ fontSize: '0.85rem', fontWeight: 500, color: '#9CA3AF', textDecoration: 'line-through' }}>
+                  {formatCurrency(product.compareAtPrice)}
+                </span>
+              )}
               <span style={{ fontSize: '1.05rem', fontWeight: 800, color: '#436132', letterSpacing: '-0.02em' }}>
                 {formatCurrency(product.price)}
               </span>

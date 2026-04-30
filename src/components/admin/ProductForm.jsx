@@ -27,8 +27,8 @@ const ProductForm = ({ currentProduct, onClose }) => {
 
   const [formData, setFormData] = useState(
     currentProduct 
-    ? { ...currentProduct, price: currentProduct.price.toString(), stock: currentProduct.stock.toString() }
-    : { title: '', price: '', category: '', description: '', image: '', stock: '', featured: false }
+    ? { ...currentProduct, price: currentProduct.price.toString(), stock: currentProduct.stock.toString(), compareAtPrice: currentProduct.compareAtPrice?.toString() || '' }
+    : { title: '', price: '', compareAtPrice: '', category: '', description: '', image: '', stock: '', featured: false }
   );
 
   const [uploading, setUploading] = useState(false);
@@ -128,6 +128,7 @@ const ProductForm = ({ currentProduct, onClose }) => {
         category: DOMPurify.sanitize(formData.category),
         description: DOMPurify.sanitize(formData.description),
         price: parseFloat(formData.price), 
+        compareAtPrice: formData.compareAtPrice ? parseFloat(formData.compareAtPrice) : null,
         stock: parseInt(formData.stock, 10) 
       };
       if (currentProduct) { 
@@ -244,10 +245,14 @@ const ProductForm = ({ currentProduct, onClose }) => {
           </FormSection>
 
           <FormSection icon={<DollarSign size={18} color="#001d04" />} title="Pricing & Inventory">
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
               <div>
                 <FieldLabel>Retail Price (LKR)</FieldLabel>
                 <input required type="number" step="0.01" min="0" className={styles.styledInput} value={formData.price} onChange={e => setFormData({ ...formData, price: e.target.value })} placeholder="0.00" />
+              </div>
+              <div>
+                <FieldLabel>Compare at Price</FieldLabel>
+                <input type="number" step="0.01" min="0" className={styles.styledInput} value={formData.compareAtPrice || ''} onChange={e => setFormData({ ...formData, compareAtPrice: e.target.value })} placeholder="Optional" />
               </div>
               <div>
                 <FieldLabel>Stock Available</FieldLabel>
