@@ -83,9 +83,18 @@ export const ProductProvider = ({ children }) => {
   // ─── Fetch Admin Catalog (Real-time listener on mount) ───
   const fetchAdminCatalog = useCallback(() => {
     if (adminUnsub.current) return; // already listening
-    const q = query(collection(db, 'products'), orderBy('title'));
+    const q = query(collection(db, 'products'));
     adminUnsub.current = onSnapshot(q, (snapshot) => {
-      const loaded = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      let loaded = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      
+      // Sort client-side newest to oldest
+      loaded.sort((a, b) => {
+        const tA = a.date?.toMillis ? a.date.toMillis() : (a.id > b.id ? 1 : -1);
+        const tB = b.date?.toMillis ? b.date.toMillis() : 0;
+        if (a.date && b.date) return tB - tA;
+        return a.id < b.id ? 1 : -1;
+      });
+      
       setAdminCatalog(loaded);
     }, (err) => {
       logger.error("Admin Catalog listener error:", err);
@@ -105,13 +114,21 @@ export const ProductProvider = ({ children }) => {
     try {
       let q;
       if (category === 'All') {
-        q = query(collection(db, 'products'), orderBy('title'), limit(pageSize));
+        q = query(collection(db, 'products'), limit(pageSize));
       } else {
         q = query(collection(db, 'products'), where('category', '==', category), limit(pageSize));
       }
       
       const snapshot = await getDocs(q);
       let loaded = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(p => p.visible !== false);
+      
+      // Sort client-side newest to oldest
+      loaded.sort((a, b) => {
+        const tA = a.date?.toMillis ? a.date.toMillis() : (a.id > b.id ? 1 : -1);
+        const tB = b.date?.toMillis ? b.date.toMillis() : 0;
+        if (a.date && b.date) return tB - tA;
+        return a.id < b.id ? 1 : -1; // Fallback to descending ID for older items
+      });
       
       // If fetching All, but some are featured, this query might fetch them too. 
       // We will let the consumer filter them if needed.
@@ -133,7 +150,7 @@ export const ProductProvider = ({ children }) => {
     try {
       let q;
       if (category === 'All') {
-        q = query(collection(db, 'products'), orderBy('title'), startAfter(afterDoc), limit(pageSize));
+        q = query(collection(db, 'products'), startAfter(afterDoc), limit(pageSize));
       } else {
         q = query(collection(db, 'products'), where('category', '==', category), startAfter(afterDoc), limit(pageSize));
       }
@@ -141,7 +158,14 @@ export const ProductProvider = ({ children }) => {
       const snapshot = await getDocs(q);
       if (snapshot.empty) return { products: [], lastDoc: afterDoc, hasMore: false };
 
-      const loaded = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(p => p.visible !== false);
+      let loaded = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })).filter(p => p.visible !== false);
+      
+      loaded.sort((a, b) => {
+        const tA = a.date?.toMillis ? a.date.toMillis() : 0;
+        const tB = b.date?.toMillis ? b.date.toMillis() : 0;
+        if (a.date && b.date) return tB - tA;
+        return a.id < b.id ? 1 : -1; 
+      });
       const lastVisible = snapshot.docs[snapshot.docs.length - 1];
       const canLoadMore = snapshot.docs.length === pageSize;
       

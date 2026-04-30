@@ -29,7 +29,13 @@ export const manageProduct = onCall(async (request) => {
   try {
     if (action === "create" || action === "update") {
       if (!id || !productData) throw new HttpsError("invalid-argument", "Missing product id or data.");
-      await db.collection("products").doc(id).set(productData, { merge: true });
+      
+      const payload = { ...productData };
+      if (action === "create" && !payload.date) {
+        payload.date = admin.firestore.FieldValue.serverTimestamp();
+      }
+      
+      await db.collection("products").doc(id).set(payload, { merge: true });
       logger.info(`Product ${id} ${action}d securely by ${request.auth.uid}`);
       return { success: true, id };
     } else if (action === "delete") {
