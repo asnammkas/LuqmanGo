@@ -213,7 +213,7 @@ export const onOrderCreated = onDocumentCreated("orders/{orderId}", async (event
 
   try {
     // Notify Vendor
-    const vendorEmail = process.env.VENDOR_EMAIL || "vendor@luqmango.com";
+    const vendorEmail = process.env.VENDOR_EMAIL || "luqmangolk@gmail.com";
     await sendEmail({
       to: vendorEmail,
       ...emailTemplates.newOrder(id, total, customer)

@@ -59,7 +59,7 @@ const Stores = () => {
              Are you a brand or creator looking to reach a wider audience? Join LuqmanGo as a partner store and start selling with us.
            </p>
            <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', position: 'relative' }}>
-              <a href="mailto:partners@luqmango.com" className="btn btn-primary" style={{ backgroundColor: '#F7F3ED', color: '#113013', borderRadius: '50px', padding: '0.8rem 2rem' }}>
+              <a href="mailto:luqmangolk@gmail.com" className="btn btn-primary" style={{ backgroundColor: '#F7F3ED', color: '#113013', borderRadius: '50px', padding: '0.8rem 2rem' }}>
                  <Mail size={18} style={{ marginRight: '0.5rem' }} /> Partner with us
               </a>
            </div>
