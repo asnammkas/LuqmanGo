@@ -9,7 +9,7 @@ import { ArrowLeft, Bell, Star, TreePine } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const ProfileSettings = () => {
-  const { currentUser, deleteAccount } = useAuth();
+  const { currentUser, userProfile, updateUserProfile, deleteAccount } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
 
@@ -20,7 +20,8 @@ const ProfileSettings = () => {
   const [profileData, setProfileData] = useState({
     name: currentUser?.displayName || '',
     email: currentUser?.email || '',
-    phone: '',
+    phone: userProfile?.phone || '',
+    address: userProfile?.address || '',
     notifications: {
       orderStatus: true,
       exclusiveOffers: false,
@@ -35,12 +36,18 @@ const ProfileSettings = () => {
       try {
         const docSnap = await getDoc(doc(db, 'users', currentUser.uid));
         if (docSnap.exists()) {
-          setProfileData(prev => ({ ...prev, ...docSnap.data() }));
+          const data = docSnap.data();
+          setProfileData(prev => ({ 
+            ...prev, 
+            ...data,
+            phone: data.phone || userProfile?.phone || '',
+            address: data.address || userProfile?.address || ''
+          }));
         }
       } catch (err) { console.error(err); }
     };
     fetchProfile();
-  }, [currentUser]);
+  }, [currentUser, userProfile]);
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -54,8 +61,15 @@ const ProfileSettings = () => {
       await setDoc(doc(db, 'users', currentUser.uid), {
         name: DOMPurify.sanitize(profileData.name),
         phone: DOMPurify.sanitize(profileData.phone),
+        address: DOMPurify.sanitize(profileData.address),
         updatedAt: new Date().toISOString()
       }, { merge: true });
+
+      // Sync to AuthContext so checkout auto-fills immediately
+      updateUserProfile({ 
+        phone: DOMPurify.sanitize(profileData.phone), 
+        address: DOMPurify.sanitize(profileData.address) 
+      });
 
       toast.success('Profile updated successfully!');
     } catch (err) {
@@ -150,6 +164,17 @@ const ProfileSettings = () => {
               type="tel" className="input" placeholder="+94 77 123 4567"
               value={profileData.phone} onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
               style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.03)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500 }} 
+            />
+          </div>
+          <div>
+            <label className="label" htmlFor="settings-address" style={{ fontSize: '0.7rem', fontWeight: 800, color: '#706F65', marginBottom: '0.4rem', display: 'block', letterSpacing: '0.05em' }}>DELIVERY ADDRESS</label>
+            <textarea 
+              id="settings-address"
+              aria-label="Update Delivery Address"
+              className="input" placeholder="Building, Street, City, Pin Code"
+              rows={3}
+              value={profileData.address || ''} onChange={(e) => setProfileData({...profileData, address: e.target.value})}
+              style={{ backgroundColor: '#FBF5EC', border: '1px solid rgba(0,0,0,0.03)', borderRadius: '12px', padding: '1rem', width: '100%', fontSize: '0.95rem', fontWeight: 500, resize: 'none', fontFamily: 'inherit' }} 
             />
           </div>
           <button 

@@ -13,7 +13,7 @@ import {
   browserSessionPersistence,
   deleteUser
 } from 'firebase/auth';
-import { doc, getDoc, deleteDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
 import { logger } from '../utils/logger';
 
@@ -26,6 +26,7 @@ export const useAuth = () => {
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [userProfile, setUserProfile] = useState({ phone: '', address: '' });
   const [loading, setLoading] = useState(true);
 
   // Sign up with email, password, and display name
@@ -74,23 +75,52 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  // Fetch user profile (phone, address) from Firestore
+  const fetchUserProfile = useCallback(async (uid) => {
+    try {
+      const userDoc = await getDoc(doc(db, 'users', uid));
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        setUserProfile({
+          phone: data.phone || '',
+          address: data.address || ''
+        });
+      }
+    } catch (error) {
+      logger.error('Error fetching user profile:', error);
+    }
+  }, []);
+
+  // Save phone & address to Firestore user profile
+  const updateUserProfile = useCallback(async (profileData) => {
+    if (!currentUser) return;
+    try {
+      await setDoc(doc(db, 'users', currentUser.uid), profileData, { merge: true });
+      setUserProfile(prev => ({ ...prev, ...profileData }));
+    } catch (error) {
+      logger.error('Error updating user profile:', error);
+    }
+  }, [currentUser]);
+
   // Listen for auth state changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       // Always reset admin status immediately when auth state changes
       setIsAdmin(false);
+      setUserProfile({ phone: '', address: '' });
       setCurrentUser(user);
       
       if (user) {
         const adminStatus = await checkAdminStatus(user.uid);
         setIsAdmin(adminStatus);
+        await fetchUserProfile(user.uid);
       }
       
       setLoading(false);
     });
 
     return unsubscribe;
-  }, [checkAdminStatus]);
+  }, [checkAdminStatus, fetchUserProfile]);
 
   // Delete Account (GDPR Compliance)
   const deleteAccount = useCallback(async () => {
@@ -110,14 +140,16 @@ export const AuthProvider = ({ children }) => {
   const value = useMemo(() => ({
     currentUser,
     isAdmin,
+    userProfile,
     loading,
     signup,
     login,
     logout,
     resetPassword,
     loginWithGoogle,
-    deleteAccount
-  }), [currentUser, isAdmin, loading, signup, login, logout, resetPassword, loginWithGoogle, deleteAccount]);
+    deleteAccount,
+    updateUserProfile
+  }), [currentUser, isAdmin, userProfile, loading, signup, login, logout, resetPassword, loginWithGoogle, deleteAccount, updateUserProfile]);
 
   return (
     <AuthContext.Provider value={value}>

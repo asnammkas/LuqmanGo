@@ -1,23 +1,10 @@
-import { useState, useEffect } from 'react';
 import { useAuth } from '../../../context/AuthContext';
-import { db } from '../../../config/firebase';
-import { collection, query, onSnapshot } from 'firebase/firestore';
-import { User, Package, MapPin, CreditCard, Bell, HelpCircle, ShieldCheck, LogOut, ChevronRight, ArrowLeft } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { User, Package, CreditCard, Bell, HelpCircle, ShieldCheck, LogOut, ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const ProfileDashboard = () => {
   const { currentUser, logout } = useAuth();
   const navigate = useNavigate();
-  const [addressCount, setAddressCount] = useState(0);
-
-  useEffect(() => {
-    if (!currentUser) return;
-    const q = query(collection(db, 'users', currentUser.uid, 'addresses'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      setAddressCount(snapshot.docs.length);
-    });
-    return () => unsubscribe();
-  }, [currentUser]);
 
   const user = {
     name: currentUser?.displayName || 'LuqmanGo Member',
@@ -69,16 +56,7 @@ const ProfileDashboard = () => {
             <ChevronRight size={16} color="#C5BBB0" />
           </button>
 
-          <button onClick={() => navigate('/profile/addresses')} style={{ width: '100%', background: 'none', border: 'none', display: 'flex', alignItems: 'center', padding: '1rem', cursor: 'pointer', borderBottom: '1px solid #F3F2EE', transition: 'background-color 0.2s' }}>
-            <div style={{ width: '38px', height: '38px', borderRadius: '12px', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem' }}>
-              <MapPin size={18} color="#001d04" />
-            </div>
-            <div style={{ flexGrow: 1, textAlign: 'left' }}>
-              <div style={{ fontWeight: 700, color: '#001d04', fontSize: '0.95rem', marginBottom: '0.1rem' }}>Shipping Addresses</div>
-              <div style={{ fontSize: '0.75rem', color: '#706F65', fontWeight: 400 }}>{addressCount} saved location{addressCount !== 1 ? 's' : ''}</div>
-            </div>
-            <ChevronRight size={16} color="#C5BBB0" />
-          </button>
+
 
           <button onClick={() => navigate('/profile/payments')} style={{ width: '100%', background: 'none', border: 'none', display: 'flex', alignItems: 'center', padding: '1rem', cursor: 'pointer', borderBottom: '1px solid #F3F2EE', transition: 'background-color 0.2s' }}>
             <div style={{ width: '38px', height: '38px', borderRadius: '12px', backgroundColor: '#FBF5EC', display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: '1rem' }}>

@@ -101,29 +101,26 @@ textarea:-webkit-autofill:focus {
 
 .badge-discount {
   position: absolute;
-  top: 1rem;
-  left: 1rem;
-  background: rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  color: #113013;
-  padding: 0.45rem 0.9rem;
-  border-radius: 12px; /* Modern, architectural rounding */
+  bottom: 0;
+  left: 0;
+  background: #113013; /* Deep brand green */
+  color: #D4CFC5; /* Sophisticated cream/gold */
+  padding: 0.5rem 1rem 0.4rem 0.8rem;
+  border-radius: 0 20px 0 0; /* Custom corner tag shape */
   font-size: 0.75rem;
   font-weight: 800;
-  letter-spacing: -0.01em;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  letter-spacing: 0.05em;
   z-index: 5;
   display: flex;
-  align-items: center;
-  gap: 4px;
-  animation: badgeEntrance 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  align-items: baseline;
+  gap: 3px;
+  box-shadow: 5px -5px 15px rgba(0,0,0,0.08);
+  animation: badgeSlideIn 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes badgeEntrance {
-  from { opacity: 0; transform: translateX(-10px); }
-  to { opacity: 1; transform: translateX(0); }
+@keyframes badgeSlideIn {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
 }
 
 /* ... existing utilities ... */

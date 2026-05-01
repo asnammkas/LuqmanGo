@@ -8,7 +8,7 @@ import { MapPin, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const ProfileAddresses = () => {
-  const { currentUser } = useAuth();
+  const { currentUser, updateUserProfile } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
   
@@ -61,6 +61,12 @@ const ProfileAddresses = () => {
       setAddressView('list');
       setEditingAddress(null);
       setAddressForm({ title: '', addressLine1: '', city: '', pinCode: '', isDefault: false });
+
+      // If this is the default address, sync it to the main profile for checkout auto-fill
+      if (sanitizedAddressForm.isDefault) {
+        const fullAddress = `${sanitizedAddressForm.addressLine1}, ${sanitizedAddressForm.city}, ${sanitizedAddressForm.pinCode}`;
+        updateUserProfile({ address: fullAddress });
+      }
     } catch (err) {
       console.error(err);
       toast.error('Failed to save address. Please try again.');

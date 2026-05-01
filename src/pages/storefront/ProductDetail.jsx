@@ -110,11 +110,8 @@ const ProductDetail = () => {
 
              {/* Discount Badge */}
              {product.compareAtPrice && product.compareAtPrice > product.price && (
-               <div 
-                 className="badge-discount" 
-                 style={{ top: '1.25rem', left: '1.25rem' }}
-               >
-                 <span style={{ fontSize: '0.6rem', fontWeight: 600, opacity: 0.7, letterSpacing: '0.05em' }}>SAVE</span>
+               <div className="badge-discount">
+                 <span style={{ fontSize: '0.6rem', opacity: 0.8 }}>SAVE</span>
                  <span>{Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)}%</span>
                </div>
              )}

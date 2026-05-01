@@ -27,7 +27,7 @@ const CartCheckout = () => {
   const { cart, removeFromCart, updateCartQuantity, getCartTotal, clearCart } = useCart();
   const { checkout } = useOrders();
   const toast = useToast();
-  const { currentUser } = useAuth();
+  const { currentUser, userProfile, updateUserProfile } = useAuth();
   
   const [showCheckoutForm, setShowCheckoutForm] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -37,22 +37,24 @@ const CartCheckout = () => {
   const [formData, setFormData] = useState({ 
     name: currentUser?.displayName || '', 
     email: currentUser?.email || '', 
-    phone: '+94', 
-    address: '', 
+    phone: userProfile?.phone || '+94', 
+    address: userProfile?.address || '', 
     orderNotes: '', 
     paymentMethod: 'Cash on Delivery' 
   });
   
-  // Update if auth resolves after mount
+  // Update if auth or profile resolves after mount
   useEffect(() => {
-    if (currentUser && (!formData.email || formData.email !== currentUser.email)) {
+    if (currentUser) {
       setFormData(prev => ({ 
         ...prev, 
         email: prev.email || currentUser.email || '', 
-        name: prev.name || currentUser.displayName || '' 
+        name: prev.name || currentUser.displayName || '',
+        phone: (prev.phone === '+94' || !prev.phone) && userProfile?.phone ? userProfile.phone : prev.phone,
+        address: !prev.address && userProfile?.address ? userProfile.address : prev.address
       }));
     }
-  }, [currentUser]); // Note: Excluding formData from deps purposefully to avoid infinite loops if it is edited later
+  }, [currentUser, userProfile]);
 
   const [errors, setErrors] = useState({});
 
@@ -90,8 +92,12 @@ const CartCheckout = () => {
       const generatedOrderId = res;
       setOrderId(generatedOrderId);
       
-      let orderDetails = cart.map(item => `${item.quantity}x ${item.title} (${formatCurrency(item.price)})`).join('%0A');
-      const textMessage = `*📦 NEW ORDER - LuqmanGo*%0A%0A*👤 Customer Details*%0A━━━━━━━━━━━━━━%0A*Name:* ${sanitizedData.name}%0A*Email:* ${sanitizedData.email}%0A*Phone:* ${sanitizedData.phone}%0A*Address:* ${sanitizedData.address}%0A*Notes:* ${sanitizedData.orderNotes || "None"}%0A%0A*💳 Payment Method:* ${sanitizedData.paymentMethod}%0A%0A*🛒 Order Summary*%0A━━━━━━━━━━━━━━%0A${orderDetails}%0A%0A*💰 TOTAL AMOUNT: ${formatCurrency(getCartTotal())}*%0A%0A_Order ID: ${generatedOrderId}_%0A%0A_Thank you for shopping with LuqmanGo!_`;
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      let orderDetails = cart.map((item, index) => {
+        const num = index + 1;
+        return `${num}. ${item.quantity}x ${item.title} — ${formatCurrency(item.price)}`;
+      }).join('%0A%0A');
+      const textMessage = `*📦 NEW ORDER - LuqmanGo*%0A%0A*👤 Customer Details*%0A━━━━━━━━━━━━━━━━━━%0A*Name:* ${sanitizedData.name}%0A*Email:* ${sanitizedData.email}%0A*Phone:* ${sanitizedData.phone}%0A*Address:* ${sanitizedData.address}%0A*Notes:* ${sanitizedData.orderNotes || "None"}%0A%0A*💳 Payment Method:* ${sanitizedData.paymentMethod}%0A%0A*🛒 Order Summary*%0A━━━━━━━━━━━━━━━━━━%0A%0A${orderDetails}%0A%0A━━━━━━━━━━━━━━━━━━%0A*🧾 Total Items: ${totalItems}*%0A*💰 Total Amount: ${formatCurrency(getCartTotal())}*%0A%0A_Order ID: ${generatedOrderId}_%0A%0A_Thank you for shopping with LuqmanGo! 🛍️_%0A_Your items will be delivered to you soon — our team is already working on it! 🚀_`;
       
       // Trigger WhatsApp immediately to avoid popup blockers
       const vendorPhone = import.meta.env.VITE_VENDOR_WHATSAPP || "94725065252"; 
@@ -101,6 +107,12 @@ const CartCheckout = () => {
       window._lastOrderWA = `https://wa.me/${vendorPhone}?text=${textMessage}`;
       
       clearCart();
+      
+      // Save phone & address to user profile for future checkouts
+      if (currentUser && sanitizedData.phone && sanitizedData.address) {
+        updateUserProfile({ phone: sanitizedData.phone, address: sanitizedData.address });
+      }
+      
       toast.success('Order placed successfully!', 'Your stock is secured and vendor notified');
       setIsSuccess(true);
     } catch (e) {
