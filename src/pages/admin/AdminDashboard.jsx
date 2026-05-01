@@ -9,9 +9,17 @@ import {
 } from 'lucide-react';
 
 const AdminDashboard = () => {
-  const { products } = useProducts();
+  const { products, fetchAdminCatalog, clearAdminCatalog } = useProducts();
   const { orders } = useOrders();
   const { categories } = useCategories();
+
+  React.useEffect(() => {
+    fetchAdminCatalog();
+    // No clearAdminCatalog on unmount here as other admin pages might need it 
+    // or we might want to keep it while in admin section.
+    // Actually, following the pattern in ProductManagement:
+    return () => clearAdminCatalog();
+  }, [fetchAdminCatalog, clearAdminCatalog]);
 
   const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
   const pendingOrders = orders.filter(o => o.status === 'Processing').length;
