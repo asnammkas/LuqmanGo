@@ -108,6 +108,17 @@ const ProductDetail = () => {
                </div>
              )}
 
+             {/* Discount Badge */}
+             {product.compareAtPrice && product.compareAtPrice > product.price && (
+               <div 
+                 className="badge-discount" 
+                 style={{ top: '1.25rem', left: '1.25rem' }}
+               >
+                 <span style={{ fontSize: '0.6rem', fontWeight: 600, opacity: 0.7, letterSpacing: '0.05em' }}>SAVE</span>
+                 <span>{Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)}%</span>
+               </div>
+             )}
+
              {/* Wishlist Heart Button - Moved from details */}
              <button 
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); toggleWishlist(product); }}
