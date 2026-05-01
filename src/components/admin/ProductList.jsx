@@ -10,9 +10,16 @@ const getStockConfig = (stock) => {
 
 const ProductList = ({
   products, categories, filterCategory, setFilterCategory,
+  searchQuery, setSearchQuery,
   handleAddNew, handleEdit, setDeleteTarget, onToggleVisibility
 }) => {
-  const filteredProducts = products.filter(p => filterCategory === 'All' || p.category === filterCategory);
+  const filteredProducts = products.filter(p => {
+    const matchesCategory = filterCategory === 'All' || p.category === filterCategory;
+    const matchesSearch = !searchQuery || 
+      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.category.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <>
@@ -31,7 +38,13 @@ const ProductList = ({
       <div className="admin-controls">
         <div className="admin-search-wrapper">
           <Search size={16} />
-          <input type="text" placeholder="Search catalog..." className="admin-search-input" />
+          <input 
+            type="text" 
+            placeholder="Search catalog..." 
+            className="admin-search-input" 
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
         </div>
         <select 
           value={filterCategory} 

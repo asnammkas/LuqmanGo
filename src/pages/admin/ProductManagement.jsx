@@ -14,6 +14,7 @@ const ProductManagement = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [currentProduct, setCurrentProduct] = useState(null);
   const [filterCategory, setFilterCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
   const [deleteTarget, setDeleteTarget] = useState(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -56,6 +57,8 @@ const ProductManagement = () => {
           categories={categories}
           filterCategory={filterCategory}
           setFilterCategory={setFilterCategory}
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
           handleAddNew={handleAddNew}
           handleEdit={handleEdit}
           setDeleteTarget={setDeleteTarget}
