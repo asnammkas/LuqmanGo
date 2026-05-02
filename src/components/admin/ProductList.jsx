@@ -15,9 +15,10 @@ const ProductList = ({
 }) => {
   const filteredProducts = products.filter(p => {
     const matchesCategory = filterCategory === 'All' || p.category === filterCategory;
-    const matchesSearch = !searchQuery || 
-      p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      p.category.toLowerCase().includes(searchQuery.toLowerCase());
+    const queryWords = searchQuery.toLowerCase().split(' ').filter(word => word.length > 0);
+    const matchesSearch = queryWords.length === 0 || queryWords.every(word => 
+      p.title.toLowerCase().includes(word)
+    );
     return matchesCategory && matchesSearch;
   });
 

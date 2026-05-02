@@ -60,6 +60,10 @@ const CartCheckout = () => {
 
   const handleCheckoutSubmit = async (e) => {
     e.preventDefault();
+    if (!currentUser) {
+      toast.error('Authentication required', 'Please sign in to place an order');
+      return;
+    }
     setErrors({});
 
     const sanitizedData = {
@@ -247,6 +251,7 @@ const CartCheckout = () => {
               errors={errors}
               isSubmitting={isSubmitting}
               onSubmit={handleCheckoutSubmit}
+              currentUser={currentUser}
             />
           </div>
         </div>

@@ -1,9 +1,30 @@
 import React from 'react';
 import { ArrowRight } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
 import styles from '../../pages/storefront/CartCheckout.module.css';
 
-const CheckoutForm = ({ formData, setFormData, errors, isSubmitting, onSubmit, showForm, setShowForm }) => {
+const CheckoutForm = ({ formData, setFormData, errors, isSubmitting, onSubmit, showForm, setShowForm, currentUser }) => {
+  const location = useLocation();
+
   if (!showForm) {
+    if (!currentUser) {
+      return (
+        <div style={{ textAlign: 'center', padding: '1.5rem', background: '#F9F7F2', borderRadius: '16px', border: '1px dashed var(--color-accent-sage)' }}>
+          <p style={{ fontSize: '0.9rem', color: 'var(--color-text-main)', marginBottom: '1.25rem', fontWeight: 500 }}>
+            Sign in to your account to complete your purchase and secure your items.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+            <Link to="/signin" state={{ from: location }} className="btn btn-primary" style={{ padding: '0.8rem' }}>
+              Sign In
+            </Link>
+            <Link to="/register" state={{ from: location }} className="btn btn-outline" style={{ padding: '0.8rem', background: 'white' }}>
+              Create Account
+            </Link>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <button className="btn btn-primary" style={{ width: '100%', padding: '1rem' }} onClick={() => setShowForm(true)}>
         Proceed to Checkout <ArrowRight size={18} />

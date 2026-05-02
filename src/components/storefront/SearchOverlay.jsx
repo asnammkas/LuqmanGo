@@ -39,12 +39,12 @@ const SearchOverlay = ({ isOpen, onClose }) => {
       return;
     }
 
-    const query = debouncedQuery.toLowerCase();
-    const filtered = searchCatalog.filter(p => 
-      p.title.toLowerCase().includes(query) || 
-      p.category.toLowerCase().includes(query) ||
-      (p.description && p.description.toLowerCase().includes(query))
-    ).slice(0, 6); // Limit results for UI clarity
+    const queryWords = debouncedQuery.toLowerCase().split(' ').filter(word => word.length > 0);
+    
+    const filtered = searchCatalog.filter(p => {
+      const title = p.title.toLowerCase();
+      return queryWords.every(word => title.includes(word));
+    }).slice(0, 20);
 
     setTimeout(() => setResults(filtered), 0);
   }, [debouncedQuery, searchCatalog]);
@@ -67,6 +67,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
         backgroundColor: 'rgba(247, 243, 237, 0.98)',
         backdropFilter: 'blur(10px)',
         display: 'flex', flexDirection: 'column',
+        overflowY: 'auto',
         animation: 'overlayFadeIn 0.3s ease-out'
       }}>
       <style>{`

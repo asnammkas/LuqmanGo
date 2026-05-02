@@ -161,8 +161,17 @@ const Register = () => {
               disabled={isLoading}
               style={{ padding: '1rem', fontSize: '1.1rem', fontWeight: 700, display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.75rem', marginTop: '0.5rem', opacity: isLoading ? 0.7 : 1, cursor: isLoading ? 'not-allowed' : 'pointer' }}
             >
-              <UserPlus size={20} />
-              {isLoading ? 'Creating Account...' : 'Create Account'}
+              {isLoading ? (
+                <>
+                  <div style={{ width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                  Creating Account...
+                </>
+              ) : (
+                <>
+                  <UserPlus size={20} />
+                  Create Account
+                </>
+              )}
             </button>
             
           </form>
