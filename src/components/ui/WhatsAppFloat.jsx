@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
+import { useCart } from '../../context/CartContext';
 
 const WhatsAppFloat = () => {
   const [isMobile, setIsMobile] = useState(false);
+  const { getCartCount } = useCart();
+  const hasCartItems = getCartCount() > 0;
+  
   const vendorPhone = import.meta.env.VITE_VENDOR_WHATSAPP || "94725065252";
   const waLink = `https://wa.me/${vendorPhone}?text=Hi! I have a question about my shopping experience at LuqmanGo.`;
 
@@ -20,7 +24,7 @@ const WhatsAppFloat = () => {
       className="animate-fade-in"
       style={{
         position: 'fixed',
-        bottom: isMobile ? '90px' : '30px', 
+        bottom: isMobile ? (hasCartItems ? '160px' : '90px') : '30px', 
         right: isMobile ? '20px' : '30px',
         width: '56px',
         height: '56px',

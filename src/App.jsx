@@ -12,6 +12,7 @@ import styles from './App.module.css';
 import CookieConsent from './components/storefront/CookieConsent';
 import LoadingSpinner from './components/ui/LoadingSpinner';
 import WhatsAppFloat from './components/ui/WhatsAppFloat';
+import FloatingCart from './components/storefront/FloatingCart';
 
 
 
@@ -193,6 +194,9 @@ function AppContent() {
       <SearchOverlay isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
       {/* GDPR Cookie Consent */}
       <CookieConsent />
+      
+      {/* Persistent Global Floating Cart Summary */}
+      <FloatingCart />
       
       {/* Persistent Global Floating Contact */}
       {!isDrawerOpen && <WhatsAppFloat />}
