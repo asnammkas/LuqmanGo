@@ -24,7 +24,7 @@ const WhatsAppFloat = () => {
       className="animate-fade-in"
       style={{
         position: 'fixed',
-        bottom: isMobile ? (hasCartItems ? '160px' : '90px') : '30px', 
+        bottom: isMobile ? '90px' : '30px', 
         right: isMobile ? '20px' : '30px',
         width: '56px',
         height: '56px',

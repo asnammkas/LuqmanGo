@@ -24,17 +24,17 @@ const FloatingCart = () => {
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ y: 100, opacity: 0 }}
+        initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 100, opacity: 0 }}
+        exit={{ y: -100, opacity: 0 }}
         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
         style={{
           position: 'fixed',
-          bottom: '85px', // Above mobile bottom nav
-          left: '50%',
-          transform: 'translateX(-50%)',
-          width: 'calc(100% - 2rem)',
-          maxWidth: '500px',
+          top: '82px', // Below navbar
+          left: '1.5rem',
+          right: '1.5rem',
+          maxWidth: '280px',
+          margin: '0 auto', // Centering on larger screens
           zIndex: 9990,
           pointerEvents: 'auto'
         }}
@@ -45,8 +45,9 @@ const FloatingCart = () => {
             width: '100%',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between',
-            padding: '1rem 1.5rem',
+            justifyContent: 'center', // Centralized
+            gap: '1rem', // Reduced gap
+            padding: '0.6rem 1rem', // Reduced padding
             backgroundColor: '#DCD7BE', 
             color: '#000000',
             borderRadius: '20px',
@@ -68,41 +69,42 @@ const FloatingCart = () => {
             pointerEvents: 'none'
           }} />
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', position: 'relative' }}>
-            <div style={{ position: 'relative' }}>
-              <ShoppingBag size={22} strokeWidth={2} />
-              <div style={{
-                position: 'absolute',
-                top: '-8px',
-                right: '-8px',
-                backgroundColor: '#000000',
-                color: '#FFFFFF',
-                fontSize: '0.65rem',
-                fontWeight: 800,
-                width: '18px',
-                height: '18px',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
-              }}>
-                {totalItems}
-              </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', position: 'relative' }}>
+            <div style={{ 
+              width: '32px', 
+              height: '32px', 
+              borderRadius: '50%', 
+              backgroundColor: '#000000', 
+              color: '#DCD7BE', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center',
+              fontSize: '0.9rem',
+              fontWeight: 800,
+              boxShadow: '0 4px 10px rgba(0,0,0,0.2)',
+              flexShrink: 0
+            }}>
+              {totalItems}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-              <span style={{ fontSize: '0.7rem', fontWeight: 600, opacity: 0.8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                Your Boutique Bag
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', minWidth: 0 }}>
+              <span style={{ 
+                fontSize: '0.55rem', 
+                fontWeight: 700, 
+                opacity: 0.6, 
+                textTransform: 'uppercase', 
+                letterSpacing: '0.15em',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                width: '100%',
+                textAlign: 'center'
+              }}>
+                Boutique Bag
               </span>
-              <span style={{ fontSize: '1.1rem', fontWeight: 700 }}>
+              <span style={{ fontSize: '1rem', fontWeight: 800, whiteSpace: 'nowrap', letterSpacing: '-0.02em' }}>
                 {formatCurrency(totalPrice)}
               </span>
             </div>
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, fontSize: '0.9rem', position: 'relative' }}>
-            Review Bag
-            <ArrowRight size={18} />
           </div>
         </button>
       </motion.div>
