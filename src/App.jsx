@@ -196,7 +196,7 @@ function AppContent() {
       <CookieConsent />
       
       {/* Persistent Global Floating Cart Summary */}
-      <FloatingCart />
+      <FloatingCart isDrawerOpen={isDrawerOpen} isSearchOpen={isSearchOpen} />
       
       {/* Persistent Global Floating Contact */}
       {!isDrawerOpen && <WhatsAppFloat />}

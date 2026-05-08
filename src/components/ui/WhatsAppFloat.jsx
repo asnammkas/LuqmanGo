@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useCart } from '../../context/CartContext';
 
 const WhatsAppFloat = () => {
   const [isMobile, setIsMobile] = useState(false);
-  const { getCartCount } = useCart();
-  const hasCartItems = getCartCount() > 0;
   
   const vendorPhone = import.meta.env.VITE_VENDOR_WHATSAPP || "94725065252";
   const waLink = `https://wa.me/${vendorPhone}?text=Hi! I have a question about my shopping experience at LuqmanGo.`;

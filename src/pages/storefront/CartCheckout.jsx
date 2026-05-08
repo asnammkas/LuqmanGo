@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import DOMPurify from 'dompurify';
 import { useCart } from '../../context/CartContext';
 import { useOrders } from '../../context/OrderContext';
@@ -58,6 +58,24 @@ const CartCheckout = () => {
 
   const [errors, setErrors] = useState({});
 
+  // Cache customer location early (when checkout form opens) so submit stays synchronous
+  const cachedLocationRef = useRef(null);
+  
+  useEffect(() => {
+    if (showCheckoutForm && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          cachedLocationRef.current = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+        },
+        () => { cachedLocationRef.current = null; }, // Denied — no problem
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+      );
+    }
+  }, [showCheckoutForm]);
+
   const handleCheckoutSubmit = async (e) => {
     e.preventDefault();
     if (!currentUser) {
@@ -101,14 +119,22 @@ const CartCheckout = () => {
         const num = index + 1;
         return `${num}. ${item.quantity}x ${item.title} — ${formatCurrency(item.price)}`;
       }).join('%0A%0A');
-      const textMessage = `*📦 NEW ORDER - LuqmanGo*%0A%0A*👤 Customer Details*%0A━━━━━━━━━━━━━━━━━━%0A*Name:* ${sanitizedData.name}%0A*Email:* ${sanitizedData.email}%0A*Phone:* ${sanitizedData.phone}%0A*Address:* ${sanitizedData.address}%0A*Notes:* ${sanitizedData.orderNotes || "None"}%0A%0A*💳 Payment Method:* ${sanitizedData.paymentMethod}%0A%0A*🛒 Order Summary*%0A━━━━━━━━━━━━━━━━━━%0A%0A${orderDetails}%0A%0A━━━━━━━━━━━━━━━━━━%0A*🧾 Total Items: ${totalItems}*%0A*💰 Total Amount: ${formatCurrency(getCartTotal())}*%0A%0A_Order ID: ${generatedOrderId}_%0A%0A_Thank you for shopping with LuqmanGo! 🛍️_%0A_Your items will be delivered to you soon — our team is already working on it! 🚀_`;
+
+      // Use pre-cached location (fetched when checkout form opened)
+      const location = cachedLocationRef.current;
+      const locationSection = location 
+        ? `%0A%0A*📍 Delivery Location*%0A━━━━━━━━━━━━━━━━━━%0Ahttps://maps.google.com/?q=${location.lat},${location.lng}`
+        : '';
+
+      const textMessage = `*📦 NEW ORDER - LuqmanGo*%0A%0A*👤 Customer Details*%0A━━━━━━━━━━━━━━━━━━%0A*Name:* ${sanitizedData.name}%0A*Email:* ${sanitizedData.email}%0A*Phone:* ${sanitizedData.phone}%0A*Address:* ${sanitizedData.address}%0A*Notes:* ${sanitizedData.orderNotes || "None"}%0A%0A*💳 Payment Method:* ${sanitizedData.paymentMethod}%0A%0A*🛒 Order Summary*%0A━━━━━━━━━━━━━━━━━━%0A%0A${orderDetails}%0A%0A━━━━━━━━━━━━━━━━━━%0A*🧾 Total Items: ${totalItems}*%0A*💰 Total Amount: ${formatCurrency(getCartTotal())}*${locationSection}%0A%0A_Order ID: ${generatedOrderId}_%0A%0A_Thank you for shopping with LuqmanGo! 🛍️_%0A_Your items will be delivered to you soon — our team is already working on it! 🚀_`;
       
-      // Trigger WhatsApp immediately to avoid popup blockers
+      // Trigger WhatsApp
       const vendorPhone = import.meta.env.VITE_VENDOR_WHATSAPP || "94725065252"; 
-      window.open(`https://wa.me/${vendorPhone}?text=${textMessage}`, '_blank', 'noopener,noreferrer');
+      const waUrl = `https://wa.me/${vendorPhone}?text=${textMessage}`;
+      window.open(waUrl, '_blank', 'noopener,noreferrer');
       
       // Store message for fallback button in case popup was blocked
-      window._lastOrderWA = `https://wa.me/${vendorPhone}?text=${textMessage}`;
+      window._lastOrderWA = waUrl;
       
       clearCart();
       
