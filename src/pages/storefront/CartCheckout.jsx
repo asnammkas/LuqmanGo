@@ -20,7 +20,8 @@ const checkoutSchema = z.object({
   phone: z.string().regex(/^\+?[0-9]{10,14}$/, "Phone must be 10-14 digits (e.g. +947XXXXXXXX)"),
   address: z.string().min(10, "Address is too short"),
   orderNotes: z.string().max(500, "Notes are too long").optional(),
-  paymentMethod: z.literal('Cash on Delivery')
+  paymentMethod: z.literal('Cash on Delivery'),
+  shareLocation: z.boolean().optional()
 });
 
 const CartCheckout = () => {
@@ -40,7 +41,8 @@ const CartCheckout = () => {
     phone: userProfile?.phone || '+94', 
     address: userProfile?.address || '', 
     orderNotes: '', 
-    paymentMethod: 'Cash on Delivery' 
+    paymentMethod: 'Cash on Delivery',
+    shareLocation: false
   });
   
   // Update if auth or profile resolves after mount
@@ -62,7 +64,7 @@ const CartCheckout = () => {
   const cachedLocationRef = useRef(null);
   
   useEffect(() => {
-    if (showCheckoutForm && navigator.geolocation) {
+    if (showCheckoutForm && formData.shareLocation && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           cachedLocationRef.current = {
@@ -73,8 +75,10 @@ const CartCheckout = () => {
         () => { cachedLocationRef.current = null; }, // Denied — no problem
         { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
       );
+    } else {
+      cachedLocationRef.current = null;
     }
-  }, [showCheckoutForm]);
+  }, [showCheckoutForm, formData.shareLocation]);
 
   const handleCheckoutSubmit = async (e) => {
     e.preventDefault();
@@ -90,7 +94,8 @@ const CartCheckout = () => {
       phone: DOMPurify.sanitize(formData.phone),
       address: DOMPurify.sanitize(formData.address),
       orderNotes: DOMPurify.sanitize(formData.orderNotes),
-      paymentMethod: formData.paymentMethod
+      paymentMethod: formData.paymentMethod,
+      shareLocation: formData.shareLocation
     };
     
     const validation = checkoutSchema.safeParse(sanitizedData);
@@ -120,8 +125,8 @@ const CartCheckout = () => {
         return `${num}. ${item.quantity}x ${item.title} — ${formatCurrency(item.price)}`;
       }).join('%0A%0A');
 
-      // Use pre-cached location (fetched when checkout form opened)
-      const location = cachedLocationRef.current;
+      // Use pre-cached location if enabled
+      const location = sanitizedData.shareLocation ? cachedLocationRef.current : null;
       const locationSection = location 
         ? `%0A%0A*📍 Delivery Location*%0A━━━━━━━━━━━━━━━━━━%0Ahttps://maps.google.com/?q=${location.lat},${location.lng}`
         : '';

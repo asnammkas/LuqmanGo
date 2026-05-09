@@ -75,6 +75,19 @@ const CheckoutForm = ({ formData, setFormData, errors, isSubmitting, onSubmit, s
         {errors.address && <p style={{ color: '#EF4444', fontSize: '0.75rem', marginTop: '0.25rem' }}>{errors.address}</p>}
       </div>
 
+      <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <input 
+          type="checkbox" 
+          id="checkout-share-location" 
+          checked={formData.shareLocation || false}
+          onChange={(e) => setFormData({...formData, shareLocation: e.target.checked})}
+          style={{ accentColor: '#113013', width: '16px', height: '16px', cursor: 'pointer' }}
+        />
+        <label htmlFor="checkout-share-location" style={{ fontSize: '0.85rem', color: 'var(--color-text-main)', cursor: 'pointer' }}>
+          Use my current GPS location for precise delivery
+        </label>
+      </div>
+
       <div style={{ marginTop: '0.5rem' }}>
         <label className="label" htmlFor="checkout-notes">Special Instructions / Order Notes (Optional)</label>
         <textarea 
