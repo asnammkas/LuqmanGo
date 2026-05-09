@@ -123,16 +123,16 @@
   height: 40px;
   border: 3px solid rgba(27, 94, 32, 0.1);
   border-top-color: #1B5E20;
-  borderRadius: 50%;
+  border-radius: 50%;
   animation: spin 1s linear infinite;
 }
 
 .loadingText {
-  fontSize: 0.75rem;
-  fontWeight: 700;
-  letterSpacing: 0.2em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
   color: #706F65;
-  textTransform: uppercase;
+  text-transform: uppercase;
 }
 
 @keyframes spin { to { transform: rotate(360deg); } }
