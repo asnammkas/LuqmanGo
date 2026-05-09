@@ -1,7 +1,8 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, MapPin } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import styles from '../../pages/storefront/CartCheckout.module.css';
+import LocationPickerMap from './LocationPickerMap';
 
 const CheckoutForm = ({ formData, setFormData, errors, isSubmitting, onSubmit, showForm, setShowForm, currentUser }) => {
   const location = useLocation();
@@ -75,17 +76,28 @@ const CheckoutForm = ({ formData, setFormData, errors, isSubmitting, onSubmit, s
         {errors.address && <p style={{ color: '#EF4444', fontSize: '0.75rem', marginTop: '0.25rem' }}>{errors.address}</p>}
       </div>
 
-      <div style={{ marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <input 
-          type="checkbox" 
-          id="checkout-share-location" 
-          checked={formData.shareLocation || false}
-          onChange={(e) => setFormData({...formData, shareLocation: e.target.checked})}
-          style={{ accentColor: '#113013', width: '16px', height: '16px', cursor: 'pointer' }}
-        />
-        <label htmlFor="checkout-share-location" style={{ fontSize: '0.85rem', color: 'var(--color-text-main)', cursor: 'pointer' }}>
-          Use my current GPS location for precise delivery
-        </label>
+      <div style={{ marginTop: '0.5rem', background: '#f5f4ef', borderRadius: '8px', padding: '1rem', border: '1px solid var(--color-border)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: formData.shareLocation ? '1rem' : '0' }}>
+          <input 
+            type="checkbox" 
+            id="checkout-share-location" 
+            checked={formData.shareLocation || false}
+            onChange={(e) => setFormData({...formData, shareLocation: e.target.checked})}
+            style={{ accentColor: '#113013', width: '16px', height: '16px', cursor: 'pointer' }}
+          />
+          <label htmlFor="checkout-share-location" style={{ fontSize: '0.9rem', color: 'var(--color-text-main)', cursor: 'pointer', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+            📌 Pin exact delivery location on map
+          </label>
+        </div>
+        
+        {formData.shareLocation && (
+          <div className="animate-fade-in">
+            <LocationPickerMap 
+              initialLocation={formData.deliveryLocation}
+              onLocationSelect={(loc) => setFormData({ ...formData, deliveryLocation: loc })} 
+            />
+          </div>
+        )}
       </div>
 
       <div style={{ marginTop: '0.5rem' }}>

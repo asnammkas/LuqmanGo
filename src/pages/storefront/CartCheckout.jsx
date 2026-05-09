@@ -21,7 +21,8 @@ const checkoutSchema = z.object({
   address: z.string().min(10, "Address is too short"),
   orderNotes: z.string().max(500, "Notes are too long").optional(),
   paymentMethod: z.literal('Cash on Delivery'),
-  shareLocation: z.boolean().optional()
+  shareLocation: z.boolean().optional(),
+  deliveryLocation: z.object({ lat: z.number(), lng: z.number() }).nullable().optional()
 });
 
 const CartCheckout = () => {
@@ -42,7 +43,8 @@ const CartCheckout = () => {
     address: userProfile?.address || '', 
     orderNotes: '', 
     paymentMethod: 'Cash on Delivery',
-    shareLocation: false
+    shareLocation: false,
+    deliveryLocation: null
   });
   
   // Update if auth or profile resolves after mount
@@ -60,25 +62,7 @@ const CartCheckout = () => {
 
   const [errors, setErrors] = useState({});
 
-  // Cache customer location early (when checkout form opens) so submit stays synchronous
-  const cachedLocationRef = useRef(null);
-  
-  useEffect(() => {
-    if (showCheckoutForm && formData.shareLocation && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          cachedLocationRef.current = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          };
-        },
-        () => { cachedLocationRef.current = null; }, // Denied — no problem
-        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-      );
-    } else {
-      cachedLocationRef.current = null;
-    }
-  }, [showCheckoutForm, formData.shareLocation]);
+  // Background geolocation is removed in favor of the interactive LocationPickerMap component
 
   const handleCheckoutSubmit = async (e) => {
     e.preventDefault();
@@ -95,7 +79,8 @@ const CartCheckout = () => {
       address: DOMPurify.sanitize(formData.address),
       orderNotes: DOMPurify.sanitize(formData.orderNotes),
       paymentMethod: formData.paymentMethod,
-      shareLocation: formData.shareLocation
+      shareLocation: formData.shareLocation,
+      deliveryLocation: formData.deliveryLocation
     };
     
     const validation = checkoutSchema.safeParse(sanitizedData);
@@ -122,16 +107,50 @@ const CartCheckout = () => {
       const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
       let orderDetails = cart.map((item, index) => {
         const num = index + 1;
-        return `${num}. ${item.quantity}x ${item.title} — ${formatCurrency(item.price)}`;
+        const lineTotal = formatCurrency(item.price * item.quantity);
+        return `${num}. ${item.title}%0A    ↳ Qty: ${item.quantity} × ${formatCurrency(item.price)} = ${lineTotal}`;
       }).join('%0A%0A');
 
-      // Use pre-cached location if enabled
-      const location = sanitizedData.shareLocation ? cachedLocationRef.current : null;
+      // Use explicitly selected map location if enabled
+      const location = sanitizedData.shareLocation ? sanitizedData.deliveryLocation : null;
       const locationSection = location 
-        ? `%0A%0A*📍 Delivery Location*%0A━━━━━━━━━━━━━━━━━━%0Ahttps://maps.google.com/?q=${location.lat},${location.lng}`
+        ? `%0A%0A📍 *Delivery Location*%0A${encodeURIComponent('https://maps.google.com/?q=' + location.lat + ',' + location.lng)}`
         : '';
 
-      const textMessage = `*📦 NEW ORDER - LuqmanGo*%0A%0A*👤 Customer Details*%0A━━━━━━━━━━━━━━━━━━%0A*Name:* ${sanitizedData.name}%0A*Email:* ${sanitizedData.email}%0A*Phone:* ${sanitizedData.phone}%0A*Address:* ${sanitizedData.address}%0A*Notes:* ${sanitizedData.orderNotes || "None"}%0A%0A*💳 Payment Method:* ${sanitizedData.paymentMethod}%0A%0A*🛒 Order Summary*%0A━━━━━━━━━━━━━━━━━━%0A%0A${orderDetails}%0A%0A━━━━━━━━━━━━━━━━━━%0A*🧾 Total Items: ${totalItems}*%0A*💰 Total Amount: ${formatCurrency(getCartTotal())}*${locationSection}%0A%0A_Order ID: ${generatedOrderId}_%0A%0A_Thank you for shopping with LuqmanGo! 🛍️_%0A_Your items will be delivered to you soon — our team is already working on it! 🚀_`;
+      const nl = '%0A';
+      const nl2 = '%0A%0A';
+      const line = '━━━━━━━━━━━━━━━━━━━━';
+      
+      const textMessage = [
+        `📦 *NEW ORDER — LuqmanGo*`,
+        `${line}`,
+        ``,
+        `👤 *Customer*`,
+        `▸ Name: ${sanitizedData.name}`,
+        `▸ Phone: ${sanitizedData.phone}`,
+        `▸ Email: ${sanitizedData.email || '—'}`,
+        `▸ Address: ${sanitizedData.address}`,
+        sanitizedData.orderNotes ? `▸ Notes: ${sanitizedData.orderNotes}` : '',
+        ``,
+        `💳 *Payment:* ${sanitizedData.paymentMethod}`,
+        ``,
+        `${line}`,
+        `🛒 *Order Items*`,
+        `${line}`,
+        ``,
+        `${orderDetails}`,
+        ``,
+        `${line}`,
+        `🧾 *Total Items:* ${totalItems}`,
+        `💰 *Total:* ${formatCurrency(getCartTotal())}`,
+        `${line}`,
+        ``,
+        `🆔 _Order: ${generatedOrderId}_`,
+        `${locationSection ? locationSection : ''}`,
+        ``,
+        `_Thank you for shopping with LuqmanGo! 🛍️_`,
+        `_Your order is being prepared 🚀_`,
+      ].filter(Boolean).join(nl);
       
       // Trigger WhatsApp
       const vendorPhone = import.meta.env.VITE_VENDOR_WHATSAPP || "94725065252"; 
